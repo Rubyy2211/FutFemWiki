@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ficha completa del equipo, historia, plantilla, palmarés y datos técnicos.">
+    <title>Ficha de Equipo - FutFemWiki</title>
+    
+    <!-- Favicon dinámico (se asignará por JS) -->
+    <link id="favicon" rel="icon" href="./img/logo.webp">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Estilos de terceros (Icons & Fonts) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@100..900&family=Oswald:wght@200..700&family=Plus+Jakarta+Sans:wght@200..800&family=Russo+One&display=swap" media="print" onload="this.media='all'">
+    
+    <!-- Estilos Locales de la Wiki -->
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" href="css/wiki.css">
+    <link rel="stylesheet" href="css/ficha-equipo.css">
+
+    <noscript>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css">
+    </noscript>
+</head>
+<body>
+
+    <!-- 1. Header (Asegúrate de tener un contenedor o incluirlo mediante JS) -->
+    <header class="navbar" id="main-header"></header>
+
+    <!-- 2. Contenedor Principal del Equipo -->
+    <div id="equipo-container">
+        <!-- Selector de Pestañas -->
+        <div id="selector">
+            <a href="#info" class="active">Información</a>
+            <a href="#plantilla">Plantilla</a>
+            <a href="#historicas">Históricas</a>
+        </div>
+
+        <!-- Pestaña 1: INFORMACIÓN GENERAL -->
+        <div id="info" class="tab-content active">
+            <div class="resto" style="height: 100%;">
+                <div class="row">
+                    <div>
+                        <div id="tabla-info" class="tabla-jugadoras">
+                            <div id="cabecera-tabla" class="cabecera-tabla">
+                                <h3>Club</h3>
+                            </div>
+                            <div class="container-jugadoras">
+                                <div id="fundacion" style="height: 20%; display: flex; flex-direction: column; justify-content: center;">
+                                    <p style="margin-bottom: 0;">Fundado</p>
+                                    <h3 id="equipo-fundacion">--</h3>
+                                </div>
+                                <div id="datos-equipo">
+                                    <h3 id="equipo-nombre">Cargando equipo...</h3>
+                                    <div>
+                                        <img src="" id="liga-item" alt="Liga">
+                                        <div id="escudo-container">
+                                            <img src="" id="escudo" alt="Escudo" fetchpriority="high">
+                                        </div>
+                                        <span class="fi" id="pais-bandera"></span>
+                                    </div>
+                                    <span>Estadio: 
+                                        <a href="#" id="btn-mapa-google" target="_blank" rel="noopener noreferrer" class="btn-mapa">
+                                            <i class="bi bi-geo-alt-fill"></i> Google Maps
+                                        </a>
+                                    </span>
+                                </div>
+                                <hr>
+                                <div id="tabla-trofeos" class="tabla-jugadoras">
+                                    <div class="cabecera-tabla">
+                                        <h3>Palmarés</h3>
+                                    </div>
+                                    <div id="palmares" class="container-jugadoras"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="right" style="display: none;">
+                        <div id="tabla-map" class="tabla-jugadoras">
+                            <div class="cabecera-tabla">
+                                <h3>Mapa</h3>
+                                <a id="ver-map" href="#">Ver Más</a>
+                            </div>
+                            <div id="mapa-equipos" class="container-jugadoras" style="width: 100%; height: 400px; display: block;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="left" style="min-height: 450px; height: 100%;">
+                <section id="jugadoras-actuales-sec">
+                    <div id="tabla-jugadoras-actuales" class="tabla-jugadoras" style="height: 100%; width: 95%; min-height: 300px;">
+                        <div class="cabecera-tabla">
+                            <h3>Plantilla</h3>
+                        </div>
+                        <div id="jugadoras-actuales">
+                            <div id="campo-destacadas" class="campo-contenedor-wrapper">
+                                <!-- El campo de fútbol dinámico -->
+                                <div id="football-field-container"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section id="jugadoras-destacadas">
+                    <div id="tabla-jugadoras-destacadas" class="tabla-jugadoras">
+                        <div class="cabecera-tabla">
+                            <h3>Destacadas</h3>
+                        </div>
+                        <div id="jugadoras-destacadas-container" class="container-jugadoras"></div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- Pestaña 2: PLANTILLA COMPLETA -->
+        <div id="plantilla" class="tab-content">  
+            <div id="jugadoras-actuales-container" class="container-jugadoras"></div>
+        </div>
+
+        <!-- Pestaña 3: JUGADORAS HISTÓRICAS -->
+        <div id="historicas" class="tab-content">
+            <div id="jugadoras-container" class="container-jugadoras" style="display: none;"></div>
+            <div id="historicas-placeholder" style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+                <h3 id="historicas-equipo-nombre">--</h3>
+                <img id="historicas-escudo" src="" alt="Escudo">
+                <p>Haz clic en una temporada para ver las jugadoras que han estado en el club</p>
+            </div>
+
+            <div id="slider-temporadas">
+                <button id="prev-temporada" class="slider-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
+                    </svg>
+                </button>
+                <div id="temporadas-container"></div>
+                <button id="next-temporada" class="slider-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Librerías Externas -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.2/color-thief.umd.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous" defer></script>
+
+    <!-- Script de Inicialización de la Ficha -->
+    <script type="module" src="./js/ficha-equipo-init.js"></script>
+</body>
+</html>

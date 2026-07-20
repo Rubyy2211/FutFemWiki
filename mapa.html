@@ -1,0 +1,89 @@
+{% load static %}
+{% load i18n %}
+{% load compress %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explora el mapa interactivo de todos los equipos del fútbol femenino mundial.">
+    <title>{% trans "Futfem Map" %}</title>
+    <link rel="icon" href="{% static 'img/logo.png' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://unpkg.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+    <link href="https://unpkg.com/maplibre-gl@5.18.0/dist/maplibre-gl.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <!--<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" media="print" onload="this.media='all'">-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css" media="print" onload="this.media='all'">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@100..900&family=Oswald:wght@200..700&family=Plus+Jakarta+Sans:wght@200..800&family=Russo+One&display=swap" 
+      media="print" onload="this.media='all'">
+    <link rel="preload" href="/api/equiposall" as="fetch" crossorigin="anonymous">
+    <link rel="modulepreload" href="/static/FutFemWiki/js/mapa.js">
+    <link rel="preload" href="https://unpkg.com/maplibre-gl@5.18.0/dist/maplibre-gl.js">
+    <link rel="modulepreload" href="/static/futfem/js/equipos.js">
+
+
+    {% compress css inline %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+    <link rel="stylesheet" href="{% static 'css/combo.css' %}">
+    <link rel="stylesheet" href="{% static 'FutFemWiki/css/wiki.css' %}">
+    <link rel="stylesheet" href="{% static 'FutFemWiki/css/mapa.css' %}">
+    {% endcompress %}
+</head>
+<body {% if usuario_sesion.equipo_favorito.id_equipo %}data-team="{{ usuario_sesion.equipo_favorito.id_equipo }}"{% endif %}>
+    {% include 'partials/header.html' %}
+    <div id="mapa-container" style="width: 100vw; height: 100vh;">
+        <div id="inputs">
+            <input id="input-equipo" type="text" name="equipo" placeholder="{% trans 'Buscar por equipo...' %}" autocomplete="off">
+            <div class="sugerencias-container">
+                <ul id="sugerencias-equipo"></ul>
+            </div>
+        </div>
+        <div id="mapa-equipos"></div>
+    </div>
+    <script src="{% static 'js/animations/header.js' %}" defer></script>
+    <!--<script src="https://unpkg.com/leaflet/dist/leaflet.js" defer></script>-->
+    <script src="https://unpkg.com/maplibre-gl@5.18.0/dist/maplibre-gl.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js" defer></script>
+    <script type="module" src="{% static 'FutFemWiki/js/mapa.js' %}" defer></script>
+<script type="module">
+import { inicializarMapaEquipos, añadirEquipoMapa, centrarMapaEnEquipos, map, actualizarMarkersZoom } from '{% static "FutFemWiki/js/mapa.js" %}';
+import { fetchAllEquipos, handleAutocompleteEquipo } from '{% static "futfem/js/equipos.js" %}';
+
+const inputEquipo = document.getElementById('input-equipo');
+
+inputEquipo.addEventListener('input', async (event) => {
+        handleAutocompleteEquipo(event, 'sugerencias-equipo');
+    });
+inicializarMapaEquipos();
+
+map.on("load", async () => {
+    let respuesta = await fetchAllEquipos();
+    const equipos = respuesta.success;
+
+    // Procesar en "chunks" (trozos) para no bloquear el hilo principal
+    let i = 0;
+    function renderizarBloque() {
+        const limite = Math.min(i + 50, equipos.length); // 50 equipos por vez
+        for (i; i < limite; i++) {
+            const equipo = equipos[i];
+            if (equipo.lat && equipo.long) {
+                añadirEquipoMapa(equipo.id, equipo.nombre, equipo.lat, equipo.long, '/' + equipo.escudo, equipo.color);
+            }
+        }
+        if (i < equipos.length) {
+            // Dejamos que el navegador respire y pinte antes del siguiente bloque
+            requestIdleCallback(renderizarBloque);
+        } else {
+            actualizarMarkersZoom();
+        }
+    }
+    renderizarBloque();
+});
+</script>
+</body>
+</html>

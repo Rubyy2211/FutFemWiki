@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Busca tu equipo o jugadora favorita y descubre su historia, logros y datos curiosos en nuestra wiki de fútbol femenino.">
+    <title>{% trans "FutfemWiki" %}</title>
+    <link rel="icon" href="{% static 'img/logo.png' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css" media="print" onload="this.media='all'">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@100..900&family=Oswald:wght@200..700&family=Plus+Jakarta+Sans:wght@200..800&family=Russo+One&display=swap" 
+      media="print" onload="this.media='all'"> 
+
+    <link rel="modulepreload" href="js/api/pais.js">
+    <link rel="modulepreload" href="js/api/equipos.js">
+    <link rel="modulepreload" href="js/api/jugadora.js">
+    <!--<link rel="modulepreload" href="/static/js/games/funciones-comunes.js">-->
+    <link rel="modulepreload" href="js/wiki.js">
+
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" href="css/combo.css">
+    <link rel="stylesheet" href="css/wiki.css">
+    <link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+<header class="navbar">
+    <div class="header-container">
+        <a href="index.html" class="logo-link">
+                <img src="img/logo.webp" alt="Logo FutFemWiki" class="logo-img">
+            </a>
+        <nav class="nav-container">
+            <!-- Menú de navegación principal -->
+            <ul class="nav-links">
+                <li><a href="jugadoras.html">Jugadoras</a></li>
+                <li><a href="equipos.html">Equipos</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<section id="bienvenida">
+    <h1>FutFemWiki</h1>
+    <p>¡Bienvenid@ a FutFemWiki!</p>
+    
+</section>
+
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.2/color-thief.umd.js" defer></script>
+<script src="{% url 'javascript-catalog' %}" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous" defer></script>
+</body>
+</html>

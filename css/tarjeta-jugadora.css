@@ -1,0 +1,232 @@
+#mostrador-tarjetas{
+    /*width: fit-content;
+    display: flex;
+    flex-direction: row;*/
+    /*gap: 30px;*/
+
+    /*overflow-x: hidden;     /* scroll horizontal */
+    /*padding: 20px 0px;*/
+
+    align-items: center;
+    /*overflow-y: hidden;*/
+}
+.swiper-pagination span{
+    font-size: medium;
+}
+.imagen-jugadora{
+    filter: contrast(1);
+    width: 100%;
+}
+/* Efecto vintage B/N */
+.vintage .imagen-jugadora,
+.vintage #jugadora-img {
+    filter:
+        grayscale(100%)
+        contrast(1.1)
+        brightness(0.95)
+        sepia(1);
+}
+
+/* Grano suave opcional */
+.tarjeta-jugadora.vintage::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+    pointer-events: none;
+    mix-blend-mode: overlay;
+}
+
+.tarjeta-jugadora{
+    position: relative;
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+    border-radius: 20px;
+    text-align: center;
+    padding-inline: unset;
+    backface-visibility: hidden;
+    contain: content;
+
+    /* 3D */
+    transform-style: preserve-3d;
+    perspective: 1000px;
+
+    /* Glass / profundidad */
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    /*box-shadow:
+        0 20px 40px rgba(0,0,0,0.35),
+        inset 0 0 0 1px rgba(255,255,255,0.15);*/
+
+    overflow: hidden;
+}
+
+/* Brillo */
+.tarjeta-jugadora::before {
+    content: "";
+    position: absolute;
+    inset: -50%;
+    background: linear-gradient(
+        120deg,
+        transparent 30%,
+        rgba(255,255,255,0.6) 50%,
+        transparent 70%
+    );
+    transform: translateX(-100%) rotate(25deg);
+    animation: shine 6s infinite;
+    pointer-events: none;
+}
+
+/* Animación brillo */
+@keyframes shine {
+    0% {
+        transform: translateX(-120%) rotate(25deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    40% {
+        transform: translateX(120%) rotate(25deg);
+        opacity: 0;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+/* Hover 3D (opcional pero brutal) */
+.tarjeta-jugadora:hover {
+    transform: rotateX(6deg) rotateY(-6deg) scale(1.03);
+    transition: transform 0.4s ease;
+}
+
+
+.tarjeta-jugadora .nombre{
+    width: 100%;
+    background: var(--color-terciario);
+    font-size: x-large;
+    margin-bottom: 0;
+    border: none;
+    font-family: "Oswald", sans-serif !important;
+}
+
+.detalles{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-items: center;
+    /*background: var(--color-terciario);*/
+    height: max-content;
+    border-radius: 0px 0px 20px 20px;
+}
+
+.detalles .equipo-pais{
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: center;
+    justify-items: center;
+    border-radius: 0px 0px 20px 20px;
+}
+
+.detalles img{
+    max-width: 30px;
+}
+
+.detalles span{
+    max-height: 40px;
+}
+
+.tarjeta-jugadora p{
+    margin-bottom: 0;
+}
+
+
+/* Contenedor de la tarjeta para el efecto 3D */
+
+
+.tarjeta-wrapper {
+    flex: 0 0 auto;
+    width: 200px;
+    height: 330px;
+    perspective: 1200px;
+}
+
+/* Interior de la tarjeta que gira */
+
+.tarjeta-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.8s ease;
+    transform-style: preserve-3d;
+}
+
+.tarjeta-inner.flipped {
+    transform: rotateY(180deg);
+}
+
+.tarjeta-front {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    padding-inline: unset;
+    display: flex;
+    flex-direction: column;
+    height: max-content;
+}
+
+.tarjeta-back {
+    position: absolute;
+    inset: 0;
+    transform: rotateY(180deg);
+    backface-visibility: hidden;
+
+    /* mismo look */
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    /*box-shadow:
+        0 20px 40px rgba(0,0,0,0.35),
+        inset 0 0 0 1px rgba(255,255,255,0.15);*/
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    gap: 12px;
+    max-height: 30dvh;
+}
+
+.tarjeta-back .trofeos{
+    align-items: center;
+    justify-items: center;
+}
+
+.tarjeta-back img{
+    object-fit: contain;
+    height: 100%;
+    width: 100%;
+}
+
+.trofeo-item{
+    max-width: 50%;
+}
+
+@media (max-width: 768px){
+    .tarjeta-jugadora{
+        /*height: 400px;*/
+        width: 250px;
+    }
+    .tarjeta-back{
+        max-height: 242.55px;
+    }
+    #mostrador-tarjetas{
+        padding-top: 15px;
+        padding-bottom: 15px;
+    }
+}

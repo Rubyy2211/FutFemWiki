@@ -1,0 +1,59 @@
+body{
+    max-height: 100vh !important;
+}
+/* Asegura que el body no tenga scroll si el mapa es pantalla completa */
+body, html {
+    margin: 0;
+    padding: 0;
+    overflow: hidden; 
+}
+
+#mapa-container {
+    width: 100vw;
+    /* Restamos la altura estimada del header para evitar el scroll */
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+#mapa-equipos {
+    width: 100%;
+    height: 100%;
+    position: absolute; /* Importante para MapLibre */
+    top: 0;
+    left: 0;
+}
+#mapa-equipos{
+    height: 100% !important;
+    width: 100% !important;
+    max-height: 100vh !important;
+    max-width: 100vw !important;
+    position: relative;
+    display: block;
+}
+#inputs{
+    position: absolute;
+    top: 10px;
+    left: 10%;
+    transform: translateX(-50%);
+    z-index: 1;
+    width: 300px;
+}
+
+.marker-punto{
+    width:12px;
+    height:12px;
+    border-radius:50%;
+    border:2px solid white;
+    display:none;
+}
+
+
+@media (max-width: 768px) {
+    #inputs{
+        left: 50%;
+        width: max-content;
+    }
+}

@@ -1,0 +1,202 @@
+{% load static %}
+{% load i18n %}
+{% load compress %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Descubre la historia, logros y curiosidades de {{ jugadora.Nombre }} {{ jugadora.Apellidos }} en su ficha personalizada. Explora su carrera, estadísticas y palmarés en nuestra wiki de fútbol femenino.">
+    <title>{{ jugadora.Nombre }} {{ jugadora.Apellidos }}</title>
+    <link rel="icon" href="{% static 'img/logo.png' %}">
+    <link rel="preload" as="image" href="/static/img/logo.webp" fetchpriority="high">
+    {% if jugadora %}
+    <link rel="preload" as="image" href="/{{ jugadora.imagen|default:'static/img/predeterm.jpg' }}" fetchpriority="high">
+    {% endif %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://unpkg.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" media="print" onload="this.media='all'"/>
+
+    
+    <noscript>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    </noscript>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css" media="print" onload="this.media='all'">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@100..900&family=Oswald:wght@200..700&family=Plus+Jakarta+Sans:wght@200..800&family=Russo+One&display=swap" 
+      media="print" onload="this.media='all'">
+
+    <link rel="modulepreload" href="/static/FutFemWiki/js/ficha-jugadora.js" as="script">
+    <link rel="preload" href="{% static 'futfem/js/jugadora.js' %}" as="script">
+    <link rel="preload" href="/static/js/animations/header.js" as="script">
+
+    <link rel="preload" href="/api/jugadora_trayectoria?id={{ jugadora.id_jugadora }}" as="fetch" crossorigin="anonymous">
+    <link rel="preload" href="/api/jugadora_companyeras?id_jugadora={{ jugadora.id_jugadora }}&limite=1000" as="fetch" crossorigin="anonymous">
+
+    {% compress css inline %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+    <link rel="stylesheet" href="{% static 'FutFemWiki/css/ficha-jugadora.css' %}">
+    <link rel="stylesheet" href="{% static 'FutFemWiki/css/tarjeta-jugadora.css' %}">
+    {% endcompress %}
+    <style>
+        .swiper {
+            width: 100%;
+            max-width: 100vw;
+            display: block;
+            margin: 0 auto;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Swiper ya pone display: flex internamente, 
+        no fuerces propiedades que puedan chocar */
+        .swiper-wrapper {
+            box-sizing: content-box; 
+        }
+
+        .swiper-slide {
+            /* REGLA DE ORO: Ancho fijo para que el cálculo sea perfecto */
+            width: 300px; 
+            display: flex;
+            justify-content: center;
+            transition: transform 0.3s;
+        }
+    </style>
+</head>
+<body {% if usuario_sesion.equipo_favorito.id_equipo %}data-team="{{ usuario_sesion.equipo_favorito.id_equipo }}"{% endif %}>
+    
+    {% include 'partials/header.html' %}
+    <div id="pagina-container">
+        <div id="ficha-jugadora-container" class="container">
+            <div id="jugadora-info">
+                <img src="/{{ jugadora.imagen|default:'static/img/predeterm.png' }}" id="jugadora-img" alt="{{ jugadora.Nombre }} {{ jugadora.Apellidos }}" fetchpriority="high" style="max-height: 125px; width: 125px; object-fit: cover;">
+                <div id="datos-jugadora">
+                    <h3 id="nombre-jugadora">{{ jugadora.Nombre }} {{ jugadora.Apellidos }}</h3>
+                    <div class="grid">   
+                        <div>
+                            <div style="display: flex; align-items: center;">
+                            <div id="pais"></div>
+                            <div id="posicion"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <p>{{ jugadora.Nacimiento|date:"d/m/Y" }}</p>
+                            |
+                            <p>{{ jugadora.altura }} cm</p>
+                            |
+                            <p>{% trans 'Pie' %}: {{ jugadora.pie_habil }}</p>    
+                            | 
+                            <p>{% trans 'Value' %}: {{ jugadora.market_value }} €</p>
+                        </div>
+                </div>
+                </div>
+                <div id="escudo-container" style="aspect-ratio: 1/1; width: auto; z-index: -1;">
+                    <img id="escudo-equipo" src="/{{ jugadora.equipo.escudo|default:'static/img/predeterm.png' }}" id="escudo" alt="{{ jugadora.EquipoActual.nombre|default:'' }}">
+                </div>
+            </div>
+            <div id="jugadora-ficha" class="section">
+                <div class="swiper mySwiper">
+                    <div class="swiper-wrapper" id="mostrador-tarjetas">
+                        <div class="tarjeta-wrapper">
+                            <div class="tarjeta-inner">
+                                <div id="tarjeta-jugadora" class="glass tarjeta-jugadora tarjeta-front">
+                                    <img id="imagen-jugadora" src="#" alt="{{ jugadora.Apodo }}" fetchpriority="high" width="400" height="500">
+                                    <p id="nombre" class="nombre">{{ jugadora.Apodo }}</p>
+                                    <div id="detalles" class="detalles">
+                                        <img src="/{{ jugadora.Nacionalidad.bandera }}" alt="{{ jugadora.Nacionalidad.nombre }}">
+                                        <p id="edad">{{ jugadora.Nacimiento }}<span></span></p>
+                                        <p> {{ jugadora.Posicion.abreviatura }} </p>
+                                    </div>
+                                </div>
+
+                                <div class="glass tarjeta-back">
+                                    <h4>Palmarés</h4>
+                                    <div class="trofeos" id="palmares-individual">
+                                        <p>Cargando...</p>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="swiper-pagination"></div></div>
+                <div id="palmares" style="height: 100%; min-width: 300px;">
+                    <div id="palmares-container" style="display: flex; flex-direction: row; height: 100%; align-items: center; justify-content: space-around;"></div>
+                </div>
+            </div>
+            <div id="jugadora-companyeras" class="section" style="overflow-y: hidden;">
+                <div id="header-compañeras">
+                    <div id="filtros-equipo"></div>
+                </div>
+                <div id="companyeras">
+                    <div id="container-companyeras"></div>
+                </div>
+            </div>
+            <div id="selector">
+                <a href="#jugadora-ficha">{% trans 'Trayectoria' %}</a>
+                <a href="#jugadora-companyeras">{% trans 'Compañeras' %}</a>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'js/animations/header.js' %}" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
+    <script src="{% url 'javascript-catalog' %}" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous" defer></script>
+<script type="module">
+    import { cargarFichaJugadora } from '/static/FutFemWiki/js/ficha-jugadora.js';
+    
+    // Una vez cargados los datos, inicializamos las pestañas inmediatamente
+    const links = document.querySelectorAll('#selector a');
+
+    console.log(links)
+
+    // 🚀 ACTIVACIÓN POR DEFECTO: Forzamos la clase active en el primer enlace y su div
+    if (links.length > 0) {
+        const primerLink = links[0];
+        const targetId = primerLink.getAttribute('href');
+        
+        primerLink.classList.add('active');
+        
+        if (targetId && targetId.startsWith('#')) {
+            const primerDiv = document.querySelector(targetId);
+            if (primerDiv) primerDiv.classList.add('active');
+        }
+    }
+
+    // Configuración de los eventos Click para los cambios de pestaña
+    links.forEach(link => {
+        link.addEventListener('click', function(e) {
+            const targetId = this.getAttribute('href');
+
+            if (!targetId || !targetId.startsWith('#') || targetId.length < 2) {
+                return; 
+            }
+
+            e.preventDefault();
+
+            // Limpiar activos en enlaces
+            links.forEach(a => a.classList.remove('active'));
+
+            // Limpiar activos en contenedores
+            document.querySelectorAll('#jugadora-ficha, #jugadora-companyeras').forEach(div => {
+                div.classList.remove('active');
+            });
+
+            // Activar actual
+            this.classList.add('active');
+            const targetDiv = document.querySelector(targetId);
+            if (targetDiv) {
+                targetDiv.classList.add('active');
+            }
+        });
+    });
+
+    // Ejecutamos la carga de datos de la jugadora
+    await cargarFichaJugadora('{{ jugadora.id_jugadora }}');
+</script>
+</body>
+</html>

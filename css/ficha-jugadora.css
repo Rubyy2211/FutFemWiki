@@ -1,0 +1,585 @@
+
+body::before{
+    /*background-color: color-mix(in srgb, var(--color-secundario) 100%, transparent 20%) !important;*/
+    background-blend-mode: normal !important;
+}
+#pagina-container{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+#ficha-jugadora-container{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - var(--header-height));
+    align-items: center;
+    max-width: 1200px;
+    padding-block: 2.5%;
+    max-height: 80dvh;
+    overflow-y: hidden;
+}
+#ficha-jugadora-container .section{
+    display: none;
+    height: 100%;
+}
+#ficha-jugadora-container .section.active{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+#ficha-jugadora-container .section #header-compañeras{
+    background: var(--color-secundario);
+    height: 12%;
+    min-height: 12%;
+    max-height: 12%;
+    width: 100%;
+    overflow-y: hidden;
+}
+#ficha-jugadora-container .section #header-compañeras div{
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    overflow-y: hidden;
+    overflow-x: auto;
+}
+
+#ficha-jugadora-container .section #header-compañeras div button{
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    aspect-ratio: 1/1;
+    width: auto;
+    overflow: hidden;
+    height: 90%;
+    background: none;
+    border-radius: 0%;
+}
+
+@media (max-width: 768px){
+
+    #ficha-jugadora-container .section #header-compañeras div{
+        gap: 5px;
+    }
+
+    #ficha-jugadora-container .section #header-compañeras div button{
+        max-height: 40px;
+    }
+}
+
+#ficha-jugadora-container .section #header-compañeras div button img{
+    height: 100%;
+    aspect-ratio: 1/1;
+    width: auto;
+}
+
+#companyeras{
+    height: 100%;
+    width: 100%;
+    background: color-mix(in srgb, var(--color-secundario) 50%, transparent 50%);
+    overflow: hidden;
+    overflow-x: auto;
+}
+
+#container-companyeras {
+    height: 100%;
+    width: 100%;
+    overflow-y: hidden; /* Permite el scroll vertical si hay más compañeras de las que caben */
+    box-sizing: border-box;
+    padding: 10px;
+    
+    display: grid;
+    grid-template-rows: repeat(3, 30%);
+    grid-template-columns: repeat(calc(var(--elementos) / 3), 100px);
+    
+    gap: 12px; 
+}
+
+/* Estilo para cada cromo de compañera */
+.companyera-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 8px;
+    border: 1px solid #333;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-align: center;
+    max-height: 100%;
+    transform: none;
+    max-width: 100px;
+    min-width: 100px;
+    max-height: 100px;
+    aspect-ratio: 1/1;
+    padding-inline: 0 !important;
+}
+
+.companyera-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.companyera-card img {
+    width: 100%;
+    aspect-ratio: 1 / 1; /* Mantiene la proporción clásica de cromo de fútbol */
+    object-fit: cover;
+}
+
+.companyera-card p {
+    margin: 6px 4px;
+    font-size: 0.8rem; /* Texto un poco más pequeño para que no rompa en dos líneas */
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; /* Si el nombre es muy largo, añade '...' */
+    width: 90%;
+}
+
+/* Tarjeta especial por si no hay jugadoras */
+.companyera-card.sin-companyeras {
+    grid-column: 1 / -1; /* Ocupa todo el ancho disponible */
+    padding: 20px;
+    border: 1px dashed #555;
+    background: transparent !important;
+    cursor: default;
+}
+.companyera-card.sin-companyeras:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.companyera-card{
+    height: 100%;
+    overflow: hidden;
+    aspect-ratio: 1/1;
+    width: auto;
+}
+
+#jugadora-info{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items: end;
+    gap: 5%;
+    min-height: 100px;
+    padding-inline: 5%;
+    /*height: 30%;*/
+    background-blend-mode: color-burn;
+    position: relative;
+    border-radius: 20px 20px 0 0;
+    overflow: hidden;
+    position: relative;
+}
+
+#jugadora-info #escudo-container{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 10px;
+}
+#jugadora-info img{
+    padding: unset;
+    max-width: 200px !important;
+    max-height: 100% !important;
+    aspect-ratio: 1/1;
+    margin-bottom: 0;
+    border: none;
+}
+#jugadora-info p{
+    margin-bottom: 0;
+    margin-inline: 5px;
+}
+#jugadora-info h3{
+    font-family: "Oswald", sans-serif;
+}
+#jugadora-info #datos-jugadora{
+    width: 100%;
+    align-self: center;
+}
+#jugadora-info #datos-jugadora #posicion{
+    display: flex;
+    gap: 10px;
+}
+#jugadora-info .grid{
+    display: flex;
+    flex-direction: column;
+}
+#jugadora-info .grid>div{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+    /*justify-content: space-between;*/
+}
+#jugadora-info .fi{
+    border: none;
+    font-size: x-large;
+    height: fit-content;
+    border-radius: 0;
+}
+#jugadora-ficha{
+    height: 100%;
+    width: 100%;
+    background-color: var(--color-secundario);
+    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding-block: 10px;
+}
+#mostrador-tarjetas{
+    height: 100%;
+}
+
+#companyeras{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+}
+
+#companyeras h4{
+    margin-bottom: 0px;
+    font-size: medium;
+}
+
+#companyeras-container{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    max-width: 97%;
+    overflow-x: hidden !important;
+    margin-bottom: 10px;
+    overflow-y: hidden !important;
+    cursor: grab;
+     /* Oculta la barra de desplazamiento en navegadores basados en WebKit */
+}
+
+#companyeras-container {
+    display: flex;
+    /*gap: 15px;            /* Espaciado entre las cartas de compañeras */
+    overflow-x: auto;     /* Permite el scroll horizontal */
+    white-space: nowrap;
+    cursor: grab;         /* Icono de mano abierta (disponible para agarrar) */
+    user-select: none;    /* Evita que se seleccione texto azul feo al arrastrar */
+    
+    /* Ocultar la barra de scroll clásica para mantener el look de juego */
+    scrollbar-width: none; /* Firefox */
+}
+
+/* Ocultar barra de scroll en Chrome, Safari y Edge */
+#companyeras-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Cuando el usuario está arrastrando activamente */
+#companyeras-container.grabbing {
+    cursor: grabbing;     /* Icono de mano cerrada (agarrando) */
+}
+
+/* 🔥 TRUCO CLAVE: Evita que los escudos o fotos de jugadoras interrumpan el arrastre */
+#companyeras-container img,
+#companyeras-container .card-jugadora {
+    pointer-events: none; /* Hace que el clic atraviese las imágenes y vaya al contenedor */
+}
+
+#companyeras-container::-webkit-scrollbar {
+    height: 8px; /* Altura de la barra de desplazamiento horizontal */
+    display: none; /* Oculta la barra de desplazamiento en navegadores basados en WebKit */
+}
+
+#companyeras-container div{
+    flex: 0 0 auto;
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-inline: 0 !important;
+}
+
+.companyera-card img{
+    width: 50px;
+    height: auto;
+    border-radius: 10px;
+}
+
+#companyeras-container div p{
+    margin-top: 5px;
+    font-size: 0.85rem; /* Un poco más flexible que 'small' */
+    
+    /* Magia para que no se salga */
+    width: 100%;
+    white-space: nowrap;      /* Obliga a una sola línea */
+    overflow: hidden;         /* Esconde lo que sobra */
+    text-overflow: ellipsis;  /* Añade los puntos suspensivos */
+    
+    text-align: center;
+    display: block;
+    margin-bottom: 0;
+    display: none; /* Oculta el nombre por defecto, se mostrará al hacer hover */
+}
+
+#companyeras-container div.sin-companyeras p{
+    display: block; /* Oculta el nombre por defecto, se mostrará al hacer hover */
+}
+
+/* 1. Clase base: aquí definimos la suavidad */
+.tarjeta-wrapper {
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); /* Curva suave */
+    will-change: transform; /* Ayuda al navegador a optimizar la animación */
+    opacity: 0.4;
+}
+
+.mySwiper{
+    min-height: 400px;
+    display: block;
+    width: 100%;
+}
+
+.swiper-slide{
+    width: auto !important;
+    aspect-ratio: 150 / 200;
+    overflow-y: hidden;
+    max-height: 300px;
+}
+
+.swiper-pagination{
+    position: relative !important;
+    height: 15% !important;
+}
+
+.tarjeta-front, .tarjeta-back{
+    height: 100% !important;
+    align-items: center;
+    width: 100% !important;
+}
+
+.tarjeta-front{
+    height: fit-content !important;
+}
+
+.tarjeta-jugadora{
+    transform: none !important;
+    height: 100% !important;
+    aspect-ratio: 150 / 200;
+    width: auto !important;
+    max-height: 300px !important;
+    box-shadow: none;
+    z-index: 1;
+}
+
+.anyos{
+    z-index: 2;
+    /* anñadir borde al texto */
+    /* borde a las letras */ 
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+    color: white; /* Color del texto */
+    height: fit-content;
+}
+
+.trofeo-card{
+    display: flex;
+    position: relative;
+}
+
+.trofeo-card p{
+    position: absolute;
+    right: 0;
+    background-color: var(--color-primario);
+    color: white;
+    padding: 0.25rem;
+    border-radius: 100%;
+}
+
+.tarjeta-jugadora .nombre{
+    font-size: large !important;
+}
+
+.swiper #mostrador-tarjetas .swiper-slide .imagen-jugadora{
+    max-width: 100% !important;
+    aspect-ratio: 1/1 !important;
+    max-height: 70% !important;
+}
+
+.swiper #mostrador-tarjetas .swiper-slide .detalles{
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.swiper #mostrador-tarjetas .swiper-slide .detalles .equipo-pais{
+    height: 100% !important;
+    overflow: hidden;
+}
+
+.swiper #mostrador-tarjetas .swiper-slide .detalles img{
+    width: 100% !important;
+}
+
+.tarjeta-wrapper{
+    height: 100% !important;
+    width: 140px !important;
+}
+
+/* 2. Clase activa: aplicamos el escalado */
+.swiper-slide.swiper-slide-active .tarjeta-jugadora {
+    /*transform: scale(1.05);*/
+    opacity: 1;
+}
+
+.swiper-slide .tarjeta-jugadora {
+    /*transform: scale(1.05);*/
+    opacity: 0.4;
+}
+
+/* 3. Asegurar que las tarjetas no se corten */
+.swiper {
+    max-height: 70% !important;
+    min-height: 70% !important;
+}
+span.swiper-pagination-bullet{
+    background: var(--color-secundario);
+    border: 1px solid var(--color-detalles);
+}
+span.swiper-pagination-bullet-active{
+    background: var(--color-primario);
+    border: 1px solid var(--color-primario);
+}
+
+@media (max-width: 906px) {
+    #jugadora-info{
+        gap: 2%;
+    }
+}
+
+@media (max-width: 859px) {
+    #jugadora-info .grid>div p{
+            font-size: small;
+    }
+}
+
+@media (max-width: 768px) {
+    body{
+        max-height: 100vh;
+    }
+    .mySwiper {
+        /* Usa un valor fijo o una unidad estable. 
+           Si usas vh, asegúrate de que sea el mismo antes y después de cargar */
+        min-height: 42vh !important; 
+        height: 50vh;
+    }
+    .swiper{
+        max-height: 300px;
+    }
+    /*.swiper #mostrador-tarjetas{
+        max-height: 30vh;
+    }
+    .swiper #mostrador-tarjetas .swiper-slide{
+        max-height: 40vh;
+    }*/
+    .swiper-pagination{
+        bottom: -5px !important;
+    }
+
+    .swiper #mostrador-tarjetas{
+        max-height: max-content;
+    }
+
+    .swiper #mostrador-tarjetas .swiper-slide{
+        max-height: 250px;
+    }
+    .swiper #mostrador-tarjetas .swiper-slide .tarjeta-wrapper{
+        /*min-height: 250px;*/
+        max-width: 152px;
+        min-width: 150px;
+    }
+
+    .swiper #mostrador-tarjetas .swiper-slide-active .tarjeta-wrapper{
+        transform: scale(1.05) !important;
+        height: 100% !important;
+    }
+
+    .swiper #mostrador-tarjetas .swiper-slide .tarjeta-wrapper .tarjeta-front, .swiper #mostrador-tarjetas .swiper-slide .tarjeta-wrapper .tarjeta-back{
+        max-height: 35vh;
+        max-width: 100%;
+    }
+    .swiper #mostrador-tarjetas .swiper-slide .tarjeta-wrapper .imagen-jugadora{
+        max-width: 150.4px;
+    }
+    .swiper #mostrador-tarjetas .swiper-slide .tarjeta-wrapper p{
+        font-size: x-small;
+    }
+
+    .swiper #mostrador-tarjetas .swiper-slide .tarjeta-wrapper span{
+        font-size: medium !important;
+    }
+
+    .swiper #mostrador-tarjetas .swiper-slide .tarjeta-wrapper .detalles img{
+        width: 40px;
+    }
+
+    .swiper #mostrador-tarjetas .swiper-slide .tarjeta-wrapper .tarjeta-front .nombre{
+        font-size: medium;
+    }
+    #companyeras-container div{
+        width: 70px;
+        height: 70px;
+    }
+    #jugadora-info{
+        gap: 1vh;
+        padding-inline: 1%;
+    }
+    #jugadora-info h3{
+        font-size: large;
+        margin-bottom: 0;
+    }
+    #jugadora-info #datos-jugadora{
+        width: 100%;
+        align-items: center;
+    }
+    #jugadora-info img{
+        width: 100px !important;
+        max-width: 100px !important;
+    }
+    #jugadora-info .fi {
+        font-size: large;
+    }
+    #jugadora-info #posicion span{
+        font-size: x-small;
+    }
+    #jugadora-info h3{
+        /*text-align: center;*/
+        margin-bottom: 0;
+    }
+    #jugadora-info .grid{
+        display: grid;
+        grid-template-rows: repeat(2, 1fr);
+        /*justify-items: center;*/
+        /*text-align: center;*/
+    }
+    #jugadora-info .grid>div:first-child{
+        width: fit-content;
+    }
+    #jugadora-info .grid>div p{
+        font-size: small;
+    }
+    @media (max-width: 470px) {
+        #jugadora-info h3{
+            font-size: medium;
+        }
+        #jugadora-info .grid>div p{
+            font-size: 8px;
+            height: fit-content;
+        }
+    }
+}
