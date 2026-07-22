@@ -5,13 +5,15 @@ let bloqueado = false;
 export function inicializarMapaEquipos() {
     if (map) {
         markersGroup.forEach(m => m.marker.remove());
-        markersGroup = []; 
+        markersGroup = [];
+        // Forzar recálculo por si el contenedor cambió de tamaño
+        setTimeout(() => map.resize(), 100);
         return map;
-    };
+    }
 
     map = new maplibregl.Map({
         container: 'mapa-equipos',
-        style: '/static/FutFemWiki/mapstyles/style-morado.json', // luego lo cambiamos por tu estilo
+        style: '/js/mapstyles/style-morado.json',
         projection: 'globe',
         center: [7, 40],
         zoom: 5,
@@ -29,52 +31,31 @@ export function inicializarMapaEquipos() {
         bloqueado = false;
     });
 
-    map.on("zoomend", () => {
-        generarHeatmap();
-    });
-
+    // Controlar la visibilidad (Punto vs Escudo) al hacer zoom
     map.on("zoom", () => {
         const zoom = map.getZoom();
 
         markersGroup.forEach(m => {
-            const el = m.el;
-
-            // 2. Tamaño según zoom
-            /*const scale = Math.min(1.3, Math.max(0.5, zoom / 7));
-            el.style.transform = `scale(${scale})`;*/
-
-            // 3. Punto vs escudo
             const escudo = m.el.querySelector('.marker-escudo-img');
             const punto = m.el.querySelector('.marker-punto');
 
-            if (zoom < 10) {
-                escudo.style.display = "none";
-                punto.style.display = "block";
-            } else {
-                escudo.style.display = "block";
-                punto.style.display = "none";
+            if (escudo && punto) {
+                if (zoom < 10) {
+                    escudo.style.display = "none";
+                    punto.style.display = "block";
+                } else {
+                    escudo.style.display = "block";
+                    punto.style.display = "none";
+                }
             }
         });
     });
 
     map.on("load", () => {
-        // buscar capa de labels para poner los edificios debajo
         const layers = map.getStyle().layers;
         const labelLayerId = layers.find(
             l => l.type === "symbol" && l.layout?.["text-field"]
         )?.id;
-        /*map.addSource("terrain-dem", {
-            type: "raster-dem",
-            url: "https://api.maptiler.com/tiles/terrain-rgb-v2/tiles.json?key=LYmhz1BKy6QniXWrxK2S",
-            tileSize: 256
-        });*/
-
-        /*map.setTerrain({
-            source: "terrain-dem",
-            exaggeration: 1.2   // puedes subirlo a 2 o 3 si quieres más relieve
-        });*/
-
-
 
         map.addSource("satellite", {
             type: "raster",
@@ -84,17 +65,6 @@ export function inicializarMapaEquipos() {
             tileSize: 256,
             attribution: "© MapTiler © OpenStreetMap contributors"
         });
-
-        /*map.addLayer({
-            id: "satellite-layer",
-            type: "raster",
-            source: "satellite",
-            layout: {
-                visibility: "none"   // empieza oculta
-            }
-        });
-
-        map.moveLayer("satellite-layer");*/
 
         map.addLayer({
             id: "3d-buildings",
@@ -116,65 +86,61 @@ export function inicializarMapaEquipos() {
             }
         }, labelLayerId);
 
-        /*map.addLayer({
-            id: "sky",
-            type: "sky",
-            paint: {
-                "sky-type": "atmosphere",
-                "sky-atmosphere-sun": [0.0, 0.0],
-                "sky-atmosphere-sun-intensity": 15
-            }
-        });*/
-
         map.setLight({
             anchor: "viewport",
             color: "#ffffff",
             intensity: 0.6,
-            position: [1.5, 180, 80] // azimut, polar
+            position: [1.5, 180, 80]
         });
-
     });
-    //const { capaControl } = import("../mapstyles/capaControl.js");
 
-    //map.addControl(new CapaControl(), "top-right");
     return map;
 }
 
-
 export function añadirEquipoMapa(id, nombre, lat, lng, escudoUrl, color) {
-
     lat = parseFloat(lat);
     lng = parseFloat(lng);
 
-    if (lat == null || lng == null) {
-        console.log(`Equipo sin coordenadas: ${nombre}`);
+    if (isNaN(lat) || isNaN(lng)) {
+        console.warn(`Equipo omitido en el mapa por coordenadas inválidas: ${nombre} (lat: ${lat}, lng: ${lng})`);
         return;
     }
 
-    const fotoUrl = escudoUrl.replace('/clubes/', '/clubes/mini/');
+    const fotoUrl = escudoUrl ? escudoUrl.replace('/clubes/', '/clubes/mini/') : '';
 
     const el = document.createElement('div');
     el.className = 'marker-escudo';
     el.innerHTML = `
         <div class="marker-wrapper" id="marker-${id}">
-            <!--<div class="marker-pin"></div>-->
             <div class="marker-punto"></div>
             <img src="${fotoUrl}" class="marker-escudo-img" />
         </div>
     `;
 
-    const img = el.querySelector('img');
+    const img = el.querySelector('.marker-escudo-img');
     const punto = el.querySelector('.marker-punto');
-    punto.style.background = color;
+    
+    if (punto) punto.style.background = color || '#c000ff';
 
-    img.style.background = `
+    if (img && color) {
+        img.style.background = `
             linear-gradient(
                 to bottom,
                 color-mix(in srgb, ${color} 30%, transparent),
                 color-mix(in srgb, transparent 30%, transparent)
             )
         `;
-        
+    }
+
+    // Inicializar visibilidad según el zoom actual
+    const currentZoom = map ? map.getZoom() : 5;
+    if (currentZoom < 10) {
+        if (img) img.style.display = "none";
+        if (punto) punto.style.display = "block";
+    } else {
+        if (img) img.style.display = "block";
+        if (punto) punto.style.display = "none";
+    }
 
     el.addEventListener('click', () => {
         const target = [lng, lat];
@@ -187,10 +153,10 @@ export function añadirEquipoMapa(id, nombre, lat, lng, escudoUrl, color) {
             duration: 1500,
             easing: t => t * t
         });
+        
         orbitando = true;
         mostrarTooltipEquipo(id, nombre, target);
         requestAnimationFrame(rotarSuave);
-        
     });
 
     // Crear marcador MapLibre
@@ -205,33 +171,31 @@ export function añadirEquipoMapa(id, nombre, lat, lng, escudoUrl, color) {
         lng,
         lat
     });
-
-    //setTimeout(() => evitarColision(el, marker), 50);
 }
 
+// CORREGIDA: Ajusta la escala dentro del contenedor interno para NO interferir con las coordenadas de MapLibre
 export function actualizarMarkersZoom() {
+    if (!map) return;
     const zoom = map.getZoom();
 
     markersGroup.forEach(m => {
-
+        const wrapper = m.el.querySelector('.marker-wrapper');
         const escudo = m.el.querySelector('.marker-escudo-img');
         const punto = m.el.querySelector('.marker-punto');
 
-        const scale = Math.min(1.3, Math.max(0.5, zoom / 7));
-        m.el.style.transform = `scale(${scale})`;
-
-        if (zoom < 10) {
-            escudo.style.display = "none";
-            punto.style.display = "block";
-        } else {
-            escudo.style.display = "block";
-            punto.style.display = "none";
+        // Escalar solo el contenido interno, no el contenedor principal del marcador
+        if (wrapper) {
+            const scale = Math.min(1.3, Math.max(0.5, zoom / 7));
+            wrapper.style.transform = `scale(${scale})`;
         }
 
-    });
-    map.easeTo({
-        zoom: zoom + 0.1,
-        duration: 600
+        if (zoom < 10) {
+            if (escudo) escudo.style.display = "none";
+            if (punto) punto.style.display = "block";
+        } else {
+            if (escudo) escudo.style.display = "block";
+            if (punto) punto.style.display = "none";
+        }
     });
 }
 
@@ -248,7 +212,7 @@ function rotarSuave(time) {
     const delta = time - lastTime;
     lastTime = time;
 
-    const velocidad = 0.005; // cuanto menor, más suave
+    const velocidad = 0.005;
     map.rotateTo(
         map.getBearing() + delta * velocidad,
         { duration: 0 }
@@ -256,7 +220,6 @@ function rotarSuave(time) {
 
     requestAnimationFrame(rotarSuave);
 }
-
 
 function mostrarTooltipEquipo(id, nombre, lngLat) {
     const slugNombre = nombre.toLowerCase().replace(/\s+/g, '-');
@@ -274,39 +237,17 @@ function mostrarTooltipEquipo(id, nombre, lngLat) {
     .addTo(map);
 
     popup.on('open', () => {
-        // cuando abres tooltip
-        rotando = true;
-        orbitar();
-        document
-          .getElementById('ver-equipo')
-          .addEventListener('click', () => {
-              window.location.href = `/equipo/${id}/${slugNombre}/`;
-          });
+        orbitando = true;
+        const btnVerEquipo = document.getElementById('ver-equipo');
+        if (btnVerEquipo) {
+            btnVerEquipo.addEventListener('click', () => {
+                window.location.href = `/equipo/${id}/${slugNombre}/`;
+            });
+        }
     });
 
     popup.on('close', () => {
         orbitando = false;
-    });
-
-    popup.on('close', () => {
-        // cuando lo cierras
-        rotando = false;
-    })
-}
-
-
-function iconoEscudoBonito(url) {
-    return L.divIcon({
-        className: "marker-escudo",
-        html: `
-            <div class="marker-wrapper">
-                <div class="marker-pin"></div>
-                <img src="${url}" class="marker-escudo-img" />
-            </div>
-        `,
-        iconSize: [50, 70],
-        iconAnchor: [25, 70],
-        popupAnchor: [0, -70]
     });
 }
 
@@ -320,95 +261,10 @@ export function centrarMapaEnEquipos() {
 
     map.easeTo({
         center,
-        zoom: Math.min(8, map.getZoom()), // ajusta si quieres
+        zoom: Math.min(8, map.getZoom()),
         pitch: 45,
         bearing: 20,
         duration: 1200,
-        easing: t => t * (2 - t) // easeOut
+        easing: t => t * (2 - t)
     });
 }
-
-
-
-function evitarColision(el, marker, intentos = 0) {
-    if (intentos > 20) return; // evitar bucles infinitos
-
-    const rect1 = el.getBoundingClientRect();
-
-    for (const m of markersGroup) {
-        if (!m.el || m.el === el) continue;
-
-        const rect2 = m.el.getBoundingClientRect();
-
-        const overlap = !(
-            rect1.right < rect2.left ||
-            rect1.left > rect2.right ||
-            rect1.bottom < rect2.top ||
-            rect1.top > rect2.bottom
-        );
-
-        if (overlap) {
-            // mover ligeramente el marcador
-            const offsetLng = (Math.random() - 0.5) * 0.05;
-            const offsetLat = (Math.random() - 0.5) * 0.05;
-
-            const pos = marker.getLngLat();
-            marker.setLngLat([pos.lng + offsetLng, pos.lat + offsetLat]);
-
-            // volver a comprobar
-            setTimeout(() => evitarColision(el, marker, intentos + 1), 10);
-            return;
-        }
-    }
-}
-
-function generarHeatmap() {
-    if (!map || markersGroup.length === 0) return;
-
-    const equiposGeoJSON = {
-        type: "FeatureCollection",
-        features: markersGroup.map(m => ({
-            type: "Feature",
-            geometry: {
-                type: "Point",
-                coordinates: [m.lng, m.lat]
-            }
-        }))
-    };
-
-    // Si ya existe, actualizar
-    if (map.getSource("equipos")) {
-        map.getSource("equipos").setData(equiposGeoJSON);
-        return;
-    }
-
-    // Crear fuente
-    map.addSource("equipos", {
-        type: "geojson",
-        data: equiposGeoJSON
-    });
-
-    // Crear capa heatmap
-    map.addLayer({
-        id: "equipos-heatmap",
-        type: "heatmap",
-        source: "equipos",
-        paint: {
-            "heatmap-radius": 45,
-            "heatmap-intensity": 1.4,
-            "heatmap-opacity": 0.55,
-            "heatmap-weight": 1,
-            "heatmap-color": [
-                "interpolate",
-                ["linear"],
-                ["heatmap-density"],
-                0, "rgba(0,0,0,0)",
-                0.2, "rgba(120,0,120,0.4)",
-                0.4, "rgba(172,0,172,0.7)",
-                0.7, "rgba(255,0,255,0.9)",
-                1, "rgba(255,255,255,1)"
-            ]
-        }
-    }, "water"); // lo ponemos debajo de los escudos
-}
-

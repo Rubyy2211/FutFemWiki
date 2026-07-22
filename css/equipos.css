@@ -1,7 +1,248 @@
-#wiki-container{
-    width: 100dvw;
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+    color: var(--color-detalles);
+    min-height: 100dvh;
+    max-width: 100vw;
+    font-family: var(--font-cuerpo), sans-serif !important;
+    overflow-x: hidden !important;
+    margin: 0px;
+    position: relative; /* Necesario para posicionar el fondo desenfocado */
 }
 
-#items-container{
-    grid-template-columns: repeat(6, 1fr) !important;
+/* Capa fija de fondo para el estadio difuminado */
+body::before {
+    content: "";
+    position: fixed;
+    top: -10px;    /* Margen extra para evitar bordes blancos por el desenfoque */
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    z-index: -1;   /* Mantiene la imagen por detrás de todo el contenido */
+    
+    background-image: 
+        linear-gradient(
+            color-mix(in srgb, var(--color-secundario) 100%, transparent 80%),
+            color-mix(in srgb, var(--color-secundario) 100%, transparent 80%)
+        ),
+        url(../img/estadio1.webp) !important;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+    background-position: center center !important;
+    
+    /* CONTROL DEL DIFUMINADO Y BRILLO */
+    filter: blur(8px) brightness(0.8); /* 👈 Ajusta los píxeles para más o menos blur */
+    transform: scale(1.05);             /* Evita bordes pixelados al aplicar el blur */
+    will-change: filter, transform;
+}
+
+body::before{
+    filter: blur(8px) brightness(0.8); /* 👈 Ajusta los píxeles para más o menos blur */
+    transform: scale(1.05);             /* Evita bordes pixelados al aplicar el blur */
+    will-change: filter, transform;
+}
+
+#wiki-equipos{
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+}
+
+#wiki-container{
+    width: 100dvw;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+
+#container-display{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 95%;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+@media (min-width:1275px){
+    #container-display{
+        max-width: 1200px;
+    }
+}
+
+#container-display .ligas {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap; /* 👈 Permite que los elementos bajen a la siguiente fila */
+    gap: 15px;       /* Opcional: espacio uniforme entre tarjetas */
+    padding: 5px;
+}
+
+@media (max-width:768px){
+    #wiki-container #container-display{
+        max-width: 95% !important; 
+    }
+
+    #container-display .equipos{
+        gap: 10px;
+    }
+
+    #wiki-equipos #wiki-container #container-display .liga-item{
+        max-height: 7dvh !important;
+        width: auto;
+        aspect-ratio: 1/1;
+    }
+}
+
+/* RESET DE PANTALLA Y LAYOUT PRINCIPAL */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden; /* Evita el scroll global de la página */
+    display: flex;
+    flex-direction: column;
+}
+
+/* El contenedor principal ocupa el espacio restante bajo la Navbar */
+body #wiki-equipos {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Limita el corte al área de la wiki */
+    width: 100%;
+}
+
+body #wiki-equipos #wiki-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    overflow-y: auto;
+    align-items: center;
+}
+
+/* Cabecera de filtros fija arriba */
+body #wiki-equipos #wiki-container #cabecera-wiki-equipos {
+    flex-shrink: 0; /* No permite que la cabecera se encoja */
+}
+
+body #wiki-equipos #wiki-container #cabecera-equipo {
+    position: relative;
+    height: 15dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+
+body #wiki-equipos #wiki-container #cabecera-equipo #input-y-boton #filtros-pais {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+/* CONTENEDOR DE JUGADORAS (AQUÍ OCURRE EL SCROLL REAL) */
+body #wiki-equipos #wiki-container #items-container {
+    flex: 1; /* Ocupa TODO el espacio libre vertical */
+    overflow-y: auto; /* Habilita el scroll interno */
+    overflow-x: hidden;
+    width: fit-content;
+    justify-items: center;
+    /*padding-bottom: 20px; /* Margen de seguridad para que la última jugadora sea 100% visible */
+}
+
+body #wiki-equipos #wiki-container #container-display .container-pais{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    border-bottom: 1px solid color-mix(in srgb, white 50%, transparent 50%);
+    padding-block: 15px;
+}
+
+@media (max-width:768px){
+    body #wiki-equipos #wiki-container #container-display .container-pais{
+        flex-direction: column;
+    }
+}
+
+body #wiki-equipos #wiki-container #container-display .header-pais{
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+    width: 20%;
+    min-width: 20%;
+    gap: 30px;
+    padding: 10px;
+    background: none !important;
+}
+
+@media (max-width:768px){
+    body #wiki-equipos #wiki-container #container-display .header-pais{
+        width: 100%;
+        min-width: 100%;
+        align-items: center;
+        padding: 5px;
+    }
+}
+
+body #wiki-equipos #wiki-container #container-display .header-pais>div{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+
+body #wiki-equipos #wiki-container #container-display .header-pais span.fi{
+    height: 30px !important;
+    width: auto !important;
+    aspect-ratio: 1/1;
+    border-radius: 100%;
+    background-size: cover;
+}
+
+body #wiki-equipos #wiki-container #container-display .header-pais span.fi::before {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-size: cover;
+}
+
+
+
+/* CONTENEDOR DE JUGADORAS (AQUÍ OCURRE EL SCROLL REAL) */
+body #wiki-equipos #wiki-container #container-display .liga-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: fit-content;
+    width: fit-content;
+    background: none !important;
+    overflow: hidden;
+    max-height: 80px;
+    aspect-ratio: 1/1;
+    padding: 8px;
+    cursor: pointer;
+}
+
+body #wiki-equipos #wiki-container #container-display .liga-item img{
+    height: 100%;
+    max-height: 100%;
+    overflow: hidden;
+    transition: filter 0.3s ease-in-out, transform 0.3s ease-in-out;
+    
+}
+body #wiki-equipos #wiki-container #container-display .liga-item:hover img {
+    /* Parámetros: offset-x | offset-y | blur-radius | color */
+    filter: drop-shadow(0 0 6px var(--liga-color-1, rgba(255, 255, 255, 0.6)));
+    transform: scale(1.05);
 }

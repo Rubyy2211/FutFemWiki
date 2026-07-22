@@ -1,0 +1,205 @@
+{
+  "version": 8,
+  "name": "FIFA Purple Dark",
+  "projection": {
+            "type": "globe"
+        },
+  "sources": {
+    "openmaptiles": {
+      "type": "vector",
+      "url": "https://api.maptiler.com/tiles/v3/tiles.json?key=LYmhz1BKy6QniXWrxK2S"
+    },
+    "satellite_maptiler": {
+      "type": "raster",
+      "url": "https://api.maptiler.com/tiles/satellite-v2/tiles.json?key=LYmhz1BKy6QniXWrxK2S",
+      "tileSize": 256
+    }
+  },
+  "glyphs": "https://api.maptiler.com/fonts/{fontstack}/{range}.pbf?key=LYmhz1BKy6QniXWrxK2S",
+
+  "layers": [
+    {
+      "id": "background",
+      "type": "background",
+      "paint": {
+        "background-color": "#0a0014"
+      }
+    },
+
+    {
+      "id": "satellite-layer",
+      "type": "raster",
+      "source": "satellite_maptiler",
+      "paint": {
+        "raster-saturation": -0.5,
+        "raster-contrast": 0.2,
+        "raster-opacity": 0.8
+      }
+    },
+
+    {
+      "id": "landcover",
+      "type": "fill",
+      "source": "openmaptiles",
+      "source-layer": "landcover",
+      "paint": {
+        "fill-color": "#480048",
+        "fill-opacity": 0.6
+      }
+    },
+
+    {
+      "id": "landuse",
+      "type": "fill",
+      "source": "openmaptiles",
+      "source-layer": "landuse",
+      "paint": {
+        "fill-color": "#2a002a",
+        "fill-opacity": 0.5
+      }
+    },
+
+    {
+      "id": "countries",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "boundary",
+      "filter": [
+        "all",
+        ["==", "admin_level", 2],
+        ["!=", "maritime", 1]
+      ],
+      "paint": {
+        "line-color": "#ac00ac",
+        "line-width": 1.2,
+        "line-opacity": 0.8
+      }
+    },
+
+    {
+      "id": "maritime-boundaries",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "boundary",
+      "filter": ["==", "maritime", 1],
+      "paint": {
+        "line-color": "rgba(0,0,0,0)",
+        "line-width": 0
+      }
+    },
+    {
+      "id": "eez-boundaries",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "boundary",
+      "filter": ["==", "admin_level", 0],
+      "paint": {
+        "line-color": "rgba(0,0,0,0)",
+        "line-width": 0
+      }
+    },
+    {
+      "id": "all-boundaries",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "boundary",
+      "paint": {
+        "line-color": "rgba(0,0,0,0)",
+        "line-width": 0
+      }
+    },
+
+    {
+      "id": "remove-ocean-lines",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "waterway",
+      "paint": {
+        "line-color": "rgba(0,0,0,0)",
+        "line-width": 0
+      }
+    },
+
+    {
+      "id": "water-outline",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "water",
+      "paint": {
+        "line-color": "rgba(0,0,0,0)",
+        "line-width": 0
+      }
+    },
+
+    {
+      "id": "waterway-lines",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "waterway",
+      "paint": {
+        "line-color": "rgba(0,0,0,0)",
+        "line-width": 0
+      }
+    },
+
+    {
+      "id": "roads",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "transportation",
+      "filter": ["!=", "class", "ferry"],
+      "paint": {
+        "line-color": "#ff33ff",
+        "line-width": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          5, 0.2,
+          12, 2
+        ]
+      }
+    },
+
+    {
+      "id": "roads-outline",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "transportation",
+      "filter": ["!=", "class", "ferry"],
+      "paint": {
+        "line-color": "#330033",
+        "line-width": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          5, 0.5,
+          12, 3
+        ]
+      }
+    },
+
+    {
+      "id": "place-labels",
+      "type": "symbol",
+      "source": "openmaptiles",
+      "source-layer": "place",
+      "text-color": "#ffb3ff",
+      "layout": {
+        "text-field": "{name}",
+        "text-size": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          4, 10,
+          10, 18
+        ],
+        "text-font": ["Open Sans Regular"]
+      },
+      "paint": {
+        "text-color": "#ffb3ff",
+        "text-halo-color": "#000000",
+        "text-halo-width": 1.5
+      }
+    }
+  ]
+}

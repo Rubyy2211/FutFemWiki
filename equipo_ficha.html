@@ -153,6 +153,64 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous" defer></script>
 
     <!-- Script de Inicialización de la Ficha -->
-    <script type="module" src="./js/ficha-equipo-init.js"></script>
+    <script type="module" src="./js/ficha-equipo.js"></script>
+    <script type="module">
+        import { initFicha } from './js/ficha-equipo.js';
+
+        // Obtener los parámetros de la URL actual
+        const urlParams = new URLSearchParams(window.location.search);
+        const equipoId = urlParams.get('id');
+        const equipoSlug = urlParams.get('slug');
+
+        console.log("ID del equipo obtenido de la URL:", equipoId);
+
+        // Función asíncrona autoejecutada para manejo seguro de await
+        (async () => {
+            if (equipoId) {
+                try {
+                    const data = await initFicha(equipoId);
+                    console.log("Datos del equipo recibidos:", data);
+                } catch (error) {
+                    console.error("Error al cargar la ficha del equipo:", error);
+                }
+            } else {
+                console.warn("No se encontró el parámetro 'id' en la URL. Asegúrate de que la URL tenga el formato: equipo.html?id=1");
+            }
+        })();
+
+
+        export function initTabs() {
+            const tabLinks = document.querySelectorAll('#selector a');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault(); // Evita que la página salte por el '#' de la URL
+
+                    // 1. Quitar la clase 'active' de todos los botones
+                    tabLinks.forEach(l => l.classList.remove('active'));
+
+                    // 2. Ocultar todos los contenidos de las pestañas
+                    tabContents.forEach(content => content.classList.remove('active'));
+
+                    // 3. Activar el botón pulsado
+                    link.classList.add('active');
+
+                    // 4. Obtener el id del objetivo desde el href (ej: "#plantilla" -> "plantilla")
+                    const targetId = link.getAttribute('href').replace('#', '');
+                    const targetTab = document.getElementById(targetId);
+
+                    // 5. Mostrar el contenido de la pestaña seleccionada
+                    if (targetTab) {
+                        targetTab.classList.add('active');
+                    }
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initTabs();
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Busca tu equipo o jugadora favorita y descubre su historia, logros y datos curiosos en nuestra wiki de fútbol femenino.">
+    <title>FutFemWiki | Equipos</title>
+    <link rel="icon" href="{% static 'img/logo.png' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://unpkg.com/maplibre-gl@5.18.0/dist/maplibre-gl.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css" media="print" onload="this.media='all'">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@100..900&family=Oswald:wght@200..700&family=Plus+Jakarta+Sans:wght@200..800&family=Russo+One&display=swap" 
+      media="print" onload="this.media='all'"> 
+
+    <link rel="modulepreload" href="js/api/pais.js">
+    <link rel="modulepreload" href="js/api/equipos.js">
+    <link rel="modulepreload" href="js/api/jugadora.js">
+    <!--<link rel="modulepreload" href="/static/js/games/funciones-comunes.js">-->
+    <link rel="modulepreload" href="js/equipos-liga.js">
+
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" href="css/combo.css">
+    <link rel="stylesheet" href="css/wiki.css">
+    <link rel="stylesheet" href="css/equipos-liga.css">
+</head>
+<body>
+<header class="navbar">
+    <div class="header-container">
+        <a href="index.html" class="logo-link">
+            <img src="img/logo.webp" alt="Logo FutFemWiki" class="logo-img">
+        </a>
+        <nav class="nav-container">
+            <ul class="nav-links">
+                <li><a href="jugadoras.html">Jugadoras</a></li>
+                <li><a href="equipos.html" class="active">Equipos</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<section id="wiki-equipos" style="height: 100%; width: 100%;">
+    
+    <div id="wiki-container" style="min-width: 50dvw; max-width: 100%; height: 70%; min-height: 70%;">
+        
+        <div id="container-display"></div>
+        <div id="items-container" style="min-width: 50%; max-width: 100%;"></div>
+        
+
+        <div id="config-wiki" data-seccion="equipos"></div>
+    </div>
+</section>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js" defer></script>
+<script src="https://unpkg.com/maplibre-gl@5.18.0/dist/maplibre-gl.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.2/color-thief.umd.js" defer></script>
+<script type="module">
+    import { inicializarEquiposLiga } from '/js/equipos-liga.js';
+
+    // 1. Capturamos los parámetros del Query String de la URL actual (?id=X)
+    const urlParams = new URLSearchParams(window.location.search);
+    const idLiga = urlParams.get('id');
+
+    // 2. Validamos que exista un ID antes de inicializar
+    if (idLiga) {
+        await inicializarEquiposLiga(idLiga);
+    } else {
+        console.error('No se proporcionó ningún ID de liga en la URL.');
+        // Opcional: Redirigir a la página principal si no hay ID
+        // window.location.href = '/index.html';
+    }
+</script>
+<!--<script src="{% static 'js/animations/header.js' %}" defer></script>-->
+<script type="module" src="js/equipos-liga.js" defer></script>
+<script src="{% url 'javascript-catalog' %}" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous" defer></script>
+</body>
+</html>

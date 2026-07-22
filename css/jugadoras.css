@@ -1,0 +1,164 @@
+/* RESET DE PANTALLA Y LAYOUT PRINCIPAL */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden; /* Evita el scroll global de la página */
+    display: flex;
+    flex-direction: column;
+}
+
+/* El contenedor principal ocupa el espacio restante bajo la Navbar */
+body #wiki-equipos {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Limita el corte al área de la wiki */
+    width: 100%;
+}
+
+body #wiki-equipos #wiki-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+/* Cabecera de filtros fija arriba */
+body #wiki-equipos #wiki-container #cabecera-wiki-equipos {
+    flex-shrink: 0; /* No permite que la cabecera se encoja */
+}
+
+body #wiki-equipos #wiki-container #cabecera-jugadora {
+    position: relative;
+    height: 15dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+body #wiki-equipos #wiki-container #cabecera-jugadora .pagination {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+body #wiki-equipos #wiki-container #cabecera-jugadora .pagination button{
+    width: fit-content;
+    height: fit-content;
+    background: none;
+}
+
+body #wiki-equipos #wiki-container #cabecera-jugadora #filtros {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+/* Encabezado de la lista (Cabecera de columnas) */
+body #wiki-equipos #wiki-container .jugadora-item.header-list {
+    flex-shrink: 0; /* Mantiene su tamaño fijo */
+    display: grid;
+    grid-template-columns: 1fr max-content 0.5fr 0.5fr;
+    align-items: center;
+    height: 40px !important;
+    min-height: 40px !important;
+    border-bottom: 2px solid var(--color-primario, #bd00ff);
+    background: color-mix(in srgb, var(--color-secundario, #1e052c) 100%, transparent 0%);
+    color: var(--color-detalles, #fff);
+    pointer-events: none;
+    text-align: center;
+    z-index: 10;
+}
+
+body #wiki-equipos #wiki-container .jugadora-item.header-list .jugadora-div1 {
+    width: 100%;
+}
+
+body #wiki-equipos #wiki-container .jugadora-item.header-list .jugadora-div1 p {
+    text-align: center;
+    width: 100%;
+}
+
+body #wiki-equipos #wiki-container .jugadora-item.header-list p {
+    color: var(--color-detalles, #fff);
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: 1px;
+    font-size: 0.7rem;
+    margin: 0;
+}
+
+/* CONTENEDOR DE JUGADORAS (AQUÍ OCURRE EL SCROLL REAL) */
+body #wiki-equipos #wiki-container #items-container {
+    flex: 1; /* Ocupa TODO el espacio libre vertical */
+    overflow-y: auto; /* Habilita el scroll interno */
+    overflow-x: hidden;
+    width: 100%;
+    /*padding-bottom: 20px; /* Margen de seguridad para que la última jugadora sea 100% visible */
+}
+
+/* ÍTEMS DE CADA JUGADORA */
+body #wiki-equipos #wiki-container #items-container .jugadora-item {
+    display: grid;
+    grid-template-columns: 1fr max-content 0.5fr 0.5fr;
+    width: 100%;
+    height: 70px; /* Altura fija por fila */
+    min-height: 70px;
+    max-height: 70px;
+    overflow: hidden;
+    align-items: center;
+    justify-items: center;
+    margin-bottom: 0;
+    border-radius: 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    transform: none;
+}
+
+@media (max-width: 768px){
+    body #wiki-equipos #wiki-container #items-container .jugadora-item {
+        max-height: 45px;
+        min-height: 45px;
+    }
+}
+
+body #wiki-equipos #wiki-container #items-container .jugadora-item img {
+    max-height: 80%;
+    object-fit: contain;
+    overflow: hidden;
+}
+
+body #wiki-equipos #wiki-container #items-container .jugadora-item .jugadora-div1 {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    padding-left: 10px;
+    overflow: hidden;
+    max-height: 100%;
+}
+
+body #wiki-equipos #wiki-container #items-container .jugadora-item .jugadora-div1 img {
+    height: 100%;
+    max-height: 100%;
+    overflow: hidden;
+}
+
+body #wiki-equipos #wiki-container #items-container .jugadora-item .jugadora-div1 .jugadora-banderas-posicion {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    align-items: center;
+}

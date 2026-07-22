@@ -1,14 +1,24 @@
 import { formatearValorMercado } from "/js/api/jugadora.js";
-import { jugadorasxTemporadaYEquipo, fetchMultiplesEquiposPalmares } from "/js/api/equipos.js";
-import { calcularEdad } from '/static/js/games/funciones-comunes.js';
-import { ponerJugadoraEnField } from "/static/js/football_field.js";
+import { fetchEquipoById ,jugadorasxTemporadaYEquipo, fetchMultiplesEquiposPalmares } from "/js/api/equipos.js";
+import { calcularEdad } from '/js/api/jugadora.js';
+//import { ponerJugadoraEnField } from "/static/js/football_field.js";
 
 const divPalmares = document.getElementById('palmares');
 const historicasPlaceholder =  document.getElementById('historicas-placeholder');
 const jugadorasContainer =  document.getElementById('jugadoras-container');
 let jugadorasHistoricas = null;
+let equipo;
 setupSliderTemporadas(); // Inicializamos el slider de temporadas
 
+export async function initFicha(id){
+    equipo = await fetchEquipoById(id);
+    document.getElementById('equipo-fundacion').textContent = equipo.fundacion;
+    document.getElementById('equipo-nombre').textContent = equipo.nombre;
+    document.getElementById('escudo').src = equipo.escudo;
+    document.getElementById('btn-mapa-google').href = `https://www.google.com/maps/search/?api=1&query=${equipo.lat},${equipo.long}`;
+
+    return data;
+}
 // ==========================================
 // 1. MÓDULO DE PALMARÉS
 // ==========================================
@@ -333,7 +343,7 @@ async function displayJugadorasActuales(id, jugadoras, color) {
     jugadoras.forEach(jugadora => {
         const posicionPrincipal = jugadora.posiciones_ids?.[0];
         if (posicionPrincipal) {
-            ponerJugadoraEnField(jugadora, posicionPrincipal, color);
+            //ponerJugadoraEnField(jugadora, posicionPrincipal, color);
         }
         // Usamos la función base COMÚN
         const cardJugadora = crearFichaBaseJugadora(jugadora, color, false);
