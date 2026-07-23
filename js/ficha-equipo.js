@@ -14,10 +14,14 @@ export async function initFicha(id){
     equipo = await fetchEquipoById(id);
     document.getElementById('equipo-fundacion').textContent = equipo.fundacion;
     document.getElementById('equipo-nombre').textContent = equipo.nombre;
+    document.getElementById('historicas-equipo-nombre').textContent = equipo.nombre;
     document.getElementById('escudo').src = equipo.escudo;
+    document.getElementById('historicas-escudo').src = equipo.escudo;
     document.getElementById('btn-mapa-google').href = `https://www.google.com/maps/search/?api=1&query=${equipo.lat},${equipo.long}`;
 
-    return data;
+    await Promise.all([ crearFichaJugadorasActuales(id, equipo.color), crearFichaJugadorasDeSiempre(id, equipo.color)], displayPalmares(id));
+    crearBotonesTemporada(equipo.fundacion, equipo.color);
+    return equipo;
 }
 // ==========================================
 // 1. MÓDULO DE PALMARÉS
@@ -35,8 +39,8 @@ export async function displayPalmares(equipo) {
         div.dataset.trofeoName = trofeo.nombre;
         
         div.innerHTML = `
-            <img src="/${trofeo.icono}" alt="${trofeo.nombre}" loading="lazy" style="width: 60px; height: 60px; object-fit: contain;">
-            <p class="trofeo-pc">${gettext("Ganado")} ${trofeo.count} ${gettext("veces")}</p>
+            <img src="${trofeo.icono}" alt="${trofeo.nombre}" loading="lazy" style="width: 60px; height: 60px; object-fit: contain;">
+            <p class="trofeo-pc">${trofeo.count}</p>
             <p class="trofeo-movil">${trofeo.count}</p>
         `;
 
@@ -153,7 +157,7 @@ function crearCardDestacada(jugadora, etiqueta) {
     badge.style.fontSize = '0.8em';
 
     const img = document.createElement('img');
-    img.src = jugadora.imagen ? '/' + jugadora.imagen : '/static/img/predeterm.png';
+    img.src = jugadora.imagen ? jugadora.imagen : '/static/img/predeterm.png';
     img.className = 'jugadora-imagen';
     img.loading = 'lazy';
     img.alt = jugadora.nombre_completo || jugadora.apodo || jugadora.nombre;
@@ -197,7 +201,7 @@ function crearFichaBaseJugadora(jugadora, colorPredeterminado, mostrarEtapas = f
 
     // Perfil
     const img = document.createElement('img');
-    img.src = jugadora.imagen ? '/' + jugadora.imagen : '/static/img/predeterm.png';
+    img.src = jugadora.imagen ? jugadora.imagen : '/img/predeterm.png';
     img.width = 70;
     img.height = 70;
     img.className = 'jugadora-imagen';
@@ -228,15 +232,15 @@ function crearFichaBaseJugadora(jugadora, colorPredeterminado, mostrarEtapas = f
 
     const imgLiga = document.createElement('img');
     if (jugadora.equipo?.liga_logo) {
-        imgLiga.src = "/" + jugadora.equipo.liga_logo;
+        imgLiga.src = jugadora.equipo.liga_logo;
     } else if (jugadora.equipo?.id === 83) { 
-        imgLiga.src = "/" + jugadora.equipo.escudo;
+        imgLiga.src = jugadora.equipo.escudo;
     }      
     divBanderas.appendChild(imgLiga);
 
     if (jugadora.equipo?.escudo) {
         const imgClub = document.createElement('img');
-        imgClub.src = '/' + jugadora.equipo.escudo;
+        imgClub.src = jugadora.equipo.escudo;
         imgClub.className = 'equipo-imagen';
         imgClub.alt = jugadora.equipo?.nombre;
         divBanderas.appendChild(imgClub);
@@ -299,6 +303,7 @@ function crearFichaBaseJugadora(jugadora, colorPredeterminado, mostrarEtapas = f
 
 export async function crearFichaJugadorasActuales(equipo, color) {
     const jugadoras = await jugadorasxTemporadaYEquipo(equipo, 'actual');
+    console.log(jugadoras.success)
     if (jugadoras.error) {
         console.error('Error al obtener jugadoras:', jugadoras.error);
         return;
@@ -316,6 +321,7 @@ export async function crearFichaJugadorasDeSiempre(equipo, color) {
 }
 
 async function displayJugadorasActuales(id, jugadoras, color) {
+    console.log(jugadoras)
     const container = document.getElementById(id);
     if (!container || !jugadoras || jugadoras.length === 0) return;
 
@@ -331,26 +337,40 @@ async function displayJugadorasActuales(id, jugadoras, color) {
         destacadosContainer.appendChild(crearCardDestacada(masMayor, 'MÁS MAYOR'));
     }
 
-    // Ordenar por IDs de posición
+    // 1. Limpiar el campo y los suplentes antes de pintar
+    limpiarCampoYSuplentes();
+
+    // 2. Ordenar por IDs de posición
     jugadoras.sort((a, b) => {
         const idA = a.posiciones_ids?.[0] || 999;
         const idB = b.posiciones_ids?.[0] || 999;
         return idA - idB;
     });
 
-    const fragment = document.createDocumentFragment();
-    
+    const suplentesContainer = document.getElementById('suplentes');
+    const fragmentSuplentes = document.createDocumentFragment();
+
+    // 3. Ubicar jugadoras en el campo o en suplentes
     jugadoras.forEach(jugadora => {
         const posicionPrincipal = jugadora.posiciones_ids?.[0];
+        let colocadoEnCampo = false;
+
+        console.log(jugadora)
+
         if (posicionPrincipal) {
-            //ponerJugadoraEnField(jugadora, posicionPrincipal, color);
+            colocadoEnCampo = ponerJugadoraEnField(jugadora, posicionPrincipal);
         }
-        // Usamos la función base COMÚN
-        const cardJugadora = crearFichaBaseJugadora(jugadora, color, false);
-        fragment.appendChild(cardJugadora);
+
+        // Si no cabía en el campo (o no tiene posición válida), va a Suplentes
+        if (!colocadoEnCampo) {
+            const cardJugadora = crearFichaBaseJugadora(jugadora, color, false);
+            fragmentSuplentes.appendChild(cardJugadora);
+        }
     });
 
-    container.appendChild(fragment);
+    if (suplentesContainer) {
+        suplentesContainer.appendChild(fragmentSuplentes);
+    }
 }
 
 function displayJugadorasHistoricas(id, jugadoras, color) {
@@ -402,8 +422,6 @@ export function filtrarJugadorasPorTemporada(temporada) {
         return posA - posB;
     });
 
-console.log(jugadorasFiltradas);
-
     if (jugadorasFiltradas.length === 0) {
         console.warn(`No se encontraron jugadoras para la temporada ${temporada}`);
     }else{
@@ -429,5 +447,117 @@ export function setupSliderTemporadas() {
         container.scrollBy({ left: 200, behavior: 'smooth' });
     });
 
+}
+
+function crearBotonesTemporada(anyo_fundacion, color) {
+        const mainContainer = document.getElementById('historicas');
+        const containerTemporadas = document.getElementById('temporadas-container');
+
+        // Limpiamos el contenedor por si acaso se vuelve a ejecutar la función
+        if (containerTemporadas) containerTemporadas.innerHTML = '';
+
+        if (anyo_fundacion) {
+            const currentYear = new Date().getFullYear(); // En 2026 generará hasta la 2026-2027
+
+            for (let year = anyo_fundacion; year <= currentYear; year++) {
+                const button = document.createElement('button');
+                button.style.background =
+                `radial-gradient(
+                    farthest-corner at left bottom,
+                    color-mix(in srgb, var(--color-secundario) 80%, black) 0%,
+                    ${color} 100%
+                )`;
+                button.textContent = year + '-' + (year + 1);
+                button.classList.add('temporada-button', 'season-badge'); // Añadimos tus clases de diseño estético
+                
+                button.addEventListener('click', () => {
+                    // 👉 LA MAGIA: Buscamos si ya había algún botón activo en el contenedor y le quitamos la clase
+                    const botonActivoAnterior = containerTemporadas.querySelector('.activo');
+                    if (botonActivoAnterior) {
+                        botonActivoAnterior.classList.remove('activo');
+                    }
+
+                    // Ahora hacemos que el botón actual pase a ser el único activo
+                    button.classList.add('activo');
+                    
+                    // Tu lógica para cargar y mostrar los datos de las jugadoras
+                    const jugadorasFiltradas = filtrarJugadorasPorTemporada(button.textContent);
+                });
+                
+                containerTemporadas.appendChild(button);
+            }
+        } else {
+            const mensaje = document.createElement('p');
+            mensaje.textContent = '{% trans "No hay información de fundación disponible para este equipo." %}';
+            containerTemporadas.appendChild(mensaje);
+        }
+}
+
+/**
+ * Inserta el elemento HTML de la jugadora en un slot libre del campo
+ */
+function ponerJugadoraEnField(jugadora, posicionId) {
+    // Buscar todos los slots que coincidan con la ID de posición
+    const slots = document.querySelectorAll(`#campo .pos-slot[data-pos="${posicionId}"]`);
+
+    // Encontrar el primer slot que aún no esté ocupado
+    let slotLibre = null;
+    for (const slot of slots) {
+        if (!slot.querySelector('.jugadora')) {
+            slotLibre = slot;
+            break;
+        }
+    }
+
+    // Si todos los slots de esa posición están ocupados, retorna false
+    if (!slotLibre) return false;
+
+    // Crear la estructura interna que pediste
+    const divJugadora = document.createElement('div');
+    divJugadora.className = 'jugadora';
+    divJugadora.dataset.id = jugadora.id;
+
+    const img = document.createElement('img');
+    img.src = jugadora.foto || jugadora.imagen || '/img/predeterm.png';
+    img.alt = jugadora.nombre || 'jugadora-silueta';
+
+    const divText = document.createElement('div');
+    divText.className = 'jugadora-text';
+
+    const spanPos = document.createElement('span');
+    spanPos.textContent = jugadora.posiciones_abrev[0] || slotLibre.textContent.trim();
+
+    const pNombre = document.createElement('p');
+    pNombre.textContent = jugadora.nombre_corto || jugadora.nombre || 'Jugadora';
+
+    divText.appendChild(spanPos);
+    divText.appendChild(pNombre);
+
+    divJugadora.appendChild(img);
+    divJugadora.appendChild(divText);
+
+    // Reemplazar o vaciar el texto borrador del slot e insertar el nodo
+    slotLibre.innerHTML = '';
+    slotLibre.appendChild(divJugadora);
+
+    return true;
+}
+
+/**
+ * Limpia las jugadoras previas de las posiciones del campo y de la banca
+ */
+function limpiarCampoYSuplentes() {
+    const slots = document.querySelectorAll('#campo .pos-slot');
+    slots.forEach(slot => {
+        // Restaurar el slot si tenía jugadora
+        if (slot.querySelector('.jugadora')) {
+            slot.innerHTML = '';
+        }
+    });
+
+    const suplentesContainer = document.getElementById('suplentes');
+    if (suplentesContainer) {
+        suplentesContainer.innerHTML = '';
+    }
 }
 

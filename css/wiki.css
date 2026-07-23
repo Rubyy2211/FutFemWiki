@@ -6,7 +6,8 @@ header{
         var(--color-secundario) 100%
     );
 
-    height: 12dvh;
+    height: 75px;
+    min-height: 75px;
 }
 
 header .header-container{

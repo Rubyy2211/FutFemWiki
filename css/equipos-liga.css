@@ -12,7 +12,79 @@
 
 #container-display .mapa-wrapper{
     height: 100% !important;
+    border-radius: 0 !important;
 }
+
+/* 1. Asegurar que el elemento raíz del marcador no meta offset */
+.marker-escudo {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+/* 2. El wrapper actuará como centro de coordenadas exacto (0,0) */
+.marker-wrapper {
+    position: relative !important;
+    width: 0 !important;
+    height: 0 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+/* 📍 3. PUNTO: Centrado exacto X e Y en (0,0) */
+.marker-punto {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    /* Forzar alineamiento centrado */
+    transform: translate(-50%, -50%) !important;
+    margin: 0 !important;
+    z-index: 1;
+}
+/* 🛡️ 4. ESCUDO: Centrado X exacto y desplazado hacia arriba en Y */
+.marker-escudo-img {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 60px;
+    height: 60px;
+    /*border-radius: 50%;*/
+    object-fit: contain;
+    /*border: 2px solid #ffffff;*/
+    filter: drop-shadow(0 0 6px var(--equipo-color, rgba(255, 255, 255, 0.6)));
+    
+    /* 
+       -50% X: Lo alinea perfectamente al centro vertical del punto.
+       -125% Y: Lo sube justo por encima del punto.
+    */
+    background: none !important;
+    transform: translate(-50%, -125%) !important;
+    margin: 0 !important;
+    z-index: 2;
+}
+
+/* Opcional: efecto al hacer hover en el seleccionado */
+.marker-escudo.selected .marker-escudo-img {
+    transform: translate(-50%, -125%) scale(1.1);
+}
+
+.marker-escudo.selected .marker-punto{
+    filter: drop-shadow(0 0 6px var(--equipo-color, rgba(255, 255, 255, 0.6)));
+}
+
+
+
+
+
+
 
 #items-container{
     display: flex;
@@ -24,7 +96,24 @@
     height: 20dvh;
     padding-inline: 10px;
     padding-bottom: 10px;
+    z-index: 10;
 }
+
+/* Estilo base del contenedor */
+#items-container {
+    display: flex;
+    overflow-x: auto;
+    cursor: grab;
+}
+
+#items-container:active {
+    cursor: grabbing;
+}
+
+#items-container::-webkit-scrollbar{
+    display: none;
+}
+
 
 .equipo-item{
     border-radius: 20px;
@@ -39,6 +128,17 @@
     justify-content: center;
     cursor: pointer;
     border: 2px solid var(--color-primario);
+    opacity: 1;
+    transform: scale(0.9);
+    transition: all 0.25s ease-out;
+}
+
+/* Estilo cuando está seleccionado/activo */
+.equipo-item.selected {
+    opacity: 1;
+    transform: scale(1);
+    border-bottom: 3px solid #c000ff; /* O el color principal de tu app */
+    background: var(--color-primario);
 }
 
 .equipo-item img{

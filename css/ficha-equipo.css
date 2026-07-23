@@ -4,6 +4,51 @@ body{
     /*background-color: rgb(37, 0, 37); /* Color negro con transparencia */
     width: 100%;
 }
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: hidden;
+    color: var(--color-detalles);
+    min-height: 100dvh;
+    max-width: 100vw;
+    font-family: var(--font-cuerpo), sans-serif !important;
+    overflow-x: hidden !important;
+    margin: 0px;
+    position: relative; /* Necesario para posicionar el fondo desenfocado */
+}
+
+/* Capa fija de fondo para el estadio difuminado */
+body::before {
+    content: "";
+    position: fixed;
+    top: -10px;    /* Margen extra para evitar bordes blancos por el desenfoque */
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    z-index: -1;   /* Mantiene la imagen por detrás de todo el contenido */
+    
+    background-image: 
+        linear-gradient(
+            color-mix(in srgb, var(--color-secundario) 100%, transparent 80%),
+            color-mix(in srgb, var(--color-secundario) 100%, transparent 80%)
+        ),
+        url(/img/locker-room.avif) !important;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+    background-position: center center !important;
+    
+    /* CONTROL DEL DIFUMINADO Y BRILLO */
+    filter: blur(8px) brightness(0.8); /* 👈 Ajusta los píxeles para más o menos blur */
+    transform: scale(1.05);             /* Evita bordes pixelados al aplicar el blur */
+    will-change: filter, transform;
+}
+
+body::before{
+    filter: blur(8px) brightness(0.8); /* 👈 Ajusta los píxeles para más o menos blur */
+    transform: scale(1.05);             /* Evita bordes pixelados al aplicar el blur */
+    will-change: filter, transform;
+}
 #info{
     width: 100%;
     height: 90%;
@@ -24,6 +69,204 @@ body{
     overflow-y: auto;
     justify-content: center;
     width: fit-content;
+    width: 100%;
+}
+
+#plantilla{
+    overflow: hidden;
+}
+
+/* 1. El contenedor padre maneja la distribución vertical */
+#jugadoras-actuales-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 🎯 Centra el campo horizontalmente si sobra espacio a los lados */
+    height: 100vh; /* O la altura total deseada (ej. calc(100vh - header)) */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* 2. El campo ocupa todo el alto restante sin deformarse */
+#plantilla #campo {
+    /* 🎯 Toma todo el alto que no ocupan los suplentes */
+    flex: 1; 
+    min-height: 0; /* Crucial en Flexbox para permitir que se ajuste al espacio */
+    
+    /* 🎯 Mantiene la proporción: el ancho se calcula automáticamente a partir del alto */
+    aspect-ratio: 2600 / 1556 !important;
+    height: 100%;
+    width: auto; 
+    max-width: 100%; /* No permite que se salga de la pantalla a lo ancho */
+
+    /* Fondo */
+    background-image: url(/img/pitch.webp);
+    background-size: 100% 100%; /* Ajusta exacto porque la caja ya tiene la proporción correcta */
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+/* --- GRID BASE EN PC (6 Columnas x 5 Filas: Portera a la Izquierda) --- */
+.football-pitch {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    place-items: center;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+/* 🧤 COLUMNA 1: PORTERA */
+.slot-por  { grid-column: 1; grid-row: 3; }
+.slot-por .jugadora-text span{
+    color: var(--color-portera);
+}
+
+/* 🛡️ COLUMNA 2: LÍNEA DEFENSIVA */
+.slot-li   { grid-column: 2; grid-row: 1; } /* Banda Izquierda (Arriba) */
+.slot-dfc1 { grid-column: 2; grid-row: 2; } /* Central Izquierdo */
+.slot-dfc2 { grid-column: 2; grid-row: 3; }
+.slot-dfc3 { grid-column: 2; grid-row: 4; } /* Central Derecho */
+.slot-ld   { grid-column: 2; grid-row: 5; } /* Banda Derecha (Abajo) */
+.slot-li .jugadora-text span, .slot-dfc1 .jugadora-text span, .slot-dfc2 .jugadora-text span, .slot-dfc3 .jugadora-text span, .slot-ld .jugadora-text span{
+    color: var(--color-defensa);
+}
+
+/* ⚙️ COLUMNA 3: PIVOTE / MCD */
+.slot-mcd1 { grid-column: 3; grid-row: 2; }
+.slot-mcd2 { grid-column: 3; grid-row: 4; }
+.slot-mcd1 .jugadora-text span, .slot-mcd2 .jugadora-text span{
+    color: var(--color-mediocampista);
+}
+
+/* 🧠 COLUMNA 4: MEDIOCAMPO */
+.slot-mi   { grid-column: 4; grid-row: 1; } /* Interior Izquierdo */
+.slot-mc1  { grid-column: 4; grid-row: 2; } /* MC Izquierdo */
+.slot-mc2  { grid-column: 4; grid-row: 3; } /* MC Central */
+.slot-mc3  { grid-column: 4; grid-row: 4; } /* MC Derecho */
+.slot-md   { grid-column: 4; grid-row: 5; } /* Interior Derecho */
+.slot-mi .jugadora-text span, .slot-mc1 .jugadora-text span, .slot-mc2 .jugadora-text span, .slot-mc3 .jugadora-text span, .slot-md .jugadora-text span{
+    color: var(--color-mediocampista);
+}
+
+/* ⚡ COLUMNA 5: EXTREMOS / MEDIAPUNTA */
+.slot-ei   { grid-column: 5; grid-row: 1; } /* Extremo Izquierdo */
+.slot-mco  { grid-column: 5; grid-row: 3; } /* Mediapunta Central */
+.slot-ed   { grid-column: 5; grid-row: 5; } /* Extremo Derecho */
+.slot-ei .jugadora-text span, .slot-ed .jugadora-text span{
+    color: var(--color-delantera);
+}
+
+.slot-mco .jugadora-text span{
+    color: var(--color-mediocampista);
+}
+
+/* ⚽ COLUMNA 6: DELANTERAS (Derecha del todo) */
+.slot-dc1  { grid-column: 6; grid-row: 2; } /* Delantera Izquierda */
+.slot-dc2  { grid-column: 6; grid-row: 3; } /* Delantera Centro */
+.slot-dc3  { grid-column: 6; grid-row: 4; } /* Delantera Derecha */
+.slot-dc1 .jugadora-text span, .slot-dc2 .jugadora-text span, .slot-dc3 .jugadora-text span{
+    color: var(--color-delantera);
+}
+
+#plantilla #suplentes {
+    flex-shrink: 0; /* Evita que el campo los aplaste */
+    min-height: 15%;
+    max-height: 15%;
+    width: 100%;
+    background: red;
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+}
+
+.football-pitch .jugadora{
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.football-pitch .jugadora img{
+    height: 80%;
+}
+
+.football-pitch .jugadora .jugadora-text{
+    display: flex;
+    flex-direction: row;
+    height: 20%;
+    gap: 10px;
+}
+
+.football-pitch .jugadora .jugadora-text p{
+    text-wrap: nowrap;
+}
+
+/* Estilo para las fichas/posiciones */
+.pos-slot {
+    aspect-ratio: 1 / 1;
+    width: 100px;
+    height: 100px;
+    /*border-radius: 50%;
+    background-color: #1a1a1a;
+    border: 2px solid #ffffff;*/
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.8rem;
+    /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);*/
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    user-select: none;
+    overflow: hidden;
+}
+
+.pos-slot:hover {
+    transform: scale(1.15);
+    /*background-color: #2b82c5;*/
+}
+
+/* --- VISTA MÓVIL (CAMPO VERTICAL) --- */
+@media (max-width: 768px) {
+    #plantilla #campo {
+        background-image: url(/img/pitch-vertical.webp); 
+        aspect-ratio: 1556 / 2600 !important;
+    }
+
+    /* Cambiamos el Grid a 5 Columnas x 6 Filas: Portera abajo */
+    .football-pitch {
+        grid-template-columns: repeat(5, 1fr);
+        grid-template-rows: repeat(6, 1fr);
+    }
+
+    /* Reordenamos las coordenadas para el flujo Vertical */
+    .slot-dc1  { grid-row: 1; grid-column: 2; }
+    .slot-dc2  { grid-row: 1; grid-column: 3; }
+    .slot-dc3  { grid-row: 1; grid-column: 4; }
+
+    .slot-ei   { grid-row: 2; grid-column: 1; }
+    .slot-mco  { grid-row: 2; grid-column: 3; }
+    .slot-ed   { grid-row: 2; grid-column: 5; }
+
+    .slot-mi   { grid-row: 3; grid-column: 1; }
+    .slot-mc1  { grid-row: 3; grid-column: 2; }
+    .slot-mc2  { grid-row: 3; grid-column: 4; }
+    .slot-md   { grid-row: 3; grid-column: 5; }
+
+    .slot-mcd  { grid-row: 4; grid-column: 3; }
+
+    .slot-li   { grid-row: 5; grid-column: 1; }
+    .slot-dfc1 { grid-row: 5; grid-column: 2; }
+    .slot-dfc2 { grid-row: 5; grid-column: 4; }
+    .slot-ld   { grid-row: 5; grid-column: 5; }
+
+    .slot-por  { grid-row: 6; grid-column: 3; }
 }
 
 #historicas{
@@ -38,6 +281,10 @@ body{
     display: flex;
     flex-direction: row;
     max-width: 80dvw;
+}
+
+#historicas #slider-temporadas::-webkit-scrollbar{
+    display: none
 }
 
 #historicas #slider-temporadas .slider-button{
@@ -136,7 +383,7 @@ hr {
     height: fit-content;
     flex-direction: row;
     justify-content: center;
-    background: var(--color-secundario);
+    /*background: var(--color-secundario);*/
     width: 300px;
 }
 
@@ -151,14 +398,21 @@ hr {
 }
 #selector a.active{
     color: var(--color-detalles) !important;
-    text-shadow: 0 0 5px color-mix(in srgb, var(--color-primario) 70%, transparent 30%);
-    background: var(--color-primario);
+    text-shadow: 0 0 5px color-mix(in srgb, white 70%, transparent 30%);
+    /*background: var(--color-primario);*/
 }
 #selector a:hover{
     color: var(--color-detalles);
-    text-shadow: 0 0 5px color-mix(in srgb, var(--color-primario) 70%, transparent 30%);
-    background: var(--color-primario);
+    text-shadow: 0 0 5px color-mix(in srgb, white 70%, transparent 30%);
+    /*background: var(--color-primario);*/
 }
+
+#selector .vr {
+  width: 1px;
+  height: 80%; /* alto de la línea */
+  background-color: #ccc;
+}
+
 /*#equipo-container>div{
     display: flex;
     flex-direction: row;
@@ -416,6 +670,10 @@ section#jugadoras-destacadas .container-jugadoras img{
     height: 45px;
 }
 
+#tabla-info .container-jugadoras{
+    flex-direction: column;
+}
+
 section#jugadoras-destacadas span, section#jugadoras-destacadas .info-destacada{
     z-index: 1;
 }
@@ -472,13 +730,15 @@ section#jugadoras-actuales, section#jugadoras-destacadas{
 }
 
 #jugadoras-actuales-container{
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 150px));
-    overflow-y: auto;
+    /*display: grid;
+    grid-template-columns: repeat(4, minmax(0, 150px));*/
+    display: flex;
+    flex-direction: column;
+    overflow-y: hidden;
     justify-items: center;
     width: 100%;
     height: 100%;
-    max-width: 1000px;
+    /*max-width: 1000px;*/
 }
 
 #jugadoras-actuales .football-field{
@@ -491,6 +751,7 @@ section#jugadoras-actuales, section#jugadoras-destacadas{
     justify-content: center;
     max-width: 150px;
     height: fit-content;
+    overflow: hidden;
 }
 
 #jugadoras-actuales-container .jugadora-item .jugadora-nombre,
@@ -511,23 +772,33 @@ section#jugadoras-actuales, section#jugadoras-destacadas{
     gap: 0;
     width: 100%;
     height: max-content;
+    overflow: hidden;
 }
 
 #jugadoras-actuales-container .jugadora-item .jugadora-div1 .jugadora-div1_2,
 #jugadoras-container .jugadora-item .jugadora-div1 .jugadora-div1_2 {
     align-items: center;
     width: 100%;
+    height: 100%;
+    max-height: 100%;
+    overflow: hidden;
 }
 
-/*#jugadoras-actuales-container .jugadora-item .jugadora-div1 .jugadora-banderas-posicion{
-    max-height: 30%;
-}*/
+.jugadora-item .jugadora-div1 .jugadora-banderas-posicion{
+    overflow: hidden;
+    height: 100%;
+}
 
 #jugadoras-actuales-container .jugadora-item .jugadora-div1 .jugadora-banderas,
 #jugadoras-container .jugadora-item .jugadora-div1 .jugadora-banderas{
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: center;
     max-height: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    overflow: hidden;
     /*background: var(--color-secundario);*/
 }
 
@@ -535,20 +806,22 @@ section#jugadoras-actuales, section#jugadoras-destacadas{
 #jugadoras-container .jugadora-item .jugadora-div1 .jugadora-banderas>*{
     max-width: 30%;
     max-height: 30px;
-    width: 30%;
+    /*width: 30%;*/
 }
 
 #jugadoras-actuales-container .jugadora-item .jugadora-div1 img,
 #jugadoras-container .jugadora-item .jugadora-div1 img{
-    width: 100%;
     height: 100%;
     max-width: 150px;
     max-height: 150px;
+    aspect-ratio: 1/1 !important;
+    width: auto;
 }
 
 #jugadoras-actuales-container .jugadora-item .jugadora-posicion,
 #jugadoras-container .jugadora-item .jugadora-posicion {
     position: absolute;
+    display: flex;
     flex-direction: column;
     left: 0;
     top: 0;

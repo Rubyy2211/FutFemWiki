@@ -229,6 +229,7 @@ body #wiki-equipos #wiki-container #container-display .liga-item {
     background: none !important;
     overflow: hidden;
     max-height: 80px;
+    min-height: 80px;
     aspect-ratio: 1/1;
     padding: 8px;
     cursor: pointer;

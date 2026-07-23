@@ -1,12 +1,13 @@
 export let map = null;
 let markersGroup = [];
 let bloqueado = false;
+let orbitando = false;
+let lastTime = null;
 
-export function inicializarMapaEquipos() {
+export function inicializarMapaEquipos(centerInicial = [7, 40], zoomInicial = 5) {
     if (map) {
         markersGroup.forEach(m => m.marker.remove());
         markersGroup = [];
-        // Forzar recálculo por si el contenedor cambió de tamaño
         setTimeout(() => map.resize(), 100);
         return map;
     }
@@ -15,41 +16,19 @@ export function inicializarMapaEquipos() {
         container: 'mapa-equipos',
         style: '/js/mapstyles/style-morado.json',
         projection: 'globe',
-        center: [7, 40],
-        zoom: 5,
-        minZoom: 4.5,
+        center: centerInicial,
+        zoom: zoomInicial,
+        minZoom: 5,
         antialias: true
     });
 
     map.addControl(new maplibregl.NavigationControl());
 
-    map.on("movestart", () => {
-        bloqueado = true;
-    });
+    map.on("movestart", () => { bloqueado = true; });
+    map.on("moveend", () => { bloqueado = false; });
 
-    map.on("moveend", () => {
-        bloqueado = false;
-    });
-
-    // Controlar la visibilidad (Punto vs Escudo) al hacer zoom
-    map.on("zoom", () => {
-        const zoom = map.getZoom();
-
-        markersGroup.forEach(m => {
-            const escudo = m.el.querySelector('.marker-escudo-img');
-            const punto = m.el.querySelector('.marker-punto');
-
-            if (escudo && punto) {
-                if (zoom < 10) {
-                    escudo.style.display = "none";
-                    punto.style.display = "block";
-                } else {
-                    escudo.style.display = "block";
-                    punto.style.display = "none";
-                }
-            }
-        });
-    });
+    // Escuchar eventos de zoom usando la función unificada
+    map.on("zoom", actualizarMarkersZoom);
 
     map.on("load", () => {
         const layers = map.getStyle().layers;
@@ -63,10 +42,10 @@ export function inicializarMapaEquipos() {
                 "https://api.maptiler.com/tiles/satellite-v2/tiles.json?key=LYmhz1BKy6QniXWrxK2S"
             ],
             tileSize: 256,
-            attribution: "© MapTiler © OpenStreetMap contributors"
+            //attribution: "© MapTiler © OpenStreetMap contributors"
         });
 
-        map.addLayer({
+        /*map.addLayer({
             id: "3d-buildings",
             source: "openmaptiles",
             "source-layer": "building",
@@ -84,7 +63,7 @@ export function inicializarMapaEquipos() {
                 "fill-extrusion-base": ["get", "render_min_height"],
                 "fill-extrusion-opacity": 0.85
             }
-        }, labelLayerId);
+        }, labelLayerId);*/
 
         map.setLight({
             anchor: "viewport",
@@ -102,14 +81,17 @@ export function añadirEquipoMapa(id, nombre, lat, lng, escudoUrl, color) {
     lng = parseFloat(lng);
 
     if (isNaN(lat) || isNaN(lng)) {
-        console.warn(`Equipo omitido en el mapa por coordenadas inválidas: ${nombre} (lat: ${lat}, lng: ${lng})`);
+        console.warn(`Equipo omitido por coordenadas inválidas: ${nombre}`);
         return;
     }
 
     const fotoUrl = escudoUrl ? escudoUrl.replace('/clubes/', '/clubes/mini/') : '';
 
     const el = document.createElement('div');
+    el.style.setProperty('--equipo-color', color)
     el.className = 'marker-escudo';
+    el.dataset.id = id; 
+
     el.innerHTML = `
         <div class="marker-wrapper" id="marker-${id}">
             <div class="marker-punto"></div>
@@ -132,16 +114,6 @@ export function añadirEquipoMapa(id, nombre, lat, lng, escudoUrl, color) {
         `;
     }
 
-    // Inicializar visibilidad según el zoom actual
-    const currentZoom = map ? map.getZoom() : 5;
-    if (currentZoom < 10) {
-        if (img) img.style.display = "none";
-        if (punto) punto.style.display = "block";
-    } else {
-        if (img) img.style.display = "block";
-        if (punto) punto.style.display = "none";
-    }
-
     el.addEventListener('click', () => {
         const target = [lng, lat];
 
@@ -159,21 +131,36 @@ export function añadirEquipoMapa(id, nombre, lat, lng, escudoUrl, color) {
         requestAnimationFrame(rotarSuave);
     });
 
-    // Crear marcador MapLibre
-    const marker = new maplibregl.Marker({ element: el })
-        .setLngLat([lng, lat])
-        .addTo(map);
+    const tarjetaActivaDOM = document.querySelector(`.equipo-item[data-id="${id}"].selected`);
+    let esElSeleccionadoDeInicio = false;
 
-    // Guardar el marcador completo
+    if (tarjetaActivaDOM) {
+        el.classList.add('selected');
+        esElSeleccionadoDeInicio = true;
+    }
+
+    // 🎯 CAMBIO AQUÍ: Añadimos { anchor: 'center' } para fijar el centro exacto
+    const marker = new maplibregl.Marker({ 
+        element: el,
+        anchor: 'center'
+    })
+    .setLngLat([lng, lat])
+    .addTo(map);
+
     markersGroup.push({
+        id,
         marker,
         el,
         lng,
-        lat
+        lat,
+        isSelected: esElSeleccionadoDeInicio
     });
+
+    actualizarMarkersZoom();
 }
 
-// CORREGIDA: Ajusta la escala dentro del contenedor interno para NO interferir con las coordenadas de MapLibre
+// CORREGIDA Y UNIFICADA
+// FORZAR el escudo visible SIEMPRE para el activo
 export function actualizarMarkersZoom() {
     if (!map) return;
     const zoom = map.getZoom();
@@ -183,24 +170,56 @@ export function actualizarMarkersZoom() {
         const escudo = m.el.querySelector('.marker-escudo-img');
         const punto = m.el.querySelector('.marker-punto');
 
-        // Escalar solo el contenido interno, no el contenedor principal del marcador
+        // Escalar tamaño de marcadores según zoom
         if (wrapper) {
             const scale = Math.min(1.3, Math.max(0.5, zoom / 7));
             wrapper.style.transform = `scale(${scale})`;
         }
 
-        if (zoom < 10) {
-            if (escudo) escudo.style.display = "none";
-            if (punto) punto.style.display = "block";
+        // Comprobamos si es el seleccionado
+        const esSeleccionado = m.el.classList.contains('selected') || m.isSelected;
+        console.log(esSeleccionado)
+
+        if (esSeleccionado) {
+            // 🎯 FORZAR VISIBILIDAD TOTAL SIN IMPORTAR EL ZOOM
+            if (escudo) escudo.style.setProperty('display', 'block', 'important');
+            //if (punto) punto.style.setProperty('display', 'none', 'important');
         } else {
-            if (escudo) escudo.style.display = "block";
-            if (punto) punto.style.display = "none";
+            // Los no seleccionados siguen la regla normal de zoom
+            if (zoom >= 10) {
+                if (escudo) escudo.style.display = 'block';
+                //if (punto) punto.style.display = 'none';
+            } else {
+                if (escudo) escudo.style.display = 'none';
+                if (punto) punto.style.display = 'block';
+            }
         }
     });
 }
 
-let orbitando = false;
-let lastTime = null;
+// Vincula la tarjeta seleccionada con el marcador del mapa
+export function marcarEquipoSeleccionadoPorId(idSeleccionado) {
+    if (!idSeleccionado) return;
+
+    // Recorremos el array global markersGroup que definiste en mapa.js
+    markersGroup.forEach(m => {
+        // Imprimimos el log para verificar
+        console.log("Comparando marcador ID:", m.id, "con seleccionado ID:", idSeleccionado);
+
+        // Convertimos a String para evitar fallos si uno es number y el otro string
+        if (String(m.id) === String(idSeleccionado)) {
+            m.el.classList.add('selected');
+            m.isSelected = true;
+        } else {
+            m.el.classList.remove('selected');
+            m.isSelected = false;
+        }
+    });
+
+    // Repintamos la visibilidad
+    actualizarMarkersZoom();
+    centrarEnEquipoActivo(true);
+}
 
 function rotarSuave(time) {
     if (!orbitando) {
@@ -251,20 +270,43 @@ function mostrarTooltipEquipo(id, nombre, lngLat) {
     });
 }
 
-export function centrarMapaEnEquipos() {
+export function centrarMapaEnEquipos(animado = false) {
     if (!map || markersGroup.length === 0) return;
 
     const bounds = new maplibregl.LngLatBounds();
-    markersGroup.forEach(m => bounds.extend([m.lng, m.lat]));
 
-    const center = bounds.getCenter();
-
-    map.easeTo({
-        center,
-        zoom: Math.min(8, map.getZoom()),
-        pitch: 45,
-        bearing: 20,
-        duration: 1200,
-        easing: t => t * (2 - t)
+    markersGroup.forEach(m => {
+        bounds.extend([m.lng, m.lat]);
     });
+
+    // fitBounds posiciona la cámara instantáneamente si duration es 0
+    map.fitBounds(bounds, {
+        padding: { top: 70, bottom: 70, left: 70, right: 70 },
+        maxZoom: 5,
+        zoom: 5,
+        duration: animado ? 1200 : 0 // 🎯 Si es false, se mueve en 0ms (sin desplazamiento)
+    });
+}
+
+export function centrarEnEquipoActivo(animado = false) {
+    if (!map) return;
+
+    // 1. Buscar el marcador activo
+    let activo = markersGroup.find(m => m.isSelected || m.el.classList.contains('selected'));
+
+    // 2. Fallback por si no se encuentra directamente
+    if (!activo) {
+        const tarjetaActiva = document.querySelector('.equipo-item.selected');
+        if (tarjetaActiva && tarjetaActiva.dataset.id) {
+            const id = tarjetaActiva.dataset.id;
+            activo = markersGroup.find(m => String(m.id) === String(id));
+        }
+    }
+
+    // 3. Mover la cámara SOLO cambiando las coordenadas (0 cambio de zoom)
+    if (activo) {
+        map.panTo([activo.lng, activo.lat], {
+            duration: animado ? 1000 : 0
+        });
+    }
 }
