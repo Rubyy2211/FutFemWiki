@@ -1,0 +1,152 @@
+/* 2. El campo ocupa todo el alto restante sin deformarse */
+#campo {
+    /* 🎯 Toma todo el alto que no ocupan los suplentes */
+    flex: 1; 
+    min-height: 0; /* Crucial en Flexbox para permitir que se ajuste al espacio */
+    
+    /* 🎯 Mantiene la proporción: el ancho se calcula automáticamente a partir del alto */
+    aspect-ratio: 2600 / 1556 !important;
+    height: 100%;
+    width: auto; 
+    max-width: 100%; /* No permite que se salga de la pantalla a lo ancho */
+
+    /* Fondo */
+    background-image: url(/img/pitch.webp);
+    background-size: 100% 100%; /* Ajusta exacto porque la caja ya tiene la proporción correcta */
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+#campo.vertical {
+    background-image: url(/img/pitch-vertical.webp); 
+    aspect-ratio: 1556 / 2600 !important;
+    height: 90%;
+}
+
+/* --- GRID BASE EN PC (6 Columnas x 5 Filas: Portera a la Izquierda) --- */
+.football-pitch {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(6, 16.6667%);
+    grid-template-rows: repeat(5, 20%);
+    place-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#campo.vertical .football-pitch {
+    grid-template-columns: repeat(5, 20%);
+    grid-template-rows: repeat(6, 16.6667%);
+    padding: 0px;
+}
+
+/* 🧤 COLUMNA 1: PORTERA */
+.slot-por  { grid-column: 1; grid-row: 3; }
+.slot-por .jugadora-text span{
+    color: var(--color-portera);
+}
+
+/* 🛡️ COLUMNA 2: LÍNEA DEFENSIVA */
+.slot-li   { grid-column: 2; grid-row: 1; } /* Banda Izquierda (Arriba) */
+.slot-dfc1 { grid-column: 2; grid-row: 2; } /* Central Izquierdo */
+.slot-dfc2 { grid-column: 2; grid-row: 3; }
+.slot-dfc3 { grid-column: 2; grid-row: 4; } /* Central Derecho */
+.slot-ld   { grid-column: 2; grid-row: 5; } /* Banda Derecha (Abajo) */
+.slot-li .jugadora-text span, .slot-dfc1 .jugadora-text span, .slot-dfc2 .jugadora-text span, .slot-dfc3 .jugadora-text span, .slot-ld .jugadora-text span{
+    color: var(--color-defensa);
+}
+
+/* ⚙️ COLUMNA 3: PIVOTE / MCD */
+.slot-mcd1 { grid-column: 3; grid-row: 2; }
+.slot-mcd2 { grid-column: 3; grid-row: 3; }
+.slot-mcd3 { grid-column: 3; grid-row: 4; }
+.slot-mcd1 .jugadora-text span, .slot-mcd2 .jugadora-text span{
+    color: var(--color-mediocampista);
+}
+
+/* 🧠 COLUMNA 4: MEDIOCAMPO */
+.slot-mi   { grid-column: 4; grid-row: 1; } /* Interior Izquierdo */
+.slot-mc1  { grid-column: 4; grid-row: 2; } /* MC Izquierdo */
+.slot-mc2  { grid-column: 4; grid-row: 3; } /* MC Central */
+.slot-mc3  { grid-column: 4; grid-row: 4; } /* MC Derecho */
+.slot-md   { grid-column: 4; grid-row: 5; } /* Interior Derecho */
+.slot-mi .jugadora-text span, .slot-mc1 .jugadora-text span, .slot-mc2 .jugadora-text span, .slot-mc3 .jugadora-text span, .slot-md .jugadora-text span{
+    color: var(--color-mediocampista);
+}
+
+/* ⚡ COLUMNA 5: EXTREMOS / MEDIAPUNTA */
+.slot-ei   { grid-column: 5; grid-row: 1; } /* Extremo Izquierdo */
+.slot-mco  { grid-column: 5; grid-row: 3; } /* Mediapunta Central */
+.slot-ed   { grid-column: 5; grid-row: 5; } /* Extremo Derecho */
+.slot-ei .jugadora-text span, .slot-ed .jugadora-text span{
+    color: var(--color-delantera);
+}
+
+.slot-mco .jugadora-text span{
+    color: var(--color-mediocampista);
+}
+
+/* ⚽ COLUMNA 6: DELANTERAS (Derecha del todo) */
+.slot-dc1  { grid-column: 6; grid-row: 2; } /* Delantera Izquierda */
+.slot-dc2  { grid-column: 6; grid-row: 3; } /* Delantera Centro */
+.slot-dc3  { grid-column: 6; grid-row: 4; } /* Delantera Derecha */
+.slot-dc1 .jugadora-text span, .slot-dc2 .jugadora-text span, .slot-dc3 .jugadora-text span{
+    color: var(--color-delantera);
+}
+
+.pos-slot {
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        aspect-ratio: 1/1;
+}
+
+.pos-slot .jugadora{
+    height: 100%;
+}
+
+#jugadora-datos .pos-slot .jugadora{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#jugadora-datos .pos-slot .jugadora img{
+    display: none;
+}
+
+#jugadora-datos .pos-slot .jugadora p, .pos-slot .jugadora .nacionalidad{
+    display: none;
+}
+
+/* Reordenamos las coordenadas para el flujo Vertical */
+#campo.vertical .slot-dc1  { grid-row: 1; grid-column: 2; }
+#campo.vertical .slot-dc2  { grid-row: 1; grid-column: 3; }
+#campo.vertical .slot-dc3  { grid-row: 1; grid-column: 4; }
+
+#campo.vertical .slot-ei   { grid-row: 2; grid-column: 1; }
+#campo.vertical .slot-mco  { grid-row: 2; grid-column: 3; }
+#campo.vertical .slot-ed   { grid-row: 2; grid-column: 5; }
+
+#campo.vertical .slot-mi   { grid-row: 3; grid-column: 1; }
+#campo.vertical .slot-mc1  { grid-row: 3; grid-column: 2; }
+#campo.vertical .slot-mc2  { grid-row: 3; grid-column: 3; }
+#campo.vertical .slot-mc3  { grid-row: 3; grid-column: 4; }
+#campo.vertical .slot-md   { grid-row: 3; grid-column: 5; }
+
+#campo.vertical .slot-mcd1  { grid-row: 4; grid-column: 2; }
+#campo.vertical .slot-mcd2  { grid-row: 4; grid-column: 3; }
+#campo.vertical .slot-mcd3  { grid-row: 4; grid-column: 4; }
+
+#campo.vertical .slot-li   { grid-row: 5; grid-column: 1; }
+#campo.vertical .slot-dfc1 { grid-row: 5; grid-column: 2; }
+#campo.vertical .slot-dfc2 { grid-row: 5; grid-column: 3; }
+#campo.vertical .slot-dfc3 { grid-column: 4; grid-row: 5; }
+#campo.vertical .slot-ld   { grid-row: 5; grid-column: 5; }
+
+#campo.vertical .slot-por  { grid-row: 6; grid-column: 3; }

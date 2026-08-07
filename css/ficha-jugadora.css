@@ -6,24 +6,74 @@ body::before{
 #pagina-container{
     width: 100%;
     height: 100%;
+    max-height: 100%;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
 }
 #ficha-jugadora-container{
-    width: 100%;
+    width: 95%;
     height: 100%;
     display: flex;
     flex-direction: column;
-    max-height: calc(100vh - var(--header-height));
     align-items: center;
+    max-width: 100%;
+    padding-block: 0;
+    padding-inline: 0;
+    max-height: 100%;
+    padding-block: 20px;
     max-width: 1200px;
-    padding-block: 2.5%;
-    max-height: 80dvh;
     overflow-y: hidden;
 }
+#resto{
+    order: 2;
+    max-height: 70%;
+    height: 70%;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    /*background-color: color-mix(in srgb, var(--color-secundario, #121212) 80%, var(--equipo-color) 10%);*/
+}
+
+#resto #selector{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+    order: 4;
+}
+
+#resto #selector .vr {
+  width: 1px;
+  height: 80%; /* alto de la línea */
+  background-color: #ccc;
+}
+
+#resto #selector a{
+    text-decoration: none;
+    padding: 5px;
+    color: color-mix(in srgb, var(--color-detalles) 75%, transparent 25%);
+}
+
+#selector a.active{
+    color: var(--color-detalles) !important;
+    text-shadow: 0 0 5px color-mix(in srgb, white 70%, transparent 30%);
+    /*background: var(--color-primario);*/
+}
+#selector a:hover{
+    color: var(--color-detalles) !important;
+    text-shadow: 0 0 5px color-mix(in srgb, white 70%, transparent 30%);
+    /*background: var(--color-primario);*/
+}
+
 #ficha-jugadora-container .section{
     display: none;
     height: 100%;
+    order: 3;
 }
 #ficha-jugadora-container .section.active{
     display: flex;
@@ -31,7 +81,6 @@ body::before{
     width: 100%;
 }
 #ficha-jugadora-container .section #header-compañeras{
-    background: var(--color-secundario);
     height: 12%;
     min-height: 12%;
     max-height: 12%;
@@ -81,7 +130,7 @@ body::before{
 #companyeras{
     height: 100%;
     width: 100%;
-    background: color-mix(in srgb, var(--color-secundario) 50%, transparent 50%);
+    /*background: color-mix(in srgb, var(--color-secundario) 50%, transparent 50%);*/
     overflow: hidden;
     overflow-x: auto;
 }
@@ -165,57 +214,253 @@ body::before{
     display: flex;
     flex-direction: row;
     width: 100%;
-    align-items: end;
-    gap: 5%;
-    min-height: 100px;
-    padding-inline: 5%;
-    /*height: 30%;*/
+    align-items: center;
+    min-height: 30%;
+    height: 30%;
     background-blend-mode: color-burn;
     position: relative;
-    border-radius: 20px 20px 0 0;
+    /*border-radius: 20px 20px 0 0;*/
     overflow: hidden;
     position: relative;
+    /*background: 
+        linear-gradient(
+            90deg, 
+            color-mix(in srgb, var(--equipo-color) 85%, #000) 0%, 
+            color-mix(in srgb, var(--equipo-color) 60%, transparent 40%) 55%,
+            rgba(0, 0, 0, 0.5) 100%
+        );*/
+    gap: 2dvw;
+    order: 1;
 }
 
 #jugadora-info #escudo-container{
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: 10px;
+    max-width: 55px;
+    max-height: 55px;
+    aspect-ratio: 1/1;
+    overflow: hidden;
 }
-#jugadora-info img{
+
+#jugadora-info #escudo-container img{
+    overflow: hidden;
+    height: 100%;
+}
+
+/* Contenedor wrapper */
+.jugadora-img-wrapper {
+    position: relative;
+    max-width: 200px !important;
+    max-height: 100% !important;
+    aspect-ratio: 1/1;
+    display: flex; /* O block / flex según tu layout */
+    padding-inline: 5px;
+    background: color-mix(in srgb, var(--equipo-color) 40%, transparent 60%);
+    /* glow */ box-shadow: 0 0 20px color-mix(in srgb, var(--equipo-color) 70%, transparent 30%);
+}
+
+#jugadora-info #jugadora-img{
     padding: unset;
     max-width: 200px !important;
     max-height: 100% !important;
     aspect-ratio: 1/1;
     margin-bottom: 0;
     border: none;
+    position: relative;
 }
+/* Esquina superior izquierda */
+#jugadora-info .jugadora-img-wrapper::after {
+    content: '';
+    position: absolute;
+    inset: 0; /* Cubre todo el cuadro */
+    pointer-events: none; /* No bloquea clics */
+
+    background:
+        /* Superior Izquierda */
+        linear-gradient(var(--equipo-color), var(--equipo-color)) top left / 20px 2px no-repeat,
+        linear-gradient(var(--equipo-color), var(--equipo-color)) top left / 2px 20px no-repeat,
+
+        /* Superior Derecha */
+        linear-gradient(var(--equipo-color), var(--equipo-color)) top right / 20px 2px no-repeat,
+        linear-gradient(var(--equipo-color), var(--equipo-color)) top right / 2px 20px no-repeat,
+
+        /* Inferior Izquierda */
+        linear-gradient(var(--equipo-color), var(--equipo-color)) bottom left / 20px 2px no-repeat,
+        linear-gradient(var(--equipo-color), var(--equipo-color)) bottom left / 2px 20px no-repeat,
+
+        /* Inferior Derecha */
+        linear-gradient(var(--equipo-color), var(--equipo-color)) bottom right / 20px 2px no-repeat,
+        linear-gradient(var(--equipo-color), var(--equipo-color)) bottom right / 2px 20px no-repeat;
+}
+
+hr {
+    border: none; /* Quitamos el borde gris por defecto */
+    height: 1.5px;  /* Le damos el grosor mínimo */
+    width: 100%;
+    order: 2;
+    
+    /* Usamos color-mix para que sea una línea sutil que no rompa el diseño */
+    background-color: color-mix(in srgb, var(--color-detalles) 70%, transparent); 
+    
+    margin: 0 0; /* Espaciado arriba y abajo para separar los bloques */
+}
+
+#jugadora-datos{
+    display: flex;
+    flex-direction: row !important;
+    align-items: center;
+    overflow: hidden;
+}
+
+#jugadora-datos #campo{
+    width: 100%;
+    max-width: 30%;
+}
+
+#jugadora-datos #campo .pos-slot .jugadora-text{
+    border: 1px solid color-mix(in srgb, var(--color-detalles) 70%, transparent);
+    border-radius: 20px;
+    text-align: center;
+    width: 80%;
+}
+
+#jugadora-datos #campo .jugadora.delantera .jugadora-text{
+    background: var(--color-delantera);
+}
+
+#jugadora-datos #campo .jugadora.delantera .jugadora-text span{
+    color: var(--color-texto);
+}
+
+#jugadora-datos #campo .jugadora.mediocampista .jugadora-text{
+    background: var(--color-mediocampista);
+}
+
+#jugadora-datos #campo .jugadora.mediocampista .jugadora-text span{
+    color: var(--color-texto);
+}
+
+#jugadora-datos #campo .jugadora.defensora .jugadora-text{
+    background: var(--color-defensa);
+}
+
+#jugadora-datos #campo .jugadora.defensora .jugadora-text span{
+    color: var(--color-texto);
+}
+
+#jugadora-datos #campo .jugadora.portera .jugadora-text{
+    background: var(--color-portera);
+}
+
+#jugadora-datos #campo .jugadora.portera .jugadora-text span{
+    color: var(--color-texto);
+}
+
+.pos-principal .jugadora-text{
+    transform: scale(1.2);
+    box-shadow: 0 0 10px color-mix(in srgb, white 70%, transparent 30%);
+    border: 1px solid color-mix(in srgb, white 70%, transparent 30%) !important;
+}
+
+.pos-secundaria .jugadora-text{
+    transform: scale(1.1);
+    box-shadow: 0 0 10px color-mix(in srgb, rgb(255, 170, 0) 70%, transparent 30%);
+    border: 1px solid color-mix(in srgb, rgb(255, 170, 0) 70%, transparent 30%) !important;
+}
+
+@media (max-width: 768px){
+    #campo{
+        max-width: 100% !important;
+        width: auto !important;
+        min-width: auto;
+    }
+    .football-pitch{
+        max-width: 100%;
+        min-width: 100%;
+        padding: 0;
+    }
+}
+
+#jugadora-datos div.bloque-dato{
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    max-height: 30%;
+    min-height: 30%;
+    overflow: hidden;
+}
+
+div.bloque-dato a{
+    text-decoration: none;
+    color: var(--color-detalles);
+    width: 100%;
+}
+
+
+.bloque-dato span{
+    font-size: xx-large;
+    font-weight: 500;
+    font-family: "Oswald", sans-serif;
+}
+
+#equipo.bloque-dato>span a, #nacionalidad.bloque-dato>span a{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+.bloque-dato p{
+    margin-bottom: 0;
+}
+
 #jugadora-info p{
     margin-bottom: 0;
-    margin-inline: 5px;
 }
 #jugadora-info h3{
     font-family: "Oswald", sans-serif;
+    width: fit-content;
+    margin-bottom: 0;
 }
 #jugadora-info #datos-jugadora{
     width: 100%;
     align-self: center;
-}
-#jugadora-info #datos-jugadora #posicion{
-    display: flex;
-    gap: 10px;
-}
-#jugadora-info .grid{
     display: flex;
     flex-direction: column;
+    justify-content: center;
 }
-#jugadora-info .grid>div{
+
+#jugadora-info #datos-jugadora .bloque-nombre-pais{
     display: flex;
     flex-direction: row;
-    width: 100%;
     align-items: center;
-    /*justify-content: space-between;*/
+    gap: 10px;
+}
+
+#jugadora-info #datos-jugadora .bloque-nombre-pais h1{
+    margin-bottom: 0;
+}
+
+#jugadora-info #datos-jugadora #bloque-nombre-pais #pais{
+    max-width: fit-content;
+}
+
+#jugadora-info #posicion{
+    display: flex;
+    flex-direction: row;
+    gap: 1dvw;
+}
+
+#jugadora-info #posicion span{
+    font-size: x-large;
+    font-weight: 500;
+    font-family: "Oswald", sans-serif;
+}
+#jugadora-info .row>div{
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    gap: 15px;
+    background: linear-gradient(to right, color-mix(in srgb, var(--equipo-color) 50%, transparent 50%), color-mix(in srgb, var(--equipo-color) 0%, transparent 100%));
 }
 #jugadora-info .fi{
     border: none;
@@ -226,17 +471,25 @@ body::before{
 #jugadora-ficha{
     height: 100%;
     width: 100%;
-    background-color: var(--color-secundario);
+    /*background: color-mix(in srgb, var(--color-secundario) 40%, transparent 60%);*/
     overflow-y: hidden;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
-    gap: 10px;
     padding-block: 10px;
+    order: 3;
 }
 #mostrador-tarjetas{
     height: 100%;
+}
+
+#jugadora-datos .column{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
 }
 
 #companyeras{
@@ -388,9 +641,41 @@ body::before{
     height: fit-content;
 }
 
+#palmares{
+    max-height: 35%;
+    min-height: 35%;
+}
+
+#palmares-container{
+    align-items: center !important;
+}
+
+
 .trofeo-card{
     display: flex;
     position: relative;
+    height: 70%;
+}
+
+@media (max-width: 768px){
+    .trofeo-card{
+        height: 50%;
+    }
+}
+
+.trofeo-card span {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%); /* 👈 Centra el elemento exactamente en el eje X */
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+}
+
+.trofeo-card img{
+    height: 100% !important;
+    aspect-ratio: 1/1;
+    width: auto !important;
 }
 
 .trofeo-card p{
@@ -472,6 +757,9 @@ span.swiper-pagination-bullet-active{
     body{
         max-height: 100vh;
     }
+    #ficha-jugadora-container{
+        padding-block: 10px;
+    }
     .mySwiper {
         /* Usa un valor fijo o una unidad estable. 
            Si usas vh, asegúrate de que sea el mismo antes y después de cargar */
@@ -505,7 +793,7 @@ span.swiper-pagination-bullet-active{
     }
 
     .swiper #mostrador-tarjetas .swiper-slide-active .tarjeta-wrapper{
-        transform: scale(1.05) !important;
+        transform: scale(1) !important;
         height: 100% !important;
     }
 
@@ -536,20 +824,25 @@ span.swiper-pagination-bullet-active{
         height: 70px;
     }
     #jugadora-info{
-        gap: 1vh;
         padding-inline: 1%;
+        justify-content: center;
+        min-height: 20%;
+        height: 20%;
     }
     #jugadora-info h3{
         font-size: large;
         margin-bottom: 0;
     }
     #jugadora-info #datos-jugadora{
-        width: 100%;
-        align-items: center;
+        width: fit-content;
+        align-items: start;
+        overflow: hidden;
     }
-    #jugadora-info img{
-        width: 100px !important;
-        max-width: 100px !important;
+    #jugadora-info .jugadora-img-wrapper{
+        max-height: 50% !important;
+    }
+    #jugadora-info #jugadora-img{
+        width: 100% !important;
     }
     #jugadora-info .fi {
         font-size: large;
@@ -561,18 +854,80 @@ span.swiper-pagination-bullet-active{
         /*text-align: center;*/
         margin-bottom: 0;
     }
+    #jugadora-info #escudo-container{
+        max-height: 30px;
+        min-height: 30px;
+        max-width: 30px;
+        width: auto;
+    }
     #jugadora-info .grid{
         display: grid;
-        grid-template-rows: repeat(2, 1fr);
+        width: 95%;
         /*justify-items: center;*/
         /*text-align: center;*/
+    }
+    #jugadora-info .bloque-dato span{
+        font-size: medium;
+    }
+    #jugadora-info #pie-img{
+        max-width: 30px !important;
     }
     #jugadora-info .grid>div:first-child{
         width: fit-content;
     }
+    #jugadora-info .grid>div{
+        justify-content: center
+    }
     #jugadora-info .grid>div p{
         font-size: small;
     }
+
+    #jugadora-datos{
+        flex-direction: column !important;
+    }
+
+    #jugadora-datos>div:nth-child(1){
+        width: 100% !important;
+        flex-direction: column !important;
+        height: 50% !important;
+    }
+
+    #jugadora-datos .column{
+        width: 100%;
+        flex-direction: row;
+        height: 50% !important;
+        justify-content: space-between;
+    }
+
+    #jugadora-datos div.bloque-dato {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        max-height: 100%;
+        min-height: 100%;
+        width: 33%;
+        overflow: hidden;
+    }
+
+    #jugadora-datos .bloque-dato span {
+        font-size: medium;
+        font-weight: 500;
+        font-family: "Oswald", sans-serif;
+    }
+
+    #jugadora-datos .bloque-dato p {
+        font-size: x-small;
+    }
+
+    #jugadora-datos .bloque-dato img{
+        max-height: 25px !important;
+        max-width: 25px !important;
+    }
+
+    #equipo.bloque-dato>span a, #nacionalidad.bloque-dato>span a{
+        gap: 5px;
+    }
+
     @media (max-width: 470px) {
         #jugadora-info h3{
             font-size: medium;

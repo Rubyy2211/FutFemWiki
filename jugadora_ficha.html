@@ -1,6 +1,3 @@
-{% load static %}
-{% load i18n %}
-{% load compress %}
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}">
 <head>
@@ -8,11 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Descubre la historia, logros y curiosidades de {{ jugadora.Nombre }} {{ jugadora.Apellidos }} en su ficha personalizada. Explora su carrera, estadísticas y palmarés en nuestra wiki de fútbol femenino.">
     <title>{{ jugadora.Nombre }} {{ jugadora.Apellidos }}</title>
-    <link rel="icon" href="{% static 'img/logo.png' %}">
-    <link rel="preload" as="image" href="/static/img/logo.webp" fetchpriority="high">
-    {% if jugadora %}
-    <link rel="preload" as="image" href="/{{ jugadora.imagen|default:'static/img/predeterm.jpg' }}" fetchpriority="high">
-    {% endif %}
+    <link rel="icon" href="/img/logo.webp">
+    <link rel="preload" as="image" href="/img/logo.webp" fetchpriority="high">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://unpkg.com">
@@ -29,19 +23,20 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@100..900&family=Oswald:wght@200..700&family=Plus+Jakarta+Sans:wght@200..800&family=Russo+One&display=swap" 
       media="print" onload="this.media='all'">
 
-    <link rel="modulepreload" href="/static/FutFemWiki/js/ficha-jugadora.js" as="script">
-    <link rel="preload" href="{% static 'futfem/js/jugadora.js' %}" as="script">
-    <link rel="preload" href="/static/js/animations/header.js" as="script">
+    <link rel="modulepreload" href="/js/ficha-jugadora.js" as="script">
+    <link rel="preload" href="/js/api/jugadora.js" as="script">
+    <link rel="preload" href="/js/animations/header.js" as="script">
 
-    <link rel="preload" href="/api/jugadora_trayectoria?id={{ jugadora.id_jugadora }}" as="fetch" crossorigin="anonymous">
-    <link rel="preload" href="/api/jugadora_companyeras?id_jugadora={{ jugadora.id_jugadora }}&limite=1000" as="fetch" crossorigin="anonymous">
+    <!--<link rel="preload" href="/api/jugadora_trayectoria?id={{ jugadora.id_jugadora }}" as="fetch" crossorigin="anonymous">
+    <link rel="preload" href="/api/jugadora_companyeras?id_jugadora={{ jugadora.id_jugadora }}&limite=1000" as="fetch" crossorigin="anonymous">-->
 
-    {% compress css inline %}
-    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
-    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
-    <link rel="stylesheet" href="{% static 'FutFemWiki/css/ficha-jugadora.css' %}">
-    <link rel="stylesheet" href="{% static 'FutFemWiki/css/tarjeta-jugadora.css' %}">
-    {% endcompress %}
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/estilos.css">
+    <link rel="stylesheet" href="/css/wiki.css">
+    <link rel="stylesheet" href="/css/football-pitch.css">
+    <link rel="stylesheet" href="/css/ficha-jugadora.css">
+    <link rel="stylesheet" href="/css/tarjeta-jugadora.css">
+
     <style>
         .swiper {
             width: 100%;
@@ -68,86 +63,366 @@
     </style>
 </head>
 <body {% if usuario_sesion.equipo_favorito.id_equipo %}data-team="{{ usuario_sesion.equipo_favorito.id_equipo }}"{% endif %}>
+    <header class="navbar">
+        <div class="header-container">
+            <a href="index.html" class="logo-link">
+                <img src="img/logo.webp" alt="Logo FutFemWiki" class="logo-img">
+            </a>
+            <nav class="nav-container">
+                <ul class="nav-links">
+                    <li><a href="jugadoras.html" class="active">Jugadoras</a></li>
+                    <li><a href="ligas.html">Equipos</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
     
-    {% include 'partials/header.html' %}
     <div id="pagina-container">
         <div id="ficha-jugadora-container" class="container">
             <div id="jugadora-info">
-                <img src="/{{ jugadora.imagen|default:'static/img/predeterm.png' }}" id="jugadora-img" alt="{{ jugadora.Nombre }} {{ jugadora.Apellidos }}" fetchpriority="high" style="max-height: 125px; width: 125px; object-fit: cover;">
+                <div class="jugadora-img-wrapper">  
+                    <img src="/img/predeterm.png" id="jugadora-img" alt="{{ jugadora.Nombre }} {{ jugadora.Apellidos }}" fetchpriority="high" style="max-height: 125px; width: 125px; object-fit: cover;">
+                </div>  
                 <div id="datos-jugadora">
-                    <h3 id="nombre-jugadora">{{ jugadora.Nombre }} {{ jugadora.Apellidos }}</h3>
-                    <div class="grid">   
+                    <div style="display: flex; align-items: center;">
+                                <div id="posicion"></div>
+                            </div>
+                    <div class="bloque-nombre-pais">
+                        <div id="pais">
+                            <span id="pais-bandera" class="fi fi-xx"></span>
+                        </div>
+                        <h1 id="nombre-jugadora">Nombre Apellidos</h1>
+                        <!--<div id="escudo-container" style="aspect-ratio: 1/1; width: auto;">
+                            <img id="escudo-equipo" src="/img/equipo-predeterm.svg" id="escudo" alt="equipo">
+                        </div>-->
+                    </div>
+                    <div class="row">   
                         <div>
-                            <div style="display: flex; align-items: center;">
-                            <div id="pais"></div>
-                            <div id="posicion"></div>
+                            <div class="bloque-dato">
+                                <!--<p>Nacimiento</p>-->
+                                <span id="nacimiento">0000-00-00</span>
+                            </div>
+                            |
+                            <div class="bloque-dato">
+                                <!--<p>Altura</p>-->
+                                <span id="altura">000 cm</span>
+                            </div>
+                            |
+                            <!--<div id="pie-habil" class="bloque-dato">
+                                <p id="pie">Pie</p>
+                                <img id="pie-img" src="/img/none.webp" alt="pie-habil" style="max-height: 50px;">
+                            </div>--> 
+                            | 
+                            <!--<div class="bloque-dato">
+                                <p id="value">Valor</p>
+                                <span id="valor">10000 €</span>
+                            </div>-->
+                        </div>
+                </div>
+                </div>
+                
+            </div>
+
+            <hr>
+
+            <div id="resto">
+                <div id="selector">
+                    <a href="#jugadora-datos">Información</a>
+                    <div class="vr"></div>
+                    <a href="#jugadora-ficha">Trayectoria</a>
+                    <div class="vr"></div>
+                    <a href="#jugadora-companyeras">Compañeras</a>
+                </div>
+                <div id="jugadora-datos" class="section">
+                    <div style="display: flex; flex-direction: row; height: 100%; align-items: center; width: 75%;">
+                        <div class="column">
+                            <div id="equipo" class="bloque-dato">
+                                <p>Equipo</p>
+                                <span id="equipo-nombre">
+                                    <a href="/equipo_ficha?id={{ jugadora.Equipo.id_equipo }}&slug={{ jugadora.Equipo.slug }}">
+                                        <img id="escudo-equipo" src="/img/equipo-predeterm.svg" id="escudo" alt="equipo" style="max-width: 50px; max-height: 50px;">
+                                        <span id="equipo-nombre-texto">Equipo Nombre</span>
+                                    </a>
+                                </span>
+                            </div>
+                            <div id="nacionalidad" class="bloque-dato">
+                                <p>Nacionalidad/Región</p>
+                                <span id="nacionalidad-nombre">
+                                    <a href="#">
+                                        <span id="bandera-pais" class="fi fi-xx"></span>
+                                        <span id="nacionalidad-nombre-texto">Nacionalidad</span>
+                                    </a>
+                                </span>
+                            </div>
+                            <div class="bloque-dato">
+                                <p>Nacimiento</p>
+                                <span id="nacimiento-datos">0000-00-00</span>
                             </div>
                         </div>
-                        <div>
-                            <p>{{ jugadora.Nacimiento|date:"d/m/Y" }}</p>
-                            |
-                            <p>{{ jugadora.altura }} cm</p>
-                            |
-                            <p>{% trans 'Pie' %}: {{ jugadora.pie_habil }}</p>    
-                            | 
-                            <p>{% trans 'Value' %}: {{ jugadora.market_value }} €</p>
+                        <div class="column">
+                            <div class="bloque-dato">
+                                <p id="value">Valor de mercado</p>
+                                <span id="valor">10000 €</span>
+                            </div>
+                            <div class="bloque-dato">
+                                <p>Altura</p>
+                                <span id="altura-datos">000 cm</span>
+                            </div>
+                            <div id="pie-habil" class="bloque-dato">
+                                <p id="pie">Pie</p>
+                                <img id="pie-img" src="/img/none.webp" alt="pie-habil" style="max-width: 50px;">
+                            </div> 
                         </div>
-                </div>
-                </div>
-                <div id="escudo-container" style="aspect-ratio: 1/1; width: auto; z-index: -1;">
-                    <img id="escudo-equipo" src="/{{ jugadora.equipo.escudo|default:'static/img/predeterm.png' }}" id="escudo" alt="{{ jugadora.EquipoActual.nombre|default:'' }}">
-                </div>
-            </div>
-            <div id="jugadora-ficha" class="section">
-                <div class="swiper mySwiper">
-                    <div class="swiper-wrapper" id="mostrador-tarjetas">
-                        <div class="tarjeta-wrapper">
-                            <div class="tarjeta-inner">
-                                <div id="tarjeta-jugadora" class="glass tarjeta-jugadora tarjeta-front">
-                                    <img id="imagen-jugadora" src="#" alt="{{ jugadora.Apodo }}" fetchpriority="high" width="400" height="500">
-                                    <p id="nombre" class="nombre">{{ jugadora.Apodo }}</p>
-                                    <div id="detalles" class="detalles">
-                                        <img src="/{{ jugadora.Nacionalidad.bandera }}" alt="{{ jugadora.Nacionalidad.nombre }}">
-                                        <p id="edad">{{ jugadora.Nacimiento }}<span></span></p>
-                                        <p> {{ jugadora.Posicion.abreviatura }} </p>
+
+                    </div>
+                    <div id="campo" class="vertical">
+                        <div class="football-pitch">
+                            <!-- DELANTERAS -->
+                            <div class="pos-slot slot-dc1" data-pos="10">
+                                <div class="jugadora delantera">
+                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                    <div class="jugadora-text">
+                                        <span>DC</span>
+                                        <p>Nombre</p>
                                     </div>
                                 </div>
-
-                                <div class="glass tarjeta-back">
-                                    <h4>Palmarés</h4>
-                                    <div class="trofeos" id="palmares-individual">
-                                        <p>Cargando...</p>
+                            </div>
+                            <div class="pos-slot slot-dc2" data-pos="10">
+                                <div class="jugadora delantera">
+                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                    <div class="jugadora-text">
+                                        <span>DC</span>
+                                        <p>Nombre</p>
                                     </div>
+                                </div>
+                            </div>
+                            <div class="pos-slot slot-dc3" data-pos="10">
+                                <div class="jugadora delantera">
+                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                    <div class="jugadora-text">
+                                        <span>DC</span>
+                                        <p>Nombre</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- EXTREMOS / MCO -->
+                            <div class="pos-slot slot-ei" data-pos="11">
+                                <div class="jugadora delantera">
+                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                    <div class="jugadora-text">
+                                        <span>EI</span>
+                                        <p>Nombre</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pos-slot slot-mco" data-pos="7">
+                                <div class="jugadora mediocampista">
+                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                    <div class="jugadora-text">
+                                        <span>MCO</span>
+                                        <p>Nombre</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pos-slot slot-ed" data-pos="12">
+                                <div class="jugadora delantera">
+                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                    <div class="jugadora-text">
+                                        <span>ED</span>
+                                        <p>Nombre</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- MEDIOCAMPISTAS -->
+                            <div class="pos-slot slot-mi" data-pos="8">
+                                <div class="jugadora mediocampista">
+                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                    <div class="jugadora-text">
+                                        <span>MI</span>
+                                        <p>Nombre</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pos-slot slot-mc1" data-pos="5">
+                                <div class="jugadora mediocampista">
+                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                    <div class="jugadora-text">
+                                        <span>MC</span>
+                                        <p>Nombre</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pos-slot slot-mc2" data-pos="5">
+                                <div class="jugadora mediocampista">
+                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                    <div class="jugadora-text">
+                                        <span>MC</span>
+                                        <p>Nombre</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pos-slot slot-mc3" data-pos="5">
+                                <div class="jugadora mediocampista">
+                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                    <div class="jugadora-text">
+                                        <span>MC</span>
+                                        <p>Nombre</p>
+                                    </div>
+                                </div>
+                            </div> <!-- 🟢 NUEVO MC -->
+                            <div class="pos-slot slot-md" data-pos="9">
+                                <div class="jugadora mediocampista">
+                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                    <div class="jugadora-text">
+                                        <span>MD</span>
+                                        <p>Nombre</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- PIVOTES / MCD (2 MCDs) -->
+                            <div class="pos-slot slot-mcd1" data-pos="6">
+                                <div class="jugadora mediocampista">
+                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                    <div class="jugadora-text">
+                                        <span>MCD</span>
+                                        <p>Nombre</p>
+                                    </div>
+                                </div>
+                            </div> <!-- 🟢 NUEVO MCD 1 -->
+                            <div class="pos-slot slot-mcd2" data-pos="6">
+                                <div class="jugadora mediocampista">
+                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                    <div class="jugadora-text">
+                                        <span>MCD</span>
+                                        <p>Nombre</p>
+                                    </div>
+                                </div>
+                            </div> <!-- 🟢 NUEVO MCD 2 -->
+
+                            <div class="pos-slot slot-mcd3" data-pos="6">
+                                <div class="jugadora mediocampista">
+                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                    <div class="jugadora-text">
+                                        <span>MCD</span>
+                                        <p>Nombre</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- DEFENSAS -->
+                            <div class="pos-slot slot-li" data-pos="4">
+                                <div class="jugadora defensora">
+                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                    <div class="jugadora-text">
+                                        <span>LI</span>
+                                        <p>Nombre</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pos-slot slot-dfc1" data-pos="3">
+                                <div class="jugadora defensora">
+                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                    <div class="jugadora-text">
+                                        <span>DFC</span>
+                                        <p>Nombre</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pos-slot slot-dfc2" data-pos="3">
+                                <div class="jugadora defensora">
+                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                    <div class="jugadora-text">
+                                        <span>DFC</span>
+                                        <p>Nombre</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pos-slot slot-dfc3" data-pos="3">
+                                <div class="jugadora defensora">
+                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                    <div class="jugadora-text">
+                                        <span>DFC</span>
+                                        <p>Nombre</p>
+                                    </div>
+                                </div>
+                            </div> <!-- 🟢 NUEVO DFC 3 -->
+                            <div class="pos-slot slot-ld" data-pos="2">
+                                <div class="jugadora defensora">
+                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                    <div class="jugadora-text">
+                                        <span>LD</span>
+                                        <p>Nombre</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- PORTERA -->
+                            <div class="pos-slot slot-por" data-pos="1">
+                                <div class="jugadora portera">
+                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                    <span class="nacionalidad fi fi-es"></span>
+                                    <div class="jugadora-text">
+                                        <span>POR</span>
+                                        <p>Nombre</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
+                <div id="jugadora-ficha" class="section">
+                    <div class="swiper mySwiper">
+                        <div class="swiper-wrapper" id="mostrador-tarjetas">
+                            <div class="tarjeta-wrapper">
+                                <div class="tarjeta-inner">
+                                    <div id="tarjeta-jugadora" class="glass tarjeta-jugadora tarjeta-front">
+                                        <img id="imagen-jugadora" src="#" alt="{{ jugadora.Apodo }}" fetchpriority="high" width="400" height="500">
+                                        <p id="nombre" class="nombre">{{ jugadora.Apodo }}</p>
+                                        <div id="detalles" class="detalles">
+                                            <img class="{{ jugadora.Nacionalidad.bandera }}" alt="{{ jugadora.Nacionalidad.nombre }}">
+                                            <p id="edad">{{ jugadora.Nacimiento }}<span></span></p>
+                                            <p> {{ jugadora.Posicion.abreviatura }} </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="glass tarjeta-back">
+                                        <h4>Palmarés</h4>
+                                        <div class="trofeos" id="palmares-individual">
+                                            <p>Cargando...</p>
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="swiper-pagination"></div></div>
+                    <div id="palmares" style="height: 100%; min-width: 300px;">
+                        <div id="palmares-container" style="display: flex; flex-direction: row; height: 100%; align-items: center; justify-content: space-around;"></div>
                     </div>
-                    <div class="swiper-pagination"></div></div>
-                <div id="palmares" style="height: 100%; min-width: 300px;">
-                    <div id="palmares-container" style="display: flex; flex-direction: row; height: 100%; align-items: center; justify-content: space-around;"></div>
+                </div>
+                <div id="jugadora-companyeras" class="section" style="overflow-y: hidden;">
+                    <div id="header-compañeras">
+                        <div id="filtros-equipo"></div>
+                    </div>
+                    <div id="companyeras">
+                        <div id="container-companyeras"></div>
+                    </div>
                 </div>
             </div>
-            <div id="jugadora-companyeras" class="section" style="overflow-y: hidden;">
-                <div id="header-compañeras">
-                    <div id="filtros-equipo"></div>
-                </div>
-                <div id="companyeras">
-                    <div id="container-companyeras"></div>
-                </div>
-            </div>
-            <div id="selector">
-                <a href="#jugadora-ficha">{% trans 'Trayectoria' %}</a>
-                <a href="#jugadora-companyeras">{% trans 'Compañeras' %}</a>
-            </div>
+                
         </div>
     </div>
-    <script src="{% static 'js/animations/header.js' %}" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
-    <script src="{% url 'javascript-catalog' %}" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous" defer></script>
-<script type="module">
-    import { cargarFichaJugadora } from '/static/FutFemWiki/js/ficha-jugadora.js';
+<script type="module" defer>
+    import { cargarFichaJugadora } from '/js/ficha-jugadora.js';
+
+    // Obtener los parámetros de la URL (?id=...&slug=...)
+    const urlParams = new URLSearchParams(window.location.search);
+    const jugadoraId = urlParams.get('id');
     
     // Una vez cargados los datos, inicializamos las pestañas inmediatamente
     const links = document.querySelectorAll('#selector a');
@@ -182,7 +457,7 @@
             links.forEach(a => a.classList.remove('active'));
 
             // Limpiar activos en contenedores
-            document.querySelectorAll('#jugadora-ficha, #jugadora-companyeras').forEach(div => {
+            document.querySelectorAll('#jugadora-datos, #jugadora-ficha, #jugadora-companyeras').forEach(div => {
                 div.classList.remove('active');
             });
 
@@ -195,8 +470,13 @@
         });
     });
 
-    // Ejecutamos la carga de datos de la jugadora
-    await cargarFichaJugadora('{{ jugadora.id_jugadora }}');
+    if (jugadoraId) {
+        // Ejecutamos la carga de datos de la jugadora
+        await cargarFichaJugadora(jugadoraId);
+    } else {
+        console.warn("No se proporcionó ningún ID de jugadora en la URL.");
+    }
+    
 </script>
 </body>
 </html>

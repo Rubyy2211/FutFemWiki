@@ -1,5 +1,5 @@
-import {calcularEdad, fetchJugadoraTrayectoriaById, fetchJugadoraPalmaresById, cargarJugadoraDatos, fetchJugadoraCompanyerasById} from '/static/futfem/js/jugadora.js'; 
-import {fetchEquipoById} from '/static/futfem/js/equipos.js';    
+import {calcularEdad, fetchJugadoraTrayectoriaById, fetchJugadoraPalmaresById, cargarJugadoraDatos, fetchJugadoraCompanyerasById, formatearValorMercado} from '/js/api/jugadora.js'; 
+import {fetchEquipoById} from '/js/api/equipos.js';    
 
 let trayectorias, palmares, jugadora, companyeras;
 // Variable global o superior para guardar las compañeras
@@ -11,15 +11,59 @@ const posicion = document.getElementById('posicion');
 const info = document.getElementById('jugadora-info');
 const palmaresIndiv = document.getElementById('palmares-individual');
 const contenedorPais = document.getElementById('pais');
+const contenedorPais2 = document.querySelector('#nacionalidad-nombre a');
+const campo = document.getElementById('campo');
+
+// si el width de la pantalla es menor a 768px, quitamos la clase vertical al campo
 
 export async function cargarFichaJugadora(id_jugadora) {
     [jugadora, trayectorias] = await Promise.all([
         cargarJugadoraDatos(id_jugadora),
         fetchJugadoraTrayectoriaById(id_jugadora)
     ]);   
+
+    console.log(jugadora)
+
+    const ultimo = trayectorias.at(-1);
+    const posiciones = jugadora.Posiciones.map(pos => pos.abreviatura || pos.nombre.substring(0, 3).toUpperCase());
+    // colocar clase primaria/secundaria en el campo según la posición principal de la jugadora usando el data-pos del slot correspondiente
+    const slotPrincipal = document.querySelector(`.pos-slot[data-pos="${jugadora.Posiciones[0].id}"]`);
+    if (slotPrincipal) {
+        slotPrincipal.classList.add('pos-principal');
+    }
+    // posiciones secundarias: añadir clase pos-secundaria a los slots correspondientes
+    jugadora.Posiciones.slice(1).forEach(pos => {
+        const slotSecundario = document.querySelector(`.pos-slot[data-pos="${pos.id}"]`);
+        if (slotSecundario) {
+            slotSecundario.classList.add('pos-secundaria');
+        }
+    });
+
+    document.documentElement.style.setProperty('--equipo-color', ultimo.color)
     // 2. Cargamos lo secundario sin bloquear el primer render
     const companyeras = fetchJugadoraCompanyerasById(id_jugadora, 1000);
     document.getElementById('nombre-jugadora').textContent = jugadora.nombre_completo;
+    document.getElementById('jugadora-img').src = jugadora.imagen
+    document.getElementById('nacimiento').textContent = jugadora.Nacimiento + ' (' + calcularEdad(jugadora.Nacimiento) + ')'
+    document.getElementById('nacimiento-datos').textContent = jugadora.Nacimiento + ' (' + calcularEdad(jugadora.Nacimiento) + ')'
+    document.getElementById('altura').textContent = jugadora.altura + ' cm'
+    document.getElementById('altura-datos').textContent = jugadora.altura + ' cm'
+    document.getElementById('pie-img').src = '/img/'+jugadora.pie+'.webp'
+    document.getElementById('pie-img').style.maxHeight = '50px' ;
+    document.getElementById('valor').textContent = formatearValorMercado(jugadora.Valor)
+    const bandera = document.getElementById('bandera-pais');
+    const bandera2 = document.getElementById('pais-bandera');
+    const nacionalidadNombreTexto = document.getElementById('nacionalidad-nombre-texto');
+
+    // debe comprobarlo todo el rato
+    document.addEventListener('resize', () => {
+        if (window.innerWidth < 768) {
+            campo.classList.remove('vertical');
+        } else {
+            campo.classList.add('vertical');
+        }
+    });
+
     palmares = await fetchJugadoraPalmaresById(id_jugadora, trayectorias);
 
     // Variables globales (o pasadas por parámetro) para usar en cargarTrayectorias
@@ -32,7 +76,7 @@ export async function cargarFichaJugadora(id_jugadora) {
     jugadora.Posiciones.forEach(pos => {
         const abrev = pos.abreviatura || pos.nombre.substring(0, 3).toUpperCase();
         const span = document.createElement('span');
-        span.textContent = gettext(abrev);
+        span.textContent = abrev;
         span.classList.add('pos-'+pos.abreviatura);
         posicion.appendChild(span);
     });
@@ -42,15 +86,15 @@ export async function cargarFichaJugadora(id_jugadora) {
     if (jugadora.pais_iso && jugadora.pais_iso.length > 0) {
         
         jugadora.pais_iso.forEach((iso, index) => {
-            const bandera = document.createElement('span');
             
             // Añadimos las clases de la librería
             bandera.classList.add('fi', `fi-${iso.toLowerCase()}`);
+            bandera2.classList.add('fi', `fi-${iso.toLowerCase()}`);
             
             // Estilos para diferenciar principal de secundarias
-            bandera.style.marginRight = '6px';
             bandera.style.display = 'inline-block';
-            
+            bandera2.style.display = 'inline-block';
+
             if (index > 0) {
                 // Nacionalidades secundarias: apagadas
                 bandera.style.opacity = '0.4';
@@ -59,12 +103,18 @@ export async function cargarFichaJugadora(id_jugadora) {
             } else {
                 // Nacionalidad principal: destacada
                 bandera.style.opacity = '1';
-                bandera.style.transform = 'scale(1.1)';
+                bandera.style.transform = 'scale(1.0)';
                 bandera.style.boxShadow = '0 1px 3px rgba(0,0,0,0.2)';
             }
 
+            console.log(jugadora)
+
+            nacionalidadNombreTexto.textContent = jugadora.nacionalidad.nombre || jugadora.Nacionalidad?.nombre || 'Desconocida';
+
             // Añadimos la bandera al contenedor principal
             contenedorPais.appendChild(bandera);
+            contenedorPais2.appendChild(bandera2);
+            contenedorPais2.appendChild(nacionalidadNombreTexto);
         });
     }
     if (!palmares.individual) {palmares.individual = [];}
@@ -87,6 +137,12 @@ export async function cargarFichaJugadora(id_jugadora) {
         grabCursor: true,
         centeredSlides: true,
         slidesPerView: "auto",
+
+        // 🚀 1. Habilitamos los observadores DOM para detectar visibilidad y dimensiones iniciales
+        observer: true,
+        observeParents: true,
+        observeSlideChildren: true,
+
         coverflowEffect: {
             rotate: 0,
             stretch: 0,
@@ -102,13 +158,20 @@ export async function cargarFichaJugadora(id_jugadora) {
         },
         on: {
             init: function () {
-                // Al cargar por primera vez, pillamos el equipo del primer slide
-                const initialId = this.slides[this.activeIndex].getAttribute('data-equipo-id');
+                const self = this;
+
+                // 🚀 2. Forzamos un update de renderizado tras la carga del DOM
+                requestAnimationFrame(() => {
+                    self.update();
+                    self.setTranslate(self.translate);
+                });
+
+                // Lógica original de palmarés
+                const initialId = this.slides[this.activeIndex]?.getAttribute('data-equipo-id');
                 displayPalmares(palmares, this.activeIndex);
             },
             slideChange: function () {
-                // Al cambiar, pillamos el ID del slide que ha quedado activo
-                const activeId = this.slides[this.activeIndex].getAttribute('data-equipo-id');
+                const activeId = this.slides[this.activeIndex]?.getAttribute('data-equipo-id');
                 displayPalmares(palmares, this.activeIndex);
             }
         }
@@ -122,9 +185,12 @@ async function cargarTrayectorias(jugadora, trayectorias, palmaresPromise) {
     const filtros = document.getElementById('filtros-equipo');
     const fragment = document.createDocumentFragment();
     const escudoEquipo = document.getElementById('escudo-equipo');
-    escudoEquipo.src = '/' + (trayectorias[trayectorias.length - 1]?.escudo || '/static/img/predeterm.png') ;
-    escudoEquipo.alt = trayectorias[trayectorias.length - 1]?.equipo?.nombre || '';
-    escudoEquipo.title = trayectorias[trayectorias.length - 1]?.equipo?.nombre || '';
+    const escudoNombre = document.getElementById('equipo-nombre-texto');
+    console.log('Trayectorias cargadas:', trayectorias);
+    escudoEquipo.src = (trayectorias[trayectorias.length - 1]?.escudo || '/img/predeterm.png') ;
+    escudoEquipo.alt = trayectorias[trayectorias.length - 1]?.nombre || '';
+    escudoEquipo.title = trayectorias[trayectorias.length - 1]?.nombre || '';
+    escudoNombre.textContent = trayectorias[trayectorias.length - 1]?.nombre || '';
     mostrador.innerHTML = ''; // Limpiar
 
     // Nota: Aunque no use el palmarés en el "back", mantengo el await 
@@ -134,7 +200,7 @@ async function cargarTrayectorias(jugadora, trayectorias, palmaresPromise) {
     trayectorias.forEach((trayectoria, index) => {
 
         const botonEquipo = document.createElement('button');
-        botonEquipo.innerHTML = `<img src="/${trayectoria.escudo}">`
+        botonEquipo.innerHTML = `<img src="${trayectoria.escudo}">`
         botonEquipo.dataset.id = trayectoria.equipo;
         filtros.appendChild(botonEquipo);
 
@@ -148,14 +214,14 @@ async function cargarTrayectorias(jugadora, trayectorias, palmaresPromise) {
 
         // 2. Aplicar el diseño de color-mix al elemento 'info'
         if (typeof info !== 'undefined') {
-            info.style.background = `
+            /*info.style.background = `
                 linear-gradient(
                     to bottom,
                     color-mix(in srgb, ${colorPrimario} 30%, transparent),
                     color-mix(in srgb, ${colorSecundario} 30%, transparent)
                 )
             `;
-            info.style.border = `1px solid ${colorPrimario}`;
+            info.style.border = `1px solid ${colorPrimario}`;*/
         }
 
         // 3. Crear el Slide de Swiper
@@ -172,16 +238,17 @@ async function cargarTrayectorias(jugadora, trayectorias, palmaresPromise) {
         const backgroundGradient = `
             linear-gradient(
                 to bottom,
-                color-mix(in srgb, ${colorPrimario} 30%, transparent),
-                color-mix(in srgb, ${colorSecundario} 30%, transparent)
-            )
+                color-mix(in srgb, ${colorPrimario} 50%, transparent 50%),
+                color-mix(in srgb, ${colorPrimario} 80%, #000 20%)
+            ),
+            url('/img/fondo_cesped.webp') center / cover no-repeat
         `;
         
         front.style.background = backgroundGradient;
         front.style.border = `1px solid ${colorPrimario}`;
 
         // 5. Lógica de contenido
-        const imgSrc = trayectoria.imagen?.trim() ? `/${trayectoria.imagen}` : jugadora.imagen?.trim() ? `/${jugadora.imagen}` : "/static/img/predeterm.jpg";
+        const imgSrc = trayectoria.imagen?.trim() ? `${trayectoria.imagen}` : jugadora.imagen?.trim() ? `${jugadora.imagen}` : "/static/img/predeterm.jpg";
         const iso = jugadora.pais_iso && jugadora.pais_iso.length > 0 ? jugadora.pais_iso[0] : 'xx';
         const anyos = trayectoria.fecha_inicio ? (trayectoria.fecha_inicio.substring(0, 4) + (trayectoria.fecha_fin ? ' - ' + trayectoria.fecha_fin.substring(0, 4) : ' - Act.')) : '';
 
@@ -190,8 +257,8 @@ async function cargarTrayectorias(jugadora, trayectorias, palmaresPromise) {
             <p class="nombre">${jugadora.nombre_completo}</p>
             <div class="detalles">
                 <div class="equipo-pais">
-                    <p>${gettext(jugadora.Posiciones[0].abreviatura)}</p>
-                    <img src="/${trayectoria.escudo}" alt="${trayectoria.equipo.nombre}" title="${trayectoria.equipo.nombre}">
+                    <p>${jugadora.Posiciones[0].abreviatura}</p>
+                    <img src="${trayectoria.escudo}" alt="${trayectoria.equipo.nombre}" title="${trayectoria.equipo.nombre}">
                     <span class="fi fi-${iso}" style="font-size: large;"></span>
                 </div>
             </div>
@@ -242,8 +309,8 @@ async function cargarCompanyeras(equipoId) {
         const card = document.createElement('div');
         card.classList.add('companyera-card', 'glass');
         const imgSrc = compañera.imagen?.trim()
-    ? `/${compañera.imagen.replace(/^\/+/, "")}`
-    : "/static/img/predeterm.png";
+    ? `${compañera.imagen.replace(/^\/+/, "")}`
+    : "/img/predeterm.png";
 
         console.log(`Cargando compañera: ${compañera.Nombre_Completo} con imagen ${imgSrc}`);
         card.innerHTML = `
@@ -286,19 +353,28 @@ function displayPalmares(palmares, equipoId) {
     const palmaresAgrupado = agruparTrofeos(palmaresEquipo);
     palmaresAgrupado.forEach(trofeo => {
         const card = document.createElement('div');
+        
         card.classList.add('trofeo-card');
-        console.log(trofeo)
         // El nombre del trofeo como tooltip y el número de veces ganado
         const tooltip = `${trofeo.nombre}` + (trofeo.temporadas && trofeo.temporadas.length > 0 ? `\n(${trofeo.temporadas.join(', ')})` : '');        card.setAttribute('title', tooltip);
         
         card.innerHTML = `
-            <img src="/${trofeo.icono}" alt="${trofeo.nombre}" title="${tooltip}" width="50" height="50" style="width: 50px; height: 50px; object-fit: contain;" loading="lazy">
+            <img src="${trofeo.icono || '/img/default/trophy.webp'}" alt="${trofeo.nombre}" title="${tooltip}" width="50" height="50" style="width: 50px; height: 50px; object-fit: contain;" loading="lazy">
             <p>${trofeo.count}</p>
         `;
         card.style.borderColor = trofeo.color || '#ccc';
         card.style.background = `linear-gradient(to bottom, 
         color-mix(in srgb, ${trofeo.color} 30%, transparent), 
         color-mix(in srgb, ${trofeo.color} 50%, transparent))`;
+
+        if(trofeo.competicion){
+            console.log('entrando')
+            const pais = document.createElement('span');
+            pais.classList.add('fi', `fi-${trofeo.competicion.pais.iso}`)
+            console.log(pais)
+            card.appendChild(pais);
+        }
+        
         contenedor.appendChild(card);
     });
     console.log(palmares.equipo[equipoId], equipoId);

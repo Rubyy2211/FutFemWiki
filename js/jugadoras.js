@@ -229,7 +229,7 @@ function renderJugadorasPage(page = 1){
         /*div.style.border = `1px solid color-mix(in srgb, ${colorPrimario} 50%, transparent)`;*/
 
         pNombre.addEventListener('click', () => {
-            window.location.href = `/jugadora/${jugadora.id_jugadora}/${slugNombre}/`;
+            window.location.href = `jugadora_ficha.html?id=${jugadora.id_jugadora}&slug=${slugNombre}`;
         });
         div.appendChild(div1);
         div.appendChild(pNacimiento);
