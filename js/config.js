@@ -1,4 +1,5 @@
 // js/config.js
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 // Configuración global de URLs de la API
 export const API_BASE_URL = 'https://futfemgames.onrender.com';
