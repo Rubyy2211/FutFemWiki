@@ -15,13 +15,14 @@ body #wiki-equipos {
     display: flex;
     flex-direction: column;
     overflow: hidden; /* Limita el corte al área de la wiki */
+    overflow-y: auto;
     width: 100%;
 }
 
 body #wiki-equipos #wiki-container {
     flex: 1;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     width: 100%;
     max-width: 100%;
     overflow: hidden;
@@ -30,29 +31,48 @@ body #wiki-equipos #wiki-container {
 /* Cabecera de filtros fija arriba */
 body #wiki-equipos #wiki-container #cabecera-wiki-equipos {
     flex-shrink: 0; /* No permite que la cabecera se encoja */
+    width: 25%;
+}
+
+#resto{
+    width: 100%;
+    min-width: 75%;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 body #wiki-equipos #wiki-container #cabecera-jugadora {
     position: relative;
-    height: 15dvh;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding-inline: 15px;
 }
 
-body #wiki-equipos #wiki-container #cabecera-jugadora .pagination {
-    position: absolute;
-    bottom: 0;
-    right: 0;
+body #wiki-equipos #wiki-container .pagination {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    height: fit-content;
+    align-items: center;
 }
 
-body #wiki-equipos #wiki-container #cabecera-jugadora .pagination button{
+body #wiki-equipos #wiki-container .pagination span{
+    height: fit-content;
+}
+
+body #wiki-equipos #wiki-container .pagination button{
     width: fit-content;
     height: fit-content;
-    background: none;
+    background: none !important;
+    font-size: x-large;
+    text-align: center;
+    box-shadow: none !important;
+}
+
+body #wiki-equipos #wiki-container .pagination button:hover{
+    color: var(--color-primario);
 }
 
 body #wiki-equipos #wiki-container #cabecera-jugadora #filtros {
@@ -60,22 +80,125 @@ body #wiki-equipos #wiki-container #cabecera-jugadora #filtros {
     flex-direction: row;
     gap: 15px;
     flex-wrap: wrap;
+    max-width: 100%;
+}
+
+body #wiki-equipos #wiki-container #cabecera-jugadora #filtros>div.filtro-group{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.filtros-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    /*background: #1e1e24;*/
+    /*padding: 16px;*/
+    border-radius: 12px;
+    color: #fff;
+}
+
+.filtro-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: relative;
+    max-width: 100%;
+}
+
+.tags-input-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    background: var(--color-secundario) !important;
+    border: 1px solid var(--color-primario) !important;
+    border-radius: 8px;
+    padding: 6px 10px;
+    min-height: 42px;
+}
+
+.tags-input-wrapper input{
+    box-shadow: none;
+}
+
+.tags-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.tag-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #3a3a4c;
+    border: 1px solid #505068;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.tag-item .remove-tag {
+    cursor: pointer;
+    font-weight: bold;
+    color: #ff5555;
+    margin-left: 2px;
+}
+
+.tags-input-wrapper input {
+    border: none;
+    background: transparent;
+    color: #fff;
+    outline: none;
+    flex: 1;
+    min-width: 120px;
+    font-size: 0.9rem;
+}
+
+.inputs-rango {
+    display: flex;
+    gap: 10px;
+}
+
+.inputs-rango input {
+    width: 50%;
+    background: var(--color-secundario);
+    border: 1px solid var(--color-primario);
+    border-radius: 8px;
+    padding: 8px;
+    color: #fff;
 }
 
 /* Encabezado de la lista (Cabecera de columnas) */
+/* Cabecera en su posición inicial (Transparente) */
 body #wiki-equipos #wiki-container .jugadora-item.header-list {
-    flex-shrink: 0; /* Mantiene su tamaño fijo */
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    
+    /* Estado inicial */
+    background-color: transparent; 
+    transition: background-color 0.25s ease, box-shadow 0.25s ease;
+
+    flex-shrink: 0;
     display: grid;
     grid-template-columns: 1fr max-content 0.5fr 0.5fr;
     align-items: center;
     height: 40px !important;
     min-height: 40px !important;
     border-bottom: 2px solid var(--color-primario, #bd00ff);
-    background: color-mix(in srgb, var(--color-secundario, #1e052c) 100%, transparent 0%);
     color: var(--color-detalles, #fff);
     pointer-events: none;
     text-align: center;
-    z-index: 10;
+}
+
+/* Estado cuando se desplaza el scroll (Fondo activo) */
+body #wiki-equipos #wiki-container .jugadora-item.header-list.is-scrolled {
+    background-color: var(--color-secundario, #1e052c);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); /* Opcional: Sombra para dar profundidad */
 }
 
 body #wiki-equipos #wiki-container .jugadora-item.header-list .jugadora-div1 {
@@ -102,6 +225,7 @@ body #wiki-equipos #wiki-container #items-container {
     overflow-y: auto; /* Habilita el scroll interno */
     overflow-x: hidden;
     width: 100%;
+    min-width: 100%;
     /*padding-bottom: 20px; /* Margen de seguridad para que la última jugadora sea 100% visible */
 }
 
@@ -118,17 +242,195 @@ body #wiki-equipos #wiki-container #items-container .jugadora-item {
     justify-items: center;
     margin-bottom: 0;
     border-radius: 0;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    /*box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);*/
+    box-shadow: none;
+    border: none;
+    border-bottom: 1px solid rgba(253, 252, 252, 0.423);
+    /*backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);*/
+    backdrop-filter: none !important;
     transform: none;
+    background: none;
 }
 
-@media (max-width: 768px){
+/* Contenedor base de la jugadora */
+.jugadora-item {
+    position: relative;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+/* Pseudoelemento para dibujar las 4 esquinas del HUD */
+.jugadora-item::before {
+    content: '';
+    position: absolute;
+    inset: 0; /* Ocupa todo el espacio de la caja */
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(1.04); /* Inicia ligeramente expandido */
+    transition: all 0.25s ease-out;
+    filter: drop-shadow(0 0 6px #c800ff); /* Brillo Neón */
+
+    /* Dibuja las 4 esquinas usando gradientes (ancho x alto de los codos) */
+    background:
+        /* Esquina Superior Izquierda ┌ */
+        linear-gradient(#c800ff, #c800ff) left top / 15px 3px no-repeat,
+        linear-gradient(#c800ff, #c800ff) left top / 3px 15px no-repeat,
+        
+        /* Esquina Superior Derecha ┐ */
+        linear-gradient(#c800ff, #c800ff) right top / 15px 3px no-repeat,
+        linear-gradient(#c800ff, #c800ff) right top / 3px 15px no-repeat,
+
+        /* Esquina Inferior Izquierda └ */
+        linear-gradient(#c800ff, #c800ff) left bottom / 15px 3px no-repeat,
+        linear-gradient(#c800ff, #c800ff) left bottom / 3px 15px no-repeat,
+
+        /* Esquina Inferior Derecha ┘ */
+        linear-gradient(#c800ff, #c800ff) right bottom / 15px 3px no-repeat,
+        linear-gradient(#c800ff, #c800ff) right bottom / 3px 15px no-repeat;
+}
+
+/* --- EFECTO HOVER --- */
+
+.jugadora-item:hover {
+    background: color-mix(in srgb, var(--color-primario) 50%, transparent 50%) !important; /* Fondo morado sutil */
+    box-shadow: inset 0 0 15px rgba(200, 0, 255, 0.25); /* Brillo interior opcional */
+}
+
+.jugadora-item:hover::before {
+    opacity: 1;
+    transform: scale(1); /* Encaja perfectamente en la tarjeta */
+}
+
+#ver-filtros{
+    display: none;
+}
+
+.filtros-header-mobile {
+    display: none; /* Oculto en escritorio */
+}
+
+/* Fondo oscuro translúcido */
+.filtros-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    z-index: 998;
+}
+
+.filtros-overlay.active {
+    display: block;
+}
+
+@media (max-width: 768px) {
+
+    body #wiki-equipos #wiki-container {
+        flex-direction: column;
+    }
+
+    #cabecera-wiki-equipos {
+        max-height: 25%;
+    }
+
+    /* Ocultar el panel de filtros normal en móvil */
+    #filtros {
+        display: none !important;
+    }
+
+    /* Formato Popup Modal cuando se activa */
+    #filtros.active {
+        display: flex !important;
+        flex-direction: column;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        max-width: 420px;
+        max-height: 85vh;
+        overflow-y: auto;
+        z-index: 999;
+        background: color-mix(in srgb, #1e1e24 50%, var(--color-secundario) 50%) ;
+        border: 1px solid #3a3a46;
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    }
+
+    .filtros-header-mobile {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #3a3a46;
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+        width: 100%;
+    }
+
+    .filtros-header-mobile h3 {
+        margin: 0;
+        color: #fff;
+    }
+
+    #cerrar-filtros {
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-size: 1.8rem;
+        cursor: pointer;
+        line-height: 1;
+    }
+
     body #wiki-equipos #wiki-container #items-container .jugadora-item {
         max-height: 45px;
         min-height: 45px;
+    }
+
+    #ver-filtros {
+        display: block;
+    }
+}
+
+@media (max-width: 768px){
+
+    body #wiki-equipos #wiki-container{
+        flex-direction: column;
+    }
+
+    #cabecera-wiki-equipos{
+        max-height: 25%;
+        width: 100% !important;
+    }
+
+    #cabecera-wiki-equipos #cabecera-jugadora{
+        width: 100%;
+    }
+
+    body #wiki-equipos #wiki-container #items-container .jugadora-item {
+        max-height: 45px;
+        min-height: 45px;
+    }
+
+    body #wiki-equipos #wiki-container #items-container .jugadora-item .jugadora-div1{
+        gap: 5px !important;
+        padding-left: 0 !important;
+    }
+
+    body #wiki-equipos #wiki-container #items-container .jugadora-item .jugadora-div1 p{
+        font-size: x-small;
+    }
+
+    body #wiki-equipos #wiki-container #items-container .jugadora-item .jugadora-banderas-posicion span{
+        font-size: small;
+    }
+
+    #ver-filtros{
+        display: block;
     }
 }
 
@@ -156,9 +458,21 @@ body #wiki-equipos #wiki-container #items-container .jugadora-item .jugadora-div
     overflow: hidden;
 }
 
+body #wiki-equipos #wiki-container #items-container .jugadora-item .jugadora-div1>div{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
 body #wiki-equipos #wiki-container #items-container .jugadora-item .jugadora-div1 .jugadora-banderas-posicion {
     display: flex;
     flex-direction: row;
-    gap: 15px;
+    gap: 5px;
     align-items: center;
+}
+
+body #wiki-equipos #wiki-container #items-container .jugadora-item .jugadora-div1 .jugadora-banderas-posicion .jugadora-posicion{
+    display: flex;
+    flex-direction: row;
+    gap: 3px;
 }

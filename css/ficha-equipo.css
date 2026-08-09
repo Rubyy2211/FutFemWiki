@@ -49,18 +49,68 @@ body::before{
     transform: scale(1.05);             /* Evita bordes pixelados al aplicar el blur */
     will-change: filter, transform;
 }
+
+#resto{
+    order: 2;
+    max-height: 70%;
+    height: 70%;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    /*background-color: color-mix(in srgb, var(--color-secundario, #121212) 80%, var(--equipo-color) 10%);*/
+}
+
+#resto #selector{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+    order: 4;
+}
+
+#resto #selector .vr {
+  width: 1px;
+  height: 80%; /* alto de la línea */
+  background-color: #ccc;
+}
+
+#resto #selector a{
+    text-decoration: none;
+    padding: 5px;
+    font-size: medium;
+    color: color-mix(in srgb, var(--color-detalles) 75%, transparent 25%);
+}
+
+#selector a.active{
+    color: var(--color-detalles) !important;
+    text-shadow: 0 0 5px color-mix(in srgb, white 70%, transparent 30%);
+    /*background: var(--color-primario);*/
+}
+#selector a:hover{
+    color: var(--color-detalles) !important;
+    text-shadow: 0 0 5px color-mix(in srgb, white 70%, transparent 30%);
+    /*background: var(--color-primario);*/
+}
+
 #info{
     width: 100%;
-    height: 90%;
-    flex-direction: row;
+    flex-direction: column;
     max-width: 1200px;
-    padding-top: 10px;
-    gap: 10px;
+}
+#info.tab-content{
+    flex-direction: row;
+    align-items: center;
+    overflow: hidden;
 }
 .tab-content{
     display: none ;
     width: 100%;
     height: 100%;
+    order: 3;
 }
 .tab-content.active{
     display: flex ;
@@ -114,7 +164,7 @@ body::before{
     grid-template-columns: repeat(6, 1fr);
     grid-template-rows: repeat(5, 1fr);
     place-items: center;
-    padding: 10px;
+    padding: 20px;
     box-sizing: border-box;
 }
 
@@ -136,7 +186,8 @@ body::before{
 
 /* ⚙️ COLUMNA 3: PIVOTE / MCD */
 .slot-mcd1 { grid-column: 3; grid-row: 2; }
-.slot-mcd2 { grid-column: 3; grid-row: 4; }
+.slot-mcd2 { grid-column: 3; grid-row: 3; }
+.slot-mcd3 { grid-column: 3; grid-row: 4; }
 .slot-mcd1 .jugadora-text span, .slot-mcd2 .jugadora-text span{
     color: var(--color-mediocampista);
 }
@@ -176,61 +227,139 @@ body::before{
     min-height: 15%;
     max-height: 15%;
     width: 100%;
-    background: red;
+    /*background: red;*/
     display: flex;
     flex-direction: row;
     overflow: hidden;
+    overflow-x: auto;
+}
+
+#plantilla #suplentes .jugadora-wrapper, #plantilla #suplentes .jugadora-item{
+    max-height: 100%;
+    min-height: 100%;
+    height: 100%;
+    transform: none;
+}
+
+#plantilla #suplentes .jugadora{
+    aspect-ratio: 1/1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+}
+
+#plantilla #suplentes .jugadora .jugadora-text{
+    display: flex;
+    flex-direction: row;
+    max-height: 30%;
+    overflow: hidden;
+}
+
+#plantilla #suplentes .jugadora .jugadora-text>*{
+    max-height: 50%;
+}
+
+#plantilla #suplentes .jugadora .jugadora-text span{
+    display: none;
+}
+
+#plantilla #suplentes .jugadora .jugadora-text p{
+    margin-bottom: 0;
+    text-align: center;
+}
+
+#plantilla #suplentes .jugadora img{
+    max-height: 70%;
+    justify-self: center;
+    align-self: center;
+}
+
+/*#plantilla #suplentes .jugadora-wrapper{
+    overflow: hidden;
+}*/
+
+#jugadoras-actuales-sec{
+    display: none;
 }
 
 .football-pitch .jugadora{
     height: 100%;
+    min-height: 100%;
+    max-height: 100%;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    max-width: 100%;
 }
 
 .football-pitch .jugadora img{
-    height: 80%;
+    height: 70%;
 }
 
 .football-pitch .jugadora .jugadora-text{
     display: flex;
     flex-direction: row;
-    height: 20%;
+    height: fit-content;
     gap: 10px;
 }
 
 .football-pitch .jugadora .jugadora-text p{
     text-wrap: nowrap;
+    margin-bottom: 0;
 }
 
 /* Estilo para las fichas/posiciones */
 .pos-slot {
     aspect-ratio: 1 / 1;
-    width: 100px;
-    height: 100px;
-    /*border-radius: 50%;
-    background-color: #1a1a1a;
-    border: 2px solid #ffffff;*/
+    
+    /* 🎯 EN PC: Mandan las 5 filas (20% de alto cada una).
+       Al poner height: 100%, la ficha ocupa la altura de su celda (20%) 
+       y aspect-ratio calcula el ancho automáticamente. */
+    height: 100%;
+    max-height: 100%;
+    width: auto;
+    
     color: #ffffff;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     font-weight: bold;
     font-size: 0.8rem;
-    /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);*/
     cursor: pointer;
     transition: transform 0.2s ease, background-color 0.2s ease;
     user-select: none;
+    position: relative;
     overflow: hidden;
 }
 
-.pos-slot:hover {
+#suplentes .jugadora{
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.pos-slot:hover, #suplentes .jugadora:hover {
     transform: scale(1.15);
     /*background-color: #2b82c5;*/
 }
+
+.pos-slot .jugadora-text{
+    width: 100%;
+}
+
+.pos-slot span{
+    justify-self: start;
+}
+
+.nacionalidad{
+    position: absolute;
+    display: none;
+    right: 5px;
+}
+
 
 /* --- VISTA MÓVIL (CAMPO VERTICAL) --- */
 @media (max-width: 768px) {
@@ -245,6 +374,12 @@ body::before{
         grid-template-rows: repeat(6, 1fr);
     }
 
+    .pos-slot {
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+    }
+
     /* Reordenamos las coordenadas para el flujo Vertical */
     .slot-dc1  { grid-row: 1; grid-column: 2; }
     .slot-dc2  { grid-row: 1; grid-column: 3; }
@@ -256,14 +391,18 @@ body::before{
 
     .slot-mi   { grid-row: 3; grid-column: 1; }
     .slot-mc1  { grid-row: 3; grid-column: 2; }
-    .slot-mc2  { grid-row: 3; grid-column: 4; }
+    .slot-mc2  { grid-row: 3; grid-column: 3; }
+    .slot-mc3  { grid-row: 3; grid-column: 4; }
     .slot-md   { grid-row: 3; grid-column: 5; }
 
-    .slot-mcd  { grid-row: 4; grid-column: 3; }
+    .slot-mcd1  { grid-row: 4; grid-column: 2; }
+    .slot-mcd2  { grid-row: 4; grid-column: 3; }
+    .slot-mcd1  { grid-row: 4; grid-column: 4; }
 
     .slot-li   { grid-row: 5; grid-column: 1; }
     .slot-dfc1 { grid-row: 5; grid-column: 2; }
-    .slot-dfc2 { grid-row: 5; grid-column: 4; }
+    .slot-dfc2 { grid-row: 5; grid-column: 3; }
+    .slot-dfc3 { grid-column: 4; grid-row: 5; } /* Central Derecho */
     .slot-ld   { grid-row: 5; grid-column: 5; }
 
     .slot-por  { grid-row: 6; grid-column: 3; }
@@ -274,16 +413,25 @@ body::before{
     justify-content: center;
     align-items: center;
     overflow-x: hidden;
-    max-height: 85%;
+    max-height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+#historicas #jugadoras-container{
+    margin-bottom: 40px;
 }
 
 #historicas #slider-temporadas{
     display: flex;
     flex-direction: row;
     max-width: 80dvw;
+    position: absolute;
+    z-index: 10;
+    bottom: 0px;
 }
 
-#historicas #slider-temporadas::-webkit-scrollbar{
+#historicas #slider-temporadas::-webkit-scrollbar, #historicas #slider-temporadas #temporadas-container::-webkit-scrollbar {
     display: none
 }
 
@@ -314,7 +462,7 @@ body::before{
     }
     #historicas #slider-temporadas{
         max-width: 95dvw;
-        order: 1;
+        order: 2;
     }
 
     #historicas #jugadoras-container, #historicas #historicas-placeholder{
@@ -358,53 +506,167 @@ body::before{
 #equipo-container {
     display: flex;
     flex-direction: column;
-    width: 100%;
-    max-width: 100vw; /* Evita el scroll horizontal */
-    max-height: calc(100dvh - var(--header-height));
+    width: 95%;
+    max-width: 1200px; /* Evita el scroll horizontal */
+    max-height: 100dvh;
     height: 100%;
     align-items: center;
     overflow: hidden; /* Importante para contener todo */
+    padding-block: 20px;
 }
+
+#equipo-info{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+    min-height: 30%;
+    height: 30%;
+    background-blend-mode: color-burn;
+    position: relative;
+    /*border-radius: 20px 20px 0 0;*/
+    overflow: hidden;
+    position: relative;
+    /*background: 
+        linear-gradient(
+            90deg, 
+            color-mix(in srgb, var(--equipo-color) 85%, #000) 0%, 
+            color-mix(in srgb, var(--equipo-color) 60%, transparent 40%) 55%,
+            rgba(0, 0, 0, 0.5) 100%
+        );*/
+    gap: 2dvw;
+    order: 1;
+}
+
+#equipo-info #escudo-container{
+    max-width: 55px;
+    max-height: 55px;
+    aspect-ratio: 1/1;
+    overflow: hidden;
+}
+
+#equipo-info #escudo-container img{
+    overflow: hidden;
+    height: 100%;
+}
+
+/* Contenedor wrapper */
+.equipo-img-wrapper {
+    position: relative;
+    max-width: 200px !important;
+    max-height: 100% !important;
+    aspect-ratio: 1/1;
+    display: flex;
+    align-items: center;
+    padding-inline: 5px;
+    background: color-mix(in srgb, var(--equipo-color) 40%, transparent 60%);
+    /* glow */ box-shadow: 0 0 20px color-mix(in srgb, var(--equipo-color) 70%, transparent 30%);
+}
+
+#equipo-info #equipo-img{
+    padding: unset;
+    max-width: 200px !important;
+    max-height: 100% !important;
+    aspect-ratio: 1/1;
+    margin-bottom: 0;
+    border: none;
+    position: relative;
+}
+/* Esquina superior izquierda */
+#equipo-info .equipo-img-wrapper::after {
+    content: '';
+    position: absolute;
+    inset: 0; /* Cubre todo el cuadro */
+    pointer-events: none; /* No bloquea clics */
+
+    background:
+        /* Superior Izquierda */
+        linear-gradient(var(--equipo-color), var(--equipo-color)) top left / 20px 2px no-repeat,
+        linear-gradient(var(--equipo-color), var(--equipo-color)) top left / 2px 20px no-repeat,
+
+        /* Superior Derecha */
+        linear-gradient(var(--equipo-color), var(--equipo-color)) top right / 20px 2px no-repeat,
+        linear-gradient(var(--equipo-color), var(--equipo-color)) top right / 2px 20px no-repeat,
+
+        /* Inferior Izquierda */
+        linear-gradient(var(--equipo-color), var(--equipo-color)) bottom left / 20px 2px no-repeat,
+        linear-gradient(var(--equipo-color), var(--equipo-color)) bottom left / 2px 20px no-repeat,
+
+        /* Inferior Derecha */
+        linear-gradient(var(--equipo-color), var(--equipo-color)) bottom right / 20px 2px no-repeat,
+        linear-gradient(var(--equipo-color), var(--equipo-color)) bottom right / 2px 20px no-repeat;
+}
+
+#equipo-info p{
+    margin-bottom: 0;
+}
+#equipo-info h3{
+    font-family: "Oswald", sans-serif;
+    width: fit-content;
+    margin-bottom: 0;
+}
+#equipo-info #datos-equipo{
+    width: 100%;
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#equipo-info #datos-equipo .bloque-nombre-pais{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+#equipo-info #datos-equipo .bloque-nombre-pais h1{
+    margin-bottom: 0;
+    font-size: large;
+}
+
+#equipo-info #datos-equipo #bloque-nombre-pais #pais{
+    max-width: fit-content;
+}
+
+#equipo-info #posicion{
+    display: flex;
+    flex-direction: row;
+    gap: 1dvw;
+}
+
+#equipo-info #posicion span{
+    font-size: x-large;
+    font-weight: 500;
+    font-family: "Oswald", sans-serif;
+}
+#equipo-info .row>div{
+    display: flex;
+    flex-direction: row !important;
+    justify-content: start;
+    align-items: center;
+    gap: 15px;
+    background: linear-gradient(to right, color-mix(in srgb, var(--equipo-color) 50%, transparent 50%), color-mix(in srgb, var(--equipo-color) 0%, transparent 100%));
+}
+#equipo-info .fi{
+    border: none;
+    font-size: x-large;
+    height: fit-content;
+    border-radius: 0;
+}
+
 
 hr {
     border: none; /* Quitamos el borde gris por defecto */
-    height: 2px;  /* Le damos el grosor mínimo */
-    width: 85%;
+    height: 1.5px;  /* Le damos el grosor mínimo */
+    min-height: 1.5px;
+    width: 100%;
+    order: 1;
     
     /* Usamos color-mix para que sea una línea sutil que no rompa el diseño */
     background-color: color-mix(in srgb, var(--color-detalles) 50%, transparent); 
     
     margin: 0 0; /* Espaciado arriba y abajo para separar los bloques */
-}
-#selector{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    height: fit-content;
-    flex-direction: row;
-    justify-content: center;
-    /*background: var(--color-secundario);*/
-    width: 300px;
-}
-
-#selector a{
-    text-decoration: none;
-    font-family: "Oswald", sans-serif;
-    color: var(--color-detalles);
-    font-size: larger;
-    padding: 5px;
-    width: 100%;
-    text-align: center;
-}
-#selector a.active{
-    color: var(--color-detalles) !important;
-    text-shadow: 0 0 5px color-mix(in srgb, white 70%, transparent 30%);
-    /*background: var(--color-primario);*/
-}
-#selector a:hover{
-    color: var(--color-detalles);
-    text-shadow: 0 0 5px color-mix(in srgb, white 70%, transparent 30%);
-    /*background: var(--color-primario);*/
 }
 
 #selector .vr {
@@ -417,16 +679,59 @@ hr {
     display: flex;
     flex-direction: row;
 }*/
+
+#info .column{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+#info div.bloque-dato{
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    max-height: 30%;
+    min-height: 30%;
+    overflow: hidden;
+}
+
+div.bloque-dato a{
+    text-decoration: none;
+    color: var(--color-detalles);
+    width: 100%;
+}
+
+.bloque-dato span{
+    font-size: xx-large;
+    font-weight: 500;
+    font-family: "Oswald", sans-serif;
+}
+
+#equipo.bloque-dato>span a, #nacionalidad.bloque-dato>span a{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+.bloque-dato p{
+    margin-bottom: 0;
+    font-size: medium;
+}
+
 .resto{
     display: flex;
+    display: none;
     flex: 1; /* Toma el resto (aprox 70%) */
     min-width: 0; /* ¡VITAL! Permite que el contenedor se encoja si es necesario */
     flex-direction: column !important;
-    padding-left: 15px;
     overflow-y: hidden; /* Si el contenido es alto, que salga scroll aquí */
     align-items: center;
     max-height: 100%;
     height: 95%;
+    min-height: 40%;
 }
 .right, .left{
     display: flex;
@@ -461,11 +766,14 @@ hr {
     justify-content: flex-start;
     flex-shrink: 0; /* Que no se encoja más de esto */
     /*height: 95%;*/
-    max-width: 50%;
-    width: 50%;
+    max-width: 100%;
+    max-height: 90%;
+    min-height: 90%;
+    overflow: hidden;
+    width: 35%;
     gap: 10px;
 }
-.row {
+#info .row {
     display: flex;
     flex-direction: row;
     width: 100%;
@@ -477,7 +785,7 @@ hr {
 }
 
 /* El bloque de Club + Palmarés */
-.row > div:first-child {
+#info .row > div:first-child {
     width: 100%;
     min-width: 250px; /* Un mínimo para que no se vea feo */
     flex-shrink: 0;
@@ -500,12 +808,52 @@ hr {
     flex-shrink: 0;
 }
 
-#tabla-info{
+#tabla-info {
+    order: 1;
+    position: relative;
+    border: none; /* Eliminamos el borde continuo anterior */
+    border-radius: 0 !important;
+    /*background: linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--equipo-color) 30%, transparent),
+        color-mix(in srgb, var(--color-secundario) 30%, transparent)
+    ) !important;*/
+    max-width: 1200px;
+    background: color-mix(in srgb, var(--equipo-color) 40%, transparent 60%);
+     
+}
+
+#tabla-info {
     height: 100%;
-    background: linear-gradient(to bottom, 
-        color-mix(in srgb, var(--color-secundario) 100%, transparent), 
-        color-mix(in srgb, var(--color-secundario) 100%, transparent));
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    min-height: 100%;
+    position: relative;
+    overflow: hidden;
+    border-radius: 0 !important;
+}
+
+/* Las 4 esquinas tácticas (HUD) */
+#tabla-info::before {
+    content: '';
+    position: absolute;
+    inset: 0; /* Cubre todo el cuadro */
+    pointer-events: none; /* No bloquea clics */
+
+    background:
+        /* Superior Izquierda */
+        linear-gradient(var(--equipo-color), var(--equipo-color)) top left / 20px 2px no-repeat,
+        linear-gradient(var(--equipo-color), var(--equipo-color)) top left / 2px 20px no-repeat,
+
+        /* Superior Derecha */
+        linear-gradient(var(--equipo-color), var(--equipo-color)) top right / 20px 2px no-repeat,
+        linear-gradient(var(--equipo-color), var(--equipo-color)) top right / 2px 20px no-repeat,
+
+        /* Inferior Izquierda */
+        linear-gradient(var(--equipo-color), var(--equipo-color)) bottom left / 20px 2px no-repeat,
+        linear-gradient(var(--equipo-color), var(--equipo-color)) bottom left / 2px 20px no-repeat,
+
+        /* Inferior Derecha */
+        linear-gradient(var(--equipo-color), var(--equipo-color)) bottom right / 20px 2px no-repeat,
+        linear-gradient(var(--equipo-color), var(--equipo-color)) bottom right / 2px 20px no-repeat;
 }
 
 #tabla-info .cabecera-tabla{
@@ -520,20 +868,36 @@ hr {
     gap: 10px;
     padding-top: 10px;
 }
-#tabla-info #info #datos-equipo{
+#tabla-info #datos-equipo{
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    height: 40%;
 }
 
-#tabla-info #info #liga-item{
-    width: 100%;
+#tabla-info #fundacion{
+    position: absolute;
+    top: 5px;
+    left: 5px;
+}
+
+#tabla-info #liga-pais{
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    max-height: 20%;
+    height: 20%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+#tabla-info #liga-pais #liga-item{
     height: auto;
-    max-width: 60px;
-    border-radius: 20px;
+    max-width: 100%;
+    aspect-ratio: 1/1;
     /*backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);*/
 }
@@ -558,12 +922,14 @@ hr {
 }
 
 #palmares{
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    padding: 2.5%;
+    display: flex;
+
+flex-direction: row;    /*padding: 2.5%;*/
     align-items: center;
     height: 100%;
 }
+
+
 /* Si hay 4 elementos, el cuarto se centra */
 #palmares > :nth-child(4) {
     grid-column: 2; /* Columna central */
@@ -646,7 +1012,9 @@ section#jugadoras-destacadas{
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 20%;
+    flex-direction: column-reverse;
+    height: 100%;
+    gap: 10px;
 }
 
 section#jugadoras-destacadas .container-jugadoras{
@@ -671,7 +1039,10 @@ section#jugadoras-destacadas .container-jugadoras img{
 }
 
 #tabla-info .container-jugadoras{
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: center;
+    height: 100%;
+    align-items: center;
 }
 
 section#jugadoras-destacadas span, section#jugadoras-destacadas .info-destacada{
@@ -773,6 +1144,9 @@ section#jugadoras-actuales, section#jugadoras-destacadas{
     width: 100%;
     height: max-content;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
 }
 
 #jugadoras-actuales-container .jugadora-item .jugadora-div1 .jugadora-div1_2,
@@ -802,6 +1176,19 @@ section#jugadoras-actuales, section#jugadoras-destacadas{
     /*background: var(--color-secundario);*/
 }
 
+#jugadoras-actuales-container .jugadora-item .jugadora-div1 .jugadora-banderas{
+    display: none;
+}
+
+
+#jugadoras-container .jugadora-item .jugadora-div1 .jugadora-banderas img{
+    width: 30%;
+    max-width: 30%;
+    aspect-ratio: 1/1;
+    height: auto;
+    max-width: 30px;
+}
+
 #jugadoras-actuales-container .jugadora-item .jugadora-div1 .jugadora-banderas>*,
 #jugadoras-container .jugadora-item .jugadora-div1 .jugadora-banderas>*{
     max-width: 30%;
@@ -811,11 +1198,12 @@ section#jugadoras-actuales, section#jugadoras-destacadas{
 
 #jugadoras-actuales-container .jugadora-item .jugadora-div1 img,
 #jugadoras-container .jugadora-item .jugadora-div1 img{
-    height: 100%;
-    max-width: 150px;
-    max-height: 150px;
+    /*height: 100%;*/
+    max-width: 100%;
+    max-height: 100%;
     aspect-ratio: 1/1 !important;
-    width: auto;
+    width: 100%;
+    height: auto;
 }
 
 #jugadoras-actuales-container .jugadora-item .jugadora-posicion,
@@ -938,7 +1326,7 @@ section#jugadoras-actuales, section#jugadoras-destacadas{
     max-width: 150px;
 }
 
-.tabla-jugadoras .jugadora-wrapper .jugadora-info{
+.tabla-jugadoras .jugadora-wrapper .equipo-info{
     width: 100%;
     display: flex;
     align-items: center;
@@ -947,7 +1335,7 @@ section#jugadoras-actuales, section#jugadoras-destacadas{
     overflow: hidden; /* Evita que cualquier cosa asome por los lados */
 }
 
-.tabla-jugadoras .jugadora-wrapper .jugadora-info h3{
+.tabla-jugadoras .jugadora-wrapper .equipo-info h3{
     text-wrap: nowrap;
     flex: 1;
     background: var(--color-secundario);
@@ -964,6 +1352,7 @@ section#jugadoras-actuales, section#jugadoras-destacadas{
 #tabla-jugadoras-destacadas{
     height: 100%;
     border: none;
+    border-radius: 0;
 }
 
 #tabla-jugadoras-destacadas .cabecera-tabla{
@@ -989,11 +1378,12 @@ section#jugadoras-actuales, section#jugadoras-destacadas{
 
 #tabla-jugadoras-destacadas #jugadoras-destacadas-container{
     padding-inline: 0;
+    height: 100%;
 }
 
 #tabla-jugadoras-destacadas #jugadoras-destacadas-container>div{
     border: 0.5px solid rgba(255,255,255,0.5);
-    border-radius: 20px;
+    border-radius: 0px !important;
     height: 100%;
     align-items: flex-start !important;
     justify-content: space-between;
@@ -1001,6 +1391,32 @@ section#jugadoras-actuales, section#jugadoras-destacadas{
     padding-right: 0;
     border: none;
     position: relative;
+}
+
+/* Esquina superior izquierda */
+#tabla-jugadoras-destacadas #jugadoras-destacadas-container>div::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 20px;  /* Largo horizontal de la esquina */
+    height: 20px; /* Largo vertical de la esquina */
+    border-top: 2px solid var(--equipo-color);
+    border-left: 2px solid var(--equipo-color);
+    pointer-events: none; /* Evita que bloquee clics en el contenido */
+}
+
+/* Esquina inferior derecha */
+#tabla-jugadoras-destacadas #jugadoras-destacadas-container>div::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 20px;  /* Largo horizontal */
+    height: 20px; /* Largo vertical */
+    border-bottom: 2px solid var(--equipo-color);
+    border-right: 2px solid var(--equipo-color);
+    pointer-events: none;
 }
 
 #tabla-jugadoras-actuales #jugadoras-actuales-container .jugadora-item{
@@ -1230,12 +1646,22 @@ section#jugadoras-actuales, section#jugadoras-destacadas{
 
 #tabla-trofeos{
     border: none;
-    height: 40%;
+    height: fit-content;
+    min-height: fit-content;
 }
 
 #tabla-trofeos h3{
     font-size: medium;
     text-wrap: nowrap;
+}
+
+#tabla-trofeos .cabecera-tabla{
+    justify-content: center;
+    background: none;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+    backdrop-filter: none;
 }
 
 .tabla-jugadoras.fullscreen {
@@ -1295,25 +1721,122 @@ body.no-scroll {
         width: 50px !important;
         height: auto !important;
     }
-    #info,#plantilla,#historicas{
+    /*#info,#plantilla,#historicas{
         order: 1;
-    }
-    #selector{
+    }*/
+    /*#selector{
         order: 2;
+    }*/
+    #resto{
+        height: 80%;
+        min-height: 80%;
     }
     #info{
-        gap: 5px;
-        flex-direction: column;
+        gap: 10px;
+        flex-direction: column !important;
         padding: 0;
         max-width: 500px;
         height: 100%;
         overflow-y: hidden;
     }
+
+    #info>div:nth-child(1){
+        flex-direction: column !important;
+        align-items: center;
+        justify-content: center;
+        height: 65% !important;
+        width: 100% !important;
+    }
+
+    #info .column{
+        flex-direction: row;
+    }
+
+    #info .column .bloque-dato{
+        height: 100%;
+        min-height: 100%;
+        max-height: 100%;
+        justify-content: center;
+    }
+
+    #info .column .bloque-dato img{
+        max-width: 25px !important;
+        max-height: 25px !important;
+    }
+
+    .bloque-dato span {
+        font-size: medium;
+        font-weight: 500;
+        font-family: "Oswald", sans-serif;
+    }
+
+
+
     #equipo-container{
         flex-direction: column;
         align-items: center;
         overflow-y: auto;
     }
+
+    #equipo-info{
+        padding-inline: 1%;
+        justify-content: center;
+        min-height: 20%;
+        height: 20%;
+    }
+    #equipo-info h3{
+        font-size: large;
+        margin-bottom: 0;
+    }
+    #equipo-info #datos-jugadora{
+        width: fit-content;
+        align-items: start;
+        overflow: hidden;
+    }
+    #equipo-info .equipo-img-wrapper{
+        max-height: 50% !important;
+    }
+    #equipo-info #equipo-img{
+        width: 100% !important;
+    }
+    #equipo-info .fi {
+        font-size: large;
+    }
+    #equipo-info #posicion span{
+        font-size: x-small;
+    }
+    #equipo-info h3{
+        /*text-align: center;*/
+        margin-bottom: 0;
+    }
+    #equipo-info #escudo-container{
+        max-height: 30px;
+        min-height: 30px;
+        max-width: 30px;
+        width: auto;
+    }
+    #equipo-info .grid{
+        display: grid;
+        width: 95%;
+        /*justify-items: center;*/
+        /*text-align: center;*/
+    }
+    #equipo-info .bloque-dato span{
+        font-size: medium;
+    }
+    #equipo-info #pie-img{
+        max-width: 30px !important;
+    }
+    #equipo-info .grid>div:first-child{
+        width: fit-content;
+    }
+    #equipo-info .grid>div{
+        justify-content: center
+    }
+    #equipo-info .grid>div p{
+        font-size: small;
+    }
+
     .badge-img{
         margin-bottom: 5px;
         width: 100%;
@@ -1343,7 +1866,7 @@ body.no-scroll {
 
    .resto{
         width: 100%;
-        height: fit-content !important;
+        /*height: fit-content !important;*/
         min-height: 20% !important;
         flex: unset;
         order: 1;
@@ -1359,6 +1882,12 @@ body.no-scroll {
     #jugadoras-container{
         gap: 5px;
         grid-template-columns: repeat(3, 1fr);
+        max-width: 100%;
+    }
+
+    #jugadoras-container .jugadora-wrapper{
+        max-width: 100%;
+        min-width: 100%;
     }
 
     .resto #jugadoras-container .jugadora-item{
@@ -1391,7 +1920,8 @@ body.no-scroll {
     section#jugadoras-destacadas{
         min-width: 95%;
         width: 95%;
-        height: 25% !important;
+        height: 100% !important;
+        gap: 10px;
     }
     
     div#jugadoras-actuales{
@@ -1604,10 +2134,21 @@ body.no-scroll {
 
     section#jugadoras-destacadas #jugadoras-destacadas-container{
         gap: 7px;
+        flex-direction: column;
     }
 
     section#jugadoras-destacadas #jugadoras-destacadas-container>div{
         padding: 7px;
+        width: 100%;
+        overflow: hidden;
+        max-height: 100%;
+    }
+
+    section#jugadoras-destacadas #jugadoras-destacadas-container .jugadora-item{
+        aspect-ratio: 1/1;
+        height: 100% !important;
+        width: auto;
+        min-height: 100% !important;
     }
 
     #tabla-jugadoras-destacadas #jugadoras-destacadas-container p{
@@ -1656,7 +2197,7 @@ body.no-scroll {
     }
 
     #jugadoras-actuales-container .jugadora-item, #jugadoras-container .jugadora-item{
-        min-height: fit-content;
+        min-height: 100%;
         min-width: 20% !important;
 
     }

@@ -30,7 +30,7 @@ export async function handleAutocompletePosicion(event) {
                     
                     listItem.innerHTML = `
                         <span class="pos-${abreviatura.toUpperCase()}">
-                            ${gettext(abreviatura.toUpperCase())}
+                            ${abreviatura.toUpperCase()}
                         </span>
                         <div class="jugadora-info">
                             <strong>${nombre}</strong>
@@ -43,7 +43,7 @@ export async function handleAutocompletePosicion(event) {
                         chip.classList.add('input-chip');
                         chip.innerHTML = `
                             <span class="pos-${abreviatura.toUpperCase()}">
-                            ${gettext(abreviatura.toUpperCase())}
+                            ${abreviatura.toUpperCase()}
                             </span>
                             <!--<div class="jugadora-info">
                                 <strong>${nombre}</strong>

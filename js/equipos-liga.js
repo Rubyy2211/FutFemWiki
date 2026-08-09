@@ -18,67 +18,6 @@ export async function inicializarEquiposLiga(id){
 
 }
 
-export function displayEquipos(data, container) {
-   
-    //dropdownMenuLigas.innerHTML = '';
-
-    if (data.error) {
-        //dropdownMenuLigas.innerHTML = `<li class="dropdown-item error">Error: ${data.error}</li>`;
-        return;
-    }
-
-    data.forEach(async (equipo, index) => {
-        const equipoItem = document.createElement('div');
-        const img = document.createElement('img');
-        const p = document.createElement('p');
-        equipoItem.className = 'equipo-item';
-        equipoItem.dataset.id = equipo.id || equipo.id; // Asegura capturar la ID
-        img.src = equipo.escudo;
-        p.textContent = equipo.nombre;
-        equipoItem.appendChild(img);
-        equipoItem.appendChild(p);
-
-        //img.crossOrigin = 'anonymous'
-        /*img.onload = async () => {
-            try {
-                const colors = await getDominantColors(img, 4);
-
-                console.log(colors)
-
-                colors.forEach((color, index) => {
-                    // Si 'color' viene como array [r, g, b], lo formateamos a rgb()
-                    const colorFormatted = Array.isArray(color) 
-                        ? `rgb(${color.join(',')})` 
-                        : color;
-
-                    // CORRECCIÓN: Usar .style.setProperty y ajustar el índice a 1..4
-                    ligaItem.style.setProperty(`--liga-color-${index + 1}`, colorFormatted);
-                });
-            } catch (error) {
-                console.error('Error extrayendo colores de la imagen:', error);
-            }
-        };*/
-        container.appendChild(equipoItem);
-
-        // NAVEGACIÓN HACIA LA PÁGINA DE LA LIGA
-        equipoItem.addEventListener('click', () => {
-            const ligaSlug = (equipo.nombre || '')
-                .toLowerCase()
-                .replace(/\s+/g, '-')
-                .replace(/[^a-z0-9\-]/g, '');
-
-            // Redirige a la página dedicada de la liga
-            window.location.href = `equipo_ficha.html?id=${equipo.id || equipo.id}&slug=${ligaSlug}`;
-        });
-    });
-
-    activarSeleccionPorScroll(container);
-    activarGrabAndScroll(container);
-    requestAnimationFrame(() => {
-        actualizarElementoActivo(container);
-    });
-}
-
 export async function cargarVistaMapaEquipos(equipos) {
     if (!containerDisplay || !equipos || equipos.length === 0) return;
 
@@ -130,44 +69,99 @@ export async function cargarVistaMapaEquipos(equipos) {
     }
 }
 
-// Función única para gestionar la clase CSS 'selected'
+// Función única para gestionar la clase CSS 'selected' y centrado
 export function seleccionarEquipo(itemSeleccionado, container) {
     const items = container.querySelectorAll('.equipo-item');
     if (items.length === 0) return;
 
-    // CASO 1: Si no se pasa un ítem específico, lo calculamos por porcentaje de scroll
-    if (!itemSeleccionado) {
-        const maxScroll = container.scrollWidth - container.clientWidth;
-        const porcentajeScroll = maxScroll > 0 ? (container.scrollLeft / maxScroll) : 0;
-        const containerRect = container.getBoundingClientRect();
-        
-        // Punto de referencia dinámico (de 0% a 100% de la pantalla)
-        const puntoReferencia = containerRect.left + (porcentajeScroll * containerRect.width);
+    // CASO 1: Si se hace clic o no se especifica item, tomamos el centro estricto del contenedor
+    const containerRect = container.getBoundingClientRect();
+    const centroContenedor = containerRect.left + (containerRect.width / 2);
 
+    if (!itemSeleccionado) {
         let menorDistancia = Infinity;
 
         items.forEach(item => {
             const itemRect = item.getBoundingClientRect();
             const centroItem = itemRect.left + (itemRect.width / 2);
-            const distancia = Math.abs(centroItem - puntoReferencia);
+            const distancia = Math.abs(centroItem - centroContenedor);
 
             if (distancia < menorDistancia) {
                 menorDistancia = distancia;
-                itemSeleccionado = item; // Asignamos el más cercano
+                itemSeleccionado = item; // Asignamos la tarjeta más cercana al centro
             }
         });
     }
 
-    // CASO 2: Aplicamos la clase 'selected'
-    // 2. Aplicamos la clase 'selected' a la tarjeta
+    // Aplicar la clase 'selected'
     if (itemSeleccionado && !itemSeleccionado.classList.contains('selected')) {
         items.forEach(item => item.classList.remove('selected'));
         itemSeleccionado.classList.add('selected');
 
-        // 🎯 AQUÍ ESTÁ LA CLAVE: Notificar al mapa cuál es la ID del equipo activo
+        // Notificar al mapa la ID del equipo activo
         const equipoId = itemSeleccionado.dataset.id;
         marcarEquipoSeleccionadoPorId(equipoId);
     }
+}
+
+export function displayEquipos(data, container) {
+    if (data.error) return;
+
+    container.innerHTML = ''; // Limpiar contenedor por seguridad
+
+    data.forEach((equipo) => {
+        const equipoItem = document.createElement('div');
+        const img = document.createElement('img');
+        const p = document.createElement('p');
+        equipoItem.className = 'equipo-item';
+        equipoItem.dataset.id = equipo.id;
+        img.src = equipo.escudo;
+        p.textContent = equipo.nombre;
+        equipoItem.appendChild(img);
+        equipoItem.appendChild(p);
+
+        container.appendChild(equipoItem);
+
+        // Generar slug limpio para la URL
+        const equipoSlug = (equipo.nombre || '')
+            .toLowerCase()
+            .replace(/\s+/g, '-')
+            .replace(/[^a-z0-9\-]/g, '');
+
+        // Manejo del evento Click
+        equipoItem.addEventListener('click', () => {
+            const yaEstaSeleccionado = equipoItem.classList.contains('selected');
+
+            if (yaEstaSeleccionado) {
+                // 🚀 Si ya es la tarjeta activa, navegar a la ficha del equipo
+                window.location.href = `equipo_ficha.html?id=${equipo.id}&slug=${equipoSlug}`;
+            } else {
+                // 🎯 Si no está activa, centrarla y seleccionarla en el mapa
+                equipoItem.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest',
+                    inline: 'center'
+                });
+                seleccionarEquipo(equipoItem, container);
+            }
+        });
+    });
+
+    activarSeleccionPorScroll(container);
+    activarGrabAndScroll(container);
+
+    // Forzar que la primera tarjeta comience centrada
+    requestAnimationFrame(() => {
+        const primerItem = container.querySelector('.equipo-item');
+        if (primerItem) {
+            primerItem.scrollIntoView({
+                behavior: 'auto',
+                block: 'nearest',
+                inline: 'center'
+            });
+            seleccionarEquipo(primerItem, container);
+        }
+    });
 }
 
 // Función que detecta cuál es el equipo más cercano según el scroll

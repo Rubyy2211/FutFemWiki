@@ -16,12 +16,12 @@ export async function handleAutocompletePais(event, id, onSelectCallback = null)
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const results = await response.json();
 
-            // Evitar duplicados
+            // Evitar duplicados en las sugerencias desplegadas
             const idsMostrados = new Set();
 
             results.forEach(nation => {
                 const { pais, nombre, iso } = nation;
-                if (!idsMostrados.has(pais)) { // Verificar que no se haya mostrado este ID
+                if (!idsMostrados.has(pais)) {
                     idsMostrados.add(pais);
 
                     const listItem = document.createElement('li');
@@ -35,40 +35,18 @@ export async function handleAutocompletePais(event, id, onSelectCallback = null)
                     `;
 
                     listItem.addEventListener('click', () => {
-                        // 1. Crear el "Chip" (el elemento visual que verá el usuario)
-                        const chip = document.createElement('div');
-                        chip.classList.add('input-chip');
-                        chip.innerHTML = `
-                            <span class="fi fi-${iso} fis"></span>
-                            <span class="chip-text">${nombre}</span>
-                            <span class="chip-cancel">&times;</span>
-                        `;
+                        // 1. Limpiar lista de sugerencias e input para poder buscar otro
+                        suggestionsList.innerHTML = '';
+                        input.value = '';
+                        input.focus();
 
-                        // 2. Insertar el Chip y ocultar el input
-                        input.insertAdjacentElement('beforebegin', chip);
-                        input.style.display = 'none'; // Ocultamos el input real
-                        input.value = nombre; // Guardamos el nombre por si el form se envía
-                        input.setAttribute('data-id', pais);
-                        
-                        suggestionsList.innerHTML = ''; // Limpiar sugerencias
-
-                        // 3. Lógica para el botón 'X' (Cancelar)
-                        chip.querySelector('.chip-cancel').addEventListener('click', () => {
-                            chip.remove(); // Quitamos el chip
-                            input.style.display = 'block'; // Mostramos el input
-                            input.value = ''; // Limpiamos el texto
-                            input.setAttribute('data-id', null);
-                            input.focus();
-                            
-                            // 🚀 AVISAMOS AL CALLBACK QUE SE QUITÓ EL FILTRO (Enviando null)
-                            if (onSelectCallback && typeof onSelectCallback === 'function') {
-                                onSelectCallback(null);
-                            }
-                        });
-
-                        // 🚀 EJECUTAMOS EL CALLBACK AL SELECCIONAR CON ÉXITO
+                        // 2. Notificar al callback enviando el objeto completo
                         if (onSelectCallback && typeof onSelectCallback === 'function') {
-                            onSelectCallback(pais); 
+                            onSelectCallback({
+                                id: pais,
+                                nombre: nombre,
+                                iso: iso
+                            }); 
                         }
                     });
 
@@ -76,10 +54,8 @@ export async function handleAutocompletePais(event, id, onSelectCallback = null)
                 }
             });
         } catch (error) {
-            console.error('Error al buscar la jugadora:', error);
+            console.error('Error al buscar país:', error);
         }
-    } else {
-        input.setAttribute('data-id', null); // Limpiar el ID si se borra el texto de búsqueda
     }
 }
 

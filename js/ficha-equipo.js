@@ -1,23 +1,49 @@
 import { formatearValorMercado } from "/js/api/jugadora.js";
 import { fetchEquipoById ,jugadorasxTemporadaYEquipo, fetchMultiplesEquiposPalmares } from "/js/api/equipos.js";
 import { calcularEdad } from '/js/api/jugadora.js';
-//import { ponerJugadoraEnField } from "/static/js/football_field.js";
+import { crearAlineacion, ponerJugadoraEnField, limpiarCampoYSuplentes } from "/js/utils/campo-futbol.js";
+import { renderSlider } from "/js/utils/slider.js";
 
 const divPalmares = document.getElementById('palmares');
 const historicasPlaceholder =  document.getElementById('historicas-placeholder');
 const jugadorasContainer =  document.getElementById('jugadoras-container');
 let jugadorasHistoricas = null;
 let equipo;
+let valorMercadoTotal = 0;
 setupSliderTemporadas(); // Inicializamos el slider de temporadas
 
 export async function initFicha(id){
     equipo = await fetchEquipoById(id);
-    document.getElementById('equipo-fundacion').textContent = equipo.fundacion;
+    
+    if (equipo?.formacion?.nombre) {
+        crearAlineacion(equipo.formacion.nombre);
+    }
+
+    //const containerEquipo = document.querySelector('#tabla-info');
+    document.documentElement.style.setProperty('--equipo-color', equipo.color);
+
+    const bandera = document.getElementById('pais-bandera')
+    const bandera2 = document.getElementById('bandera-pais')
+    const iso = equipo.escudo?.match(/\/media\/([^\/]+)\//)?.[1] || '';
+
+    document.getElementById('fundacion-datos').textContent = equipo.fundacion;
+    document.getElementById('fundacion').textContent = 'Est. ' + equipo.fundacion;
+    document.getElementById('formacion').textContent = equipo.formacion.nombre;
     document.getElementById('equipo-nombre').textContent = equipo.nombre;
+    bandera.classList.add('fi');
+    bandera.classList.add(`fi-${iso.toLowerCase()}`); 
+    bandera2.classList.add('fi');
+    bandera2.classList.add(`fi-${iso.toLowerCase()}`);
+    document.getElementById('nacionalidad-nombre-texto').textContent = equipo.liga.pais;
     document.getElementById('historicas-equipo-nombre').textContent = equipo.nombre;
+    document.getElementById('nombre-equipo').textContent = equipo.nombre;
     document.getElementById('escudo').src = equipo.escudo;
+    document.getElementById('equipo-img').src = equipo.escudo;
+    document.getElementById('liga-item').src = equipo.liga.logo;
+    document.getElementById('logo-liga').src = equipo.liga.logo;
+    document.getElementById('liga-nombre-texto').textContent = equipo.liga.nombre;
     document.getElementById('historicas-escudo').src = equipo.escudo;
-    document.getElementById('btn-mapa-google').href = `https://www.google.com/maps/search/?api=1&query=${equipo.lat},${equipo.long}`;
+    document.getElementById('btn-estadio').href = `https://www.google.com/maps/search/?api=1&query=${equipo.lat},${equipo.long}`;
 
     await Promise.all([ crearFichaJugadorasActuales(id, equipo.color), crearFichaJugadorasDeSiempre(id, equipo.color)], displayPalmares(id));
     crearBotonesTemporada(equipo.fundacion, equipo.color);
@@ -30,8 +56,10 @@ export async function initFicha(id){
 export async function displayPalmares(equipo) {
     const data = await fetchMultiplesEquiposPalmares(equipo, '1950-act');
     if (!data?.success?.[0]) return;
-    
+
     const palmaresAgrupado = agruparTrofeos(data.success[0]);
+    console.log('Palmarés agrupado:', palmaresAgrupado);
+    renderSlider('#left', palmaresAgrupado);
 
     palmaresAgrupado.forEach(trofeo => {
         const div = document.createElement("div");
@@ -59,6 +87,7 @@ function agruparTrofeos(trofeos) {
                 nombre: t.nombre,
                 icono: t.icono,
                 tipo: t.tipo,
+                competicion: t.competicion, // 👈 Incluye el objeto competición completo (id, nombre, logo, pais, etc.)
                 count: 0,
                 temporadas: []
             };
@@ -226,7 +255,8 @@ function crearFichaBaseJugadora(jugadora, colorPredeterminado, mostrarEtapas = f
     if (jugadora.nacionalidades_isos?.[0]) {
         const iso = jugadora.nacionalidades_isos[0];
         const icon = document.createElement('span');
-        icon.className = `fi fi-${iso.toLowerCase()}`;
+        icon.classList.add('fi');
+        icon.classList.add(`fi-${iso.toLowerCase()}`); 
         divBanderas.appendChild(icon);
     }
 
@@ -303,7 +333,9 @@ function crearFichaBaseJugadora(jugadora, colorPredeterminado, mostrarEtapas = f
 
 export async function crearFichaJugadorasActuales(equipo, color) {
     const jugadoras = await jugadorasxTemporadaYEquipo(equipo, 'actual');
-    console.log(jugadoras.success)
+    valorMercadoTotal = calcularValorMercadoTotal(jugadoras.success);
+    document.getElementById('valor').textContent = valorMercadoTotal;
+    console.log('actuales', jugadoras.success)
     if (jugadoras.error) {
         console.error('Error al obtener jugadoras:', jugadoras.error);
         return;
@@ -321,7 +353,7 @@ export async function crearFichaJugadorasDeSiempre(equipo, color) {
 }
 
 async function displayJugadorasActuales(id, jugadoras, color) {
-    console.log(jugadoras)
+
     const container = document.getElementById(id);
     if (!container || !jugadoras || jugadoras.length === 0) return;
 
@@ -354,8 +386,6 @@ async function displayJugadorasActuales(id, jugadoras, color) {
     jugadoras.forEach(jugadora => {
         const posicionPrincipal = jugadora.posiciones_ids?.[0];
         let colocadoEnCampo = false;
-
-        console.log(jugadora)
 
         if (posicionPrincipal) {
             colocadoEnCampo = ponerJugadoraEnField(jugadora, posicionPrincipal);
@@ -493,71 +523,13 @@ function crearBotonesTemporada(anyo_fundacion, color) {
         }
 }
 
-/**
- * Inserta el elemento HTML de la jugadora en un slot libre del campo
- */
-function ponerJugadoraEnField(jugadora, posicionId) {
-    // Buscar todos los slots que coincidan con la ID de posición
-    const slots = document.querySelectorAll(`#campo .pos-slot[data-pos="${posicionId}"]`);
 
-    // Encontrar el primer slot que aún no esté ocupado
-    let slotLibre = null;
-    for (const slot of slots) {
-        if (!slot.querySelector('.jugadora')) {
-            slotLibre = slot;
-            break;
-        }
-    }
+function calcularValorMercadoTotal(jugadoras) {
+    if (!jugadoras || jugadoras.length === 0) return 0;
 
-    // Si todos los slots de esa posición están ocupados, retorna false
-    if (!slotLibre) return false;
-
-    // Crear la estructura interna que pediste
-    const divJugadora = document.createElement('div');
-    divJugadora.className = 'jugadora';
-    divJugadora.dataset.id = jugadora.id;
-
-    const img = document.createElement('img');
-    img.src = jugadora.foto || jugadora.imagen || '/img/predeterm.png';
-    img.alt = jugadora.nombre || 'jugadora-silueta';
-
-    const divText = document.createElement('div');
-    divText.className = 'jugadora-text';
-
-    const spanPos = document.createElement('span');
-    spanPos.textContent = jugadora.posiciones_abrev[0] || slotLibre.textContent.trim();
-
-    const pNombre = document.createElement('p');
-    pNombre.textContent = jugadora.nombre_corto || jugadora.nombre || 'Jugadora';
-
-    divText.appendChild(spanPos);
-    divText.appendChild(pNombre);
-
-    divJugadora.appendChild(img);
-    divJugadora.appendChild(divText);
-
-    // Reemplazar o vaciar el texto borrador del slot e insertar el nodo
-    slotLibre.innerHTML = '';
-    slotLibre.appendChild(divJugadora);
-
-    return true;
-}
-
-/**
- * Limpia las jugadoras previas de las posiciones del campo y de la banca
- */
-function limpiarCampoYSuplentes() {
-    const slots = document.querySelectorAll('#campo .pos-slot');
-    slots.forEach(slot => {
-        // Restaurar el slot si tenía jugadora
-        if (slot.querySelector('.jugadora')) {
-            slot.innerHTML = '';
-        }
-    });
-
-    const suplentesContainer = document.getElementById('suplentes');
-    if (suplentesContainer) {
-        suplentesContainer.innerHTML = '';
-    }
+    return formatearValorMercado((jugadoras).reduce((total, jugadora) => {
+        const valor = jugadora.market_value ? parseFloat(jugadora.market_value) : 0;
+        return total + valor;
+    }, 0));
 }
 

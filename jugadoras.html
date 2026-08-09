@@ -34,7 +34,7 @@
         <nav class="nav-container">
             <ul class="nav-links">
                 <li><a href="jugadoras.html" class="active">Jugadoras</a></li>
-                <li><a href="equipos.html">Equipos</a></li>
+                <li><a href="ligas.html">Equipos</a></li>
             </ul>
         </nav>
     </div>
@@ -47,43 +47,84 @@
         <div id="cabecera-wiki-equipos">
             <div id="cabecera-jugadora" class="panel">
                 <h2>Selección de Jugadora</h2>
-                <div id="filtros">
-                    <div>
-                        <label for="input-equipo">Equipo:</label>
-                        <input id="input-equipo" type="text" name="equipo" placeholder="Buscar por equipo..." autocomplete="off">
+                <button id="ver-filtros">Filtrar</button>
+                <div id="filtros" class="filtros-container">
+                    <!-- Cabecera exclusiva para cerrar en móvil -->
+                    <div class="filtros-header-mobile">
+                        <h3>Filtros</h3>
+                        <button id="cerrar-filtros">&times;</button>
+                    </div>
+                    <!-- Equipo / Clubes -->
+                    <div class="filtro-group">
+                        <label>Clubes / Equipos:</label>
+                        <div class="tags-input-wrapper">
+                            <div id="tags-equipo" class="tags-box"></div>
+                            <input id="input-equipo" type="text" placeholder="Añadir equipo..." autocomplete="off">
+                        </div>
                         <div class="sugerencias-container">
                             <ul id="sugerencias-equipo"></ul>
                         </div>
                     </div>
-                    <div>
-                        <label for="input-pais">Nacionalidad:</label>
-                        <input id="input-pais" class="input-pais" name="pais" type="text" placeholder="Buscar por país..." autocomplete="off">
+
+                    <!-- Nacionalidad / Países -->
+                    <div class="filtro-group">
+                        <label>Nacionalidades:</label>
+                        <div class="tags-input-wrapper">
+                            <div id="tags-pais" class="tags-box"></div>
+                            <input id="input-pais" class="input-pais" type="text" placeholder="Añadir país..." autocomplete="off">
+                        </div>
                         <div class="sugerencias-container">
                             <ul id="sugerencias-pais2"></ul>
                         </div>
                     </div>
-                    <div>
-                        <label for="input-posicion">Posición:</label>
-                        <input id="input-posicion" class="input-posicion" name="posicion" type="text" placeholder="Buscar por posición..." autocomplete="off">
+
+                    <!-- Posición -->
+                    <div class="filtro-group">
+                        <label>Posiciones:</label>
+                        <div class="tags-input-wrapper">
+                            <div id="tags-posicion" class="tags-box"></div>
+                            <input id="input-posicion" class="input-posicion" type="text" placeholder="Añadir posición..." autocomplete="off">
+                        </div>
                         <div class="sugerencias-container">
-                            <ul id="sugerencias-posicion" style="padding: unset;"></ul>
+                            <ul id="sugerencias-posicion"></ul>
+                        </div>
+                    </div>
+
+                    <!-- Valor de Mercado -->
+                    <div class="filtro-group filtro-rango">
+                        <label>Valor de mercado (€):</label>
+                        <div class="inputs-rango">
+                            <input id="input-valor-min" type="number" placeholder="Mín" min="0" step="50000">
+                            <input id="input-valor-max" type="number" placeholder="Máx" min="0" step="50000">
+                        </div>
+                    </div>
+
+                    <!-- Altura -->
+                    <div class="filtro-group filtro-rango">
+                        <label>Altura (cm):</label>
+                        <div class="inputs-rango">
+                            <input id="input-altura-min" type="number" placeholder="Mín" min="120" max="220">
+                            <input id="input-altura-max" type="number" placeholder="Máx" min="120" max="220">
                         </div>
                     </div>
                 </div>
-                <div id="pagination" class="pagination"></div>
             </div>
         </div>
 
-        <!-- Encabezado de la Tabla (Sticky) -->
-        <div class="jugadora-item header-list">
-            <div class="jugadora-div1"><p><b>JUGADORA</b></p></div>
-            <div class="header-label"><p><b>EDAD</b></p></div>
-            <div class="header-label"><p><b>CLUB</b></p></div>
-            <div class="header-label"><p><b>VALOR</b></p></div>
-        </div>
+        <div id="resto">
 
-        <!-- Contenedor SCROLLABLE con las Jugadoras -->
-        <div id="items-container"></div>
+            <!-- Encabezado de la Tabla (Sticky) -->
+            <div class="jugadora-item header-list">
+                <div class="jugadora-div1"><p><b>JUGADORA</b></p></div>
+                <div class="header-label"><p><b>EDAD</b></p></div>
+                <div class="header-label"><p><b>CLUB</b></p></div>
+                <div class="header-label"><p><b>VALOR</b></p></div>
+            </div>
+
+            <!-- Contenedor SCROLLABLE con las Jugadoras -->
+            <div id="items-container"></div>
+            <div id="pagination" class="pagination"></div>
+        </div>
 
         <div id="config-wiki" data-seccion="jugadoras"></div>
     </div>
