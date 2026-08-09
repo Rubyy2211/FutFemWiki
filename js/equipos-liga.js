@@ -112,13 +112,22 @@ export function displayEquipos(data, container) {
     data.forEach((equipo) => {
         const equipoItem = document.createElement('div');
         const img = document.createElement('img');
+        
+        // 🎯 Contenedor envolvente para medir y recortar el texto
+        const pWrapper = document.createElement('div');
+        pWrapper.className = 'equipo-nombre-wrapper';
+        
         const p = document.createElement('p');
+        p.textContent = equipo.nombre;
+        
+        pWrapper.appendChild(p);
+
         equipoItem.className = 'equipo-item';
         equipoItem.dataset.id = equipo.id;
         img.src = equipo.escudo;
-        p.textContent = equipo.nombre;
+
         equipoItem.appendChild(img);
-        equipoItem.appendChild(p);
+        equipoItem.appendChild(pWrapper); // Añadir el wrapper en lugar de <p> directo
 
         container.appendChild(equipoItem);
 
@@ -150,8 +159,10 @@ export function displayEquipos(data, container) {
     activarSeleccionPorScroll(container);
     activarGrabAndScroll(container);
 
-    // Forzar que la primera tarjeta comience centrada
+    // 🎯 Detectar desborde de texto una vez renderizados los elementos
     requestAnimationFrame(() => {
+        ajustarTextosMarquee(container);
+
         const primerItem = container.querySelector('.equipo-item');
         if (primerItem) {
             primerItem.scrollIntoView({
@@ -160,6 +171,26 @@ export function displayEquipos(data, container) {
                 inline: 'center'
             });
             seleccionarEquipo(primerItem, container);
+        }
+    });
+}
+
+// 🚀 Función para medir el exceso de ancho y activar la animación
+function ajustarTextosMarquee(container) {
+    const wrappers = container.querySelectorAll('.equipo-nombre-wrapper');
+    wrappers.forEach((wrapper) => {
+        const p = wrapper.querySelector('p');
+        const item = wrapper.closest('.equipo-item');
+
+        // Calcula cuánto espacio falta por mostrar
+        const overflowDistance = p.scrollWidth - wrapper.clientWidth;
+
+        if (overflowDistance > 2) {
+            // Añade la clase que activa el keyframe y le pasa los píxeles exactos a trasladar
+            item.classList.add('is-overflowing');
+            p.style.setProperty('--overflow-distance', `-${overflowDistance + 6}px`);
+        } else {
+            item.classList.remove('is-overflowing');
         }
     });
 }

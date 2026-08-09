@@ -71,6 +71,21 @@
     z-index: 2;
 }
 
+/* 🚀 ELEVAR TODO EL MARCADOR SELECCIONADO SOBRE LOS DEMÁS */
+.marker-escudo.selected {
+    z-index: 9999 !important;
+    position: relative !important;
+}
+
+.marker-escudo.selected .marker-wrapper {
+    z-index: 9999 !important;
+}
+
+/* Opcional: Asegurar que la imagen del escudo siempre gane internamente */
+.marker-escudo-img {
+    z-index: 10 !important;
+}
+
 /* Opcional: efecto al hacer hover en el seleccionado */
 .marker-escudo.selected .marker-escudo-img {
     transform: translate(-50%, -125%) scale(1.1);
@@ -119,6 +134,8 @@
     aspect-ratio: 5 / 4;
     height: 100%;
     width: auto;
+    max-width: fit-content;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -152,4 +169,42 @@
 
 .equipo-item:hover{
     background: var(--color-primario);
+}
+
+/* Contenedor del texto (limita el ancho interno) */
+.equipo-nombre-wrapper {
+    width: 88%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: center;
+    margin-top: 6px;
+}
+
+/* El texto por defecto */
+.equipo-item p {
+    display: inline-block;
+    white-space: nowrap;
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #fff;
+    will-change: transform;
+}
+
+/* Animación cuando el texto sobrepasa los límites */
+.equipo-item.is-overflowing p {
+    animation: marquee-bounce 5s ease-in-out infinite;
+}
+
+/* Vaivén suave: inicio -> desplazamiento al final -> pausa -> regreso */
+@keyframes marquee-bounce {
+    0%, 20% {
+        transform: translateX(0);
+    }
+    50%, 70% {
+        transform: translateX(var(--overflow-distance, 0px));
+    }
+    100% {
+        transform: translateX(0);
+    }
 }

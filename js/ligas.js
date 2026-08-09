@@ -204,6 +204,8 @@ export function displayLigas(data, container) {
     }
 
     data.forEach(async (liga, index) => {
+        console.log(liga)
+        ///if(liga.)
         const ligaItem = document.createElement('div');
         const img = document.createElement('img');
         ligaItem.className = 'liga-item';
@@ -215,8 +217,6 @@ export function displayLigas(data, container) {
         img.onload = async () => {
             try {
                 const colors = await getDominantColors(img, 4);
-
-                console.log(colors)
 
                 colors.forEach((color, index) => {
                     // Si 'color' viene como array [r, g, b], lo formateamos a rgb()
