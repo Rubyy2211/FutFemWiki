@@ -814,18 +814,18 @@ li a::after {
     transform: translateX(-50%) translateY(var(--arrowYTop)) scale(var(--arrowScale));
     
     /* EFECTO NEÓN: El brillo sigue la forma de la esquina */
-    filter: drop-shadow(0 0 2px var(--color-primario)) 
-            drop-shadow(0 0 8px var(--color-primario));
+    filter: drop-shadow(0 0 2px var(--color-detalles)) 
+            drop-shadow(0 0 8px var(--color-detalles));
 }
 
 /* Esquinas Superiores */
 li a::before {
     top: 0;
     background-image: 
-        linear-gradient(to right, var(--color-primario) 2px, transparent 2px),
-        linear-gradient(to bottom, var(--color-primario) 2px, transparent 2px),
-        linear-gradient(to left, var(--color-primario) 2px, transparent 2px),
-        linear-gradient(to bottom, var(--color-primario) 2px, transparent 2px);
+        linear-gradient(to right, var(--color-detalles) 2px, transparent 2px),
+        linear-gradient(to bottom, var(--color-detalles) 2px, transparent 2px),
+        linear-gradient(to left, var(--color-detalles) 2px, transparent 2px),
+        linear-gradient(to bottom, var(--color-detalles) 2px, transparent 2px);
     background-position: 0 0, 0 0, 100% 0, 100% 0;
 }
 
@@ -834,10 +834,10 @@ li a::after {
     bottom: 0;
     transform: translateX(-50%) translateY(var(--arrowYBottom)) scale(var(--arrowScale));
     background-image: 
-        linear-gradient(to right, var(--color-primario) 2px, transparent 2px),
-        linear-gradient(to top, var(--color-primario) 2px, transparent 2px),
-        linear-gradient(to left, var(--color-primario) 2px, transparent 2px),
-        linear-gradient(to top, var(--color-primario) 2px, transparent 2px);
+        linear-gradient(to right, var(--color-detalles) 2px, transparent 2px),
+        linear-gradient(to top, var(--color-detalles) 2px, transparent 2px),
+        linear-gradient(to left, var(--color-detalles) 2px, transparent 2px),
+        linear-gradient(to top, var(--color-detalles) 2px, transparent 2px);
     background-position: 0 100%, 0 100%, 100% 100%, 100% 100%;
 }
 
@@ -846,12 +846,12 @@ header ul li a:hover {
     /* Tres capas de sombra para profundidad de neón */
     text-shadow: 
         0 0 5px #fff,
-        0 0 10px var(--color-primario),
-        0 0 20px var(--color-primario);
+        0 0 10px var(--color-detalles),
+        0 0 20px var(--color-detalles);
 }
 
 a.active {
-  color: var(--color-primario) !important;
+  color: var(--color-detalles) !important;
   --arrowOpacity: 1;
   --arrowScale: 1;
   --arrowYTop: 0;

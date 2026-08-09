@@ -27,31 +27,216 @@
     <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
-<header class="navbar">
-    <div class="header-container">
-        <a href="index.html" class="logo-link">
-                <img src="img/logo.webp" alt="Logo FutFemWiki" class="logo-img">
-            </a>
-        <nav class="nav-container">
-            <!-- Menú de navegación principal -->
-            <ul class="nav-links">
-                <li><a href="jugadoras.html">Jugadoras</a></li>
-                <li><a href="ligas.html">Equipos</a></li>
-            </ul>
-        </nav>
-    </div>
-</header>
 
-<section id="bienvenida">
-    <h1>FutFemWiki</h1>
-    <p>¡Bienvenid@ a FutFemWiki!</p>
-    
+<section class="hero-section" id="bienvenida">
+    <header class="navbar">
+        <div class="header-container">
+            <a href="index.html" class="logo-link">
+                    <img src="img/logo.webp" alt="Logo FutFemWiki" class="logo-img">
+                </a>
+            <nav class="nav-container">
+                <!-- Menú de navegación principal -->
+                <ul class="nav-links">
+                    <li><a href="jugadoras.html">Jugadoras</a></li>
+                    <li><a href="ligas.html">Equipos</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <div class="hero-content">
+        <h1 class="hero-title">FUTFEMWIKI</h1>
+        <p class="hero-subtitle">¡Bienvenid@ a FutFemWiki! Descubre, analiza y explora la base de datos del fútbol femenino.</p>
+
+        <!-- 🚀 Acciones Rápidas -->
+        <div class="hero-actions">
+            <a href="/jugadoras.html" class="btn btn-primary">Explorar Jugadoras</a>
+            <!--<a href="/alineador.html" class="btn btn-secondary">Creador de 11s</a>-->
+            <a href="/ligas.html" class="btn btn-outline">Ver Equipos</a>
+        </div>
+    </div>
 </section>
+
+<section id="jugadoras">
+    <div id="jugadoras-content">
+        <h2>JUGADORAS</h2>
+        <p class="hero-subtitle">¡Bienvenid@ a FutFemWiki! Descubre, analiza y explora la base de datos del fútbol femenino.</p>
+        <a href="/jugadoras.html" class="btn btn-primary">Explorar Jugadoras</a>
+    </div>
+</section>
+
+<section id="equipos">
+    <div id="equipos-content">
+        <h2>EQUIPOS</h2>
+        <p class="hero-subtitle">¡Bienvenid@ a FutFemWiki! Descubre, analiza y explora la base de datos del fútbol femenino.</p>
+        <a href="/ligas.html" class="btn btn-primary">Explorar Equipos</a>
+    </div>
+</section>
+
+<div id="menu">
+    <a href="#bienvenida">Inicio</a><a href="#jugadoras">Jugadoras</a><a href="#equipos">Equipos</a>
+</div>
 
 
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.2/color-thief.umd.js" defer></script>
 <script src="{% url 'javascript-catalog' %}" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous" defer></script>
+<script type="module">
+    import { fetchAllJugadoras } from '/js/api/jugadora.js';
+    import { fetchAllEquipos } from '/js/api/equipos.js';
+
+    const jugadoras = await fetchAllJugadoras();
+    const equipos = await fetchAllEquipos();
+
+    localStorage.setItem('todas_jugadoras', JSON.stringify(jugadoras));
+    localStorage.setItem('todos_equipos', JSON.stringify(equipos));
+
+    const sectionJugadoras = document.getElementById('jugadoras');
+    const sectionEquipos = document.getElementById('equipos');
+
+    // Función auxiliar para mezclar arrays
+    function mezclarFotos(array) {
+        const copia = [...array];
+        for (let i = copia.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copia[i], copia[j]] = [copia[j], copia[i]];
+        }
+        return copia;
+    }
+
+    // --- MARQUESINA DE JUGADORAS (VERTICAL / COLUMNAS) ---
+    function crearFondoJugadoras(listaJugadoras) {
+        if (!listaJugadoras || listaJugadoras.length === 0) return;
+        const fotosBase = listaJugadoras.map(j => j.foto || j.imagen).filter(Boolean);
+
+        const marqueeBg = document.createElement('div');
+        marqueeBg.className = 'bg-marquee';
+
+        for (let i = 0; i < 5; i++) {
+            const col = document.createElement('div');
+            col.className = `marquee-col ${i % 2 === 0 ? 'scroll-up' : 'scroll-down'}`;
+
+            const fotosColumna = [...mezclarFotos(fotosBase), ...mezclarFotos(fotosBase)];
+            fotosColumna.forEach(url => {
+                const img = document.createElement('img');
+                img.src = url;
+                img.alt = 'Jugadora';
+                img.loading = 'lazy';
+                col.appendChild(img);
+            });
+            marqueeBg.appendChild(col);
+        }
+
+        const overlay = document.createElement('div');
+        overlay.className = 'bg-overlay';
+
+        sectionJugadoras.prepend(overlay);
+        sectionJugadoras.prepend(marqueeBg);
+    }
+
+    // --- MARQUESINA DE EQUIPOS (HORIZONTAL / FILAS) ---
+    function crearFondoEquipos(listaEquipos) {
+        console.log(listaEquipos)
+        if (!listaEquipos || listaEquipos.length === 0) return;
+
+        // Extraer fotos o escudos de los equipos
+        const fotosBase = listaEquipos.map(e => e.escudo || e.foto || e.imagen || e.logo).filter(Boolean);
+
+        const marqueeBg = document.createElement('div');
+        marqueeBg.className = 'bg-marquee-equipos';
+
+        const numFilas = 4;
+
+        for (let i = 0; i < numFilas; i++) {
+            const row = document.createElement('div');
+            // Pares (0 y 2) van a la izquierda, Impares (1 y 3) van a la derecha
+            row.className = `marquee-row ${i % 2 === 0 ? 'scroll-left' : 'scroll-right'}`;
+
+            // Multiplicamos el listado para asegurar que llene el ancho horizontal sin cortes
+            const fotosFila = [...mezclarFotos(fotosBase), ...mezclarFotos(fotosBase), ...mezclarFotos(fotosBase)];
+
+            fotosFila.forEach(url => {
+                const img = document.createElement('img');
+                img.src = url;
+                img.alt = 'Equipo';
+                img.loading = 'lazy';
+                row.appendChild(img);
+            });
+
+            marqueeBg.appendChild(row);
+        }
+
+        const overlay = document.createElement('div');
+        overlay.className = 'bg-overlay-equipos';
+
+        sectionEquipos.prepend(overlay);
+        sectionEquipos.prepend(marqueeBg);
+    }
+
+    // Ejecutar ambas funciones
+    crearFondoJugadoras(jugadoras);
+    crearFondoEquipos(equipos.success);
+
+    // --- CONTROL DE SCROLL SECCIÓN POR SECCIÓN ---
+    const secciones = document.querySelectorAll('section');
+    let indiceSeccionActual = 0;
+    let estaAnimando = false;
+
+    window.addEventListener('wheel', (e) => {
+        // Cancela el comportamiento nativo del scroll
+        e.preventDefault();
+
+        // Si la animación de salto está en curso, ignora otros movimientos del ratón
+        if (estaAnimando) return;
+
+        if (e.deltaY > 0) {
+            // Scroll hacia abajo -> pasa a la siguiente sección
+            if (indiceSeccionActual < secciones.length - 1) {
+                indiceSeccionActual++;
+                cambiarDeSeccion(indiceSeccionActual);
+            }
+        } else if (e.deltaY < 0) {
+            // Scroll hacia arriba -> vuelve a la sección anterior
+            if (indiceSeccionActual > 0) {
+                indiceSeccionActual--;
+                cambiarDeSeccion(indiceSeccionActual);
+            }
+        }
+    }, { passive: false }); // { passive: false } es obligatorio para que funcione e.preventDefault()
+
+    function cambiarDeSeccion(indice) {
+        estaAnimando = true;
+
+        // Salto suave a la sección objetivo
+        secciones[indice].scrollIntoView({ behavior: 'smooth' });
+
+        // Bloquea nuevos saltos hasta que finalice el desplazamiento (800ms)
+        setTimeout(() => {
+            estaAnimando = false;
+        }, 800);
+    }
+
+    const enlacesMenu = document.querySelectorAll('#menu a');
+
+    // Observador que detecta la sección visible en pantalla
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const idSeccion = entry.target.getAttribute('id');
+                
+                enlacesMenu.forEach(enlace => {
+                    // Compara el href del 'a' (#seccion) con el id de la sección actual
+                    const esActivo = enlace.getAttribute('href') === `#${idSeccion}`;
+                    enlace.classList.toggle('active', esActivo);
+                });
+            }
+        });
+    }, { threshold: 0.5 }); // Se activa cuando al menos el 50% de la sección es visible
+
+    // Activar observador en todas las secciones
+    secciones.forEach(seccion => observer.observe(seccion));
+
+    
+</script>
 </body>
 </html>

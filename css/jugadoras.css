@@ -7,6 +7,48 @@ body, html {
     overflow: hidden; /* Evita el scroll global de la página */
     display: flex;
     flex-direction: column;
+    position: relative;
+}
+
+*::-webkit-scrollbar{
+    background: none;
+}
+
+*::-webkit-scrollbar-thumb{
+    background: var(--color-primario);
+    border-radius: 10px;
+}
+
+/* Capa fija de fondo para el estadio difuminado */
+body::before {
+    content: "";
+    position: fixed;
+    top: -10px;    /* Margen extra para evitar bordes blancos por el desenfoque */
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    z-index: -1;   /* Mantiene la imagen por detrás de todo el contenido */
+    
+    background-image: 
+        linear-gradient(
+            color-mix(in srgb, var(--color-secundario) 100%, transparent 80%),
+            color-mix(in srgb, var(--color-secundario) 100%, transparent 80%)
+        ),
+        url(../img/estadio1.webp) !important;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+    background-position: center center !important;
+    
+    /* CONTROL DEL DIFUMINADO Y BRILLO */
+    filter: blur(8px) brightness(0.8); /* 👈 Ajusta los píxeles para más o menos blur */
+    transform: scale(1.05);             /* Evita bordes pixelados al aplicar el blur */
+    will-change: filter, transform;
+}
+
+body::before{
+    filter: blur(8px) brightness(0.8); /* 👈 Ajusta los píxeles para más o menos blur */
+    transform: scale(1.05);             /* Evita bordes pixelados al aplicar el blur */
+    will-change: filter, transform;
 }
 
 /* El contenedor principal ocupa el espacio restante bajo la Navbar */
@@ -355,7 +397,7 @@ body #wiki-equipos #wiki-container #items-container .jugadora-item {
         max-height: 85vh;
         overflow-y: auto;
         z-index: 999;
-        background: color-mix(in srgb, #1e1e24 50%, var(--color-secundario) 50%) ;
+        background: color-mix(in srgb, #1e1e24 50%, var(--color-secundario) 50%);
         border: 1px solid #3a3a46;
         border-radius: 16px;
         padding: 20px;
