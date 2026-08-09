@@ -61,6 +61,9 @@
             transition: transform 0.3s;
         }
     </style>
+    
+    <!-- Vercel Speed Insights -->
+    <script type="module" src="/js/speed-insights-init.js"></script>
 </head>
 <body {% if usuario_sesion.equipo_favorito.id_equipo %}data-team="{{ usuario_sesion.equipo_favorito.id_equipo }}"{% endif %}>
     <header class="navbar">

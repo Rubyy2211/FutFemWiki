@@ -33,6 +33,9 @@
     <link rel="stylesheet" href="{% static 'FutFemWiki/css/wiki.css' %}">
     <link rel="stylesheet" href="{% static 'FutFemWiki/css/mapa.css' %}">
     {% endcompress %}
+    
+    <!-- Vercel Speed Insights -->
+    <script type="module" src="{% static 'FutFemWiki/js/speed-insights-init.js' %}"></script>
 </head>
 <body {% if usuario_sesion.equipo_favorito.id_equipo %}data-team="{{ usuario_sesion.equipo_favorito.id_equipo }}"{% endif %}>
     {% include 'partials/header.html' %}
