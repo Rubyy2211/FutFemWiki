@@ -113,7 +113,8 @@
             const col = document.createElement('div');
             col.className = `marquee-col ${i % 2 === 0 ? 'scroll-up' : 'scroll-down'}`;
 
-            const fotosColumna = [...mezclarFotos(fotosBase), ...mezclarFotos(fotosBase)];
+            const base = mezclarFotos(fotosBase).slice(0, 15);
+            const fotosColumna = [...base, ...base];
             fotosColumna.forEach(url => {
                 const img = document.createElement('img');
                 img.src = url;
@@ -171,8 +172,10 @@
     }
 
     // Ejecutar ambas funciones
-    crearFondoJugadoras(jugadoras);
-    crearFondoEquipos(equipos.success);
+    window.addEventListener('load', () => {
+        crearFondoJugadoras(jugadoras);
+        crearFondoEquipos(equipos.success);
+    });
 
     // --- CONTROL DE SCROLL SECCIÓN POR SECCIÓN ---
     const secciones = document.querySelectorAll('section');
