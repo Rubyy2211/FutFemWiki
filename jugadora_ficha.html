@@ -62,8 +62,6 @@
         }
     </style>
     
-    <!-- Vercel Speed Insights -->
-    <script type="module" src="/js/speed-insights-init.js"></script>
 </head>
 <body {% if usuario_sesion.equipo_favorito.id_equipo %}data-team="{{ usuario_sesion.equipo_favorito.id_equipo }}"{% endif %}>
     <header class="navbar">
@@ -420,7 +418,6 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous" defer></script>
-    <script defer src="/_vercel/speed-insights/script.js"></script>
 <script type="module" defer>
     import { cargarFichaJugadora } from '/js/ficha-jugadora.js';
 

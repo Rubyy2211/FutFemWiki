@@ -33,9 +33,6 @@
     <link rel="stylesheet" href="{% static 'FutFemWiki/css/wiki.css' %}">
     <link rel="stylesheet" href="{% static 'FutFemWiki/css/mapa.css' %}">
     {% endcompress %}
-    
-    <!-- Vercel Speed Insights -->
-    <script type="module" src="{% static 'FutFemWiki/js/speed-insights-init.js' %}"></script>
 </head>
 <body {% if usuario_sesion.equipo_favorito.id_equipo %}data-team="{{ usuario_sesion.equipo_favorito.id_equipo }}"{% endif %}>
     {% include 'partials/header.html' %}
@@ -53,7 +50,6 @@
     <script src="https://unpkg.com/maplibre-gl@5.18.0/dist/maplibre-gl.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js" defer></script>
     <script type="module" src="{% static 'FutFemWiki/js/mapa.js' %}" defer></script>
-    <script defer src="/_vercel/speed-insights/script.js"></script>
 <script type="module">
 import { inicializarMapaEquipos, añadirEquipoMapa, centrarMapaEnEquipos, map, actualizarMarkersZoom } from '{% static "FutFemWiki/js/mapa.js" %}';
 import { fetchAllEquipos, handleAutocompleteEquipo } from '{% static "futfem/js/equipos.js" %}';
