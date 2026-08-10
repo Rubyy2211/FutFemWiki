@@ -298,13 +298,16 @@ function crearFichaBaseJugadora(jugadora, colorPredeterminado, mostrarEtapas = f
     // Estilos de Fondo
     const colorPrimario = jugadora.equipo?.color || colorPredeterminado || 'var(--color-primario)';
     const colorSecundario = jugadora.equipo?.colorSecundario || 'transparent';
-    div.style.background = `
-        linear-gradient(
-            to bottom,
-            color-mix(in srgb, ${colorPrimario} 30%, transparent),
-            color-mix(in srgb, ${colorSecundario} 30%, transparent)
-        )
-    `;
+    const backgroundGradient = `
+            linear-gradient(
+                to bottom,
+                color-mix(in srgb, ${colorPrimario} 50%, transparent 50%),
+                color-mix(in srgb, ${colorPrimario} 80%, #000 20%)
+            ),
+            url('/img/fondo_cesped.webp') center / cover no-repeat
+        `;
+        
+    div.style.background = backgroundGradient;
     div.style.border = '1px solid ' + colorPrimario;
 
     div.addEventListener('click', () => {

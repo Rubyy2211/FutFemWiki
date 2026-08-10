@@ -172,10 +172,9 @@
     }
 
     // Ejecutar ambas funciones
-    window.addEventListener('load', () => {
-        crearFondoJugadoras(jugadoras);
-        crearFondoEquipos(equipos.success);
-    });
+    crearFondoJugadoras(jugadoras);
+    crearFondoEquipos(equipos.success);
+
 
     // --- CONTROL DE SCROLL SECCIÓN POR SECCIÓN ---
     const secciones = document.querySelectorAll('section');
