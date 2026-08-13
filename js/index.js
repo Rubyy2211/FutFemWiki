@@ -75,13 +75,3 @@ class CanvasBackground {
         this.initCircles();
     }
 }
-
-const navToggle = document.getElementById('nav-toggle');
-const navMenu = document.getElementById('nav-menu');
-
-if (navToggle && navMenu) {
-    navToggle.addEventListener('click', () => {
-        navToggle.classList.toggle('open');
-        navMenu.classList.toggle('open');
-    });
-}
