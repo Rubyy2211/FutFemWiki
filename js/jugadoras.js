@@ -3,11 +3,6 @@ import { handleAutocompletePosicion } from '/js/api/posiciones.js';
 import { equiposxliga, handleAutocompleteEquipo, fetchEquipoById } from '/js/api/equipos.js';
 import { fetchAllJugadoras, formatearValorMercado, calcularEdad } from '/js/api/jugadora.js';
 import { API_BASE_URL } from '/js/config.js';
-import '../css/bootstrap.css';
-import '../css/estilos.css';
-import '../css/combo.css';
-import '../css/wiki.css';
-import '../css/jugadoras.css';
 
 let jugadorasOriginal = [];
 let currentPage = 1;
