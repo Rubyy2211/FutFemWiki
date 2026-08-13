@@ -22,5 +22,8 @@
   "homepage": "https://github.com/Rubyy2211/FutFemWiki#readme",
   "devDependencies": {
     "vite": "^8.2.1"
+  },
+  "dependencies": {
+    "maplibre-gl": "^6.3.0"
   }
 }

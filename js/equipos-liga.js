@@ -5,6 +5,8 @@ import { equiposxliga, handleAutocompleteEquipo, fetchEquipoById } from '/js/api
 import { fetchAllJugadoras, formatearValorMercado, calcularEdad } from '/js/api/jugadora.js';
 import { activarGrabAndScroll } from '/js/utils/interaccion.js';
 import { API_BASE_URL } from '/js/config.js';
+import maplibregl from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 
 const containerDisplay = document.getElementById('container-display')
 
