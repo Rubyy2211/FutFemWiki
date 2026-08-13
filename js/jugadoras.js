@@ -218,14 +218,14 @@ function renderJugadorasPage(page = 1) {
         div1.className = 'jugadora-div1';
 
         const img = document.createElement('img');
-        img.src = jugadora.imagen || '/img/predeterm.png';
+        img.src = jugadora.imagen || '../img/predeterm.png';
         img.className = 'jugadora-imagen';
         img.alt = jugadora.apodo || nombreCompleto;
         div1.appendChild(img);
 
         const imgClub = document.createElement('img');
         const foto = jugadora.equipo?.escudo;
-        let fotoMini = foto ? foto.replace('/clubes/', '/clubes/mini/') : '/img/predeterm.png';
+        let fotoMini = foto ? foto.replace('/clubes/', '/clubes/mini/') : '../img/predeterm.png';
         imgClub.src = fotoMini;
         imgClub.className = 'equipo-imagen';
         imgClub.alt = jugadora.equipo?.nombre || '';
