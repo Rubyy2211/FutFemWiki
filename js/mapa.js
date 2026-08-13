@@ -14,7 +14,7 @@ export function inicializarMapaEquipos(centerInicial = [7, 40], zoomInicial = 5)
 
     map = new maplibregl.Map({
         container: 'mapa-equipos',
-        style: 'js/mapstyles/style-morado.json',
+        style: './js/mapstyles/style-morado.json',
         projection: 'globe',
         center: centerInicial,
         zoom: zoomInicial,

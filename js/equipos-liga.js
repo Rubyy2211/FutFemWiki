@@ -5,7 +5,6 @@ import { equiposxliga, handleAutocompleteEquipo, fetchEquipoById } from '/js/api
 import { fetchAllJugadoras, formatearValorMercado, calcularEdad } from '/js/api/jugadora.js';
 import { activarGrabAndScroll } from '/js/utils/interaccion.js';
 import { API_BASE_URL } from '/js/config.js';
-import styleMorado from './mapstyles/style-morado.json';
 
 const containerDisplay = document.getElementById('container-display')
 

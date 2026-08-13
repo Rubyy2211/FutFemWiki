@@ -209,12 +209,13 @@
 </section>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.2/color-thief.umd.js" defer></script>
-<script src="/js/index.js" defer></script>
 <script type="module">
-    import { inicializarLigas } from '/js/ligas.js';
-    import { CanvasBackground } from '/js/index.js';
+    import { inicializarLigas } from './js/ligas.js';
+    import { CanvasBackground } from './js/index.js';
     
-    await inicializarLigas();
+    document.addEventListener('DOMContentLoaded', () => {
+        inicializarLigas();
+    });
 
     const heroCanvas = new CanvasBackground('canvas', {
         colors: ["#210936", "#836FFF", "#FF007A"] // Cyberpunk
