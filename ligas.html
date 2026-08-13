@@ -141,7 +141,18 @@
         <a href="index.html" class="logo-link">
             <img src="img/logo.webp" alt="Logo FutFemWiki" class="logo-img">
         </a>
-        <nav class="nav-container">
+        
+        <h1 id="logo-wiki">FUTFEM <span>WIKI</span></h1>
+
+        <!-- 🍔 Botón Hamburguesa para móvil -->
+        <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <!-- Menú de navegación -->
+        <nav class="nav-container" id="nav-menu">
             <ul class="nav-links">
                 <li><a href="jugadoras.html">Jugadoras</a></li>
                 <li><a href="ligas.html" class="active">Equipos</a></li>
@@ -149,6 +160,8 @@
         </nav>
     </div>
 </header>
+
+<canvas id="canvas" width="500" height="500" class="canvas-bg"></canvas>
 
 <section id="wiki-equipos" style="height: 100%; width: 100%;">
     
@@ -196,15 +209,17 @@
 </section>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.2/color-thief.umd.js" defer></script>
+<script src="/js/index.js" defer></script>
+<script type="module" src="js/ligas.js" defer></script>
 <script type="module">
     import { inicializarLigas } from '/js/ligas.js';
     
     await inicializarLigas();
 
+    const heroCanvas = new CanvasBackground('canvas', {
+        colors: ["#210936", "#836FFF", "#FF007A"] // Cyberpunk
+    });
 </script>
-<!--<script src="{% static 'js/animations/header.js' %}" defer></script>-->
-<script type="module" src="js/ligas.js" defer></script>
-<script src="{% url 'javascript-catalog' %}" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous" defer></script>
 </body>
 </html>

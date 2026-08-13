@@ -17,11 +17,11 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@100..900&family=Oswald:wght@200..700&family=Plus+Jakarta+Sans:wght@200..800&family=Russo+One&display=swap" media="print" onload="this.media='all'">
     
     <!-- Estilos Locales de la Wiki -->
-    <link rel="stylesheet" href="css/bootstrap.css">
-    <link rel="stylesheet" href="css/estilos.css">
-    <link rel="stylesheet" href="css/wiki.css">
-    <link rel="stylesheet" href="css/slider.css">
-    <link rel="stylesheet" href="css/ficha-equipo.css">
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/estilos.css">
+    <link rel="stylesheet" href="/css/wiki.css">
+    <link rel="stylesheet" href="/css/slider.css">
+    <link rel="stylesheet" href="/css/ficha-equipo.css">
 
     <noscript>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css">
@@ -34,7 +34,18 @@
             <a href="index.html" class="logo-link">
                 <img src="img/logo.webp" alt="Logo FutFemWiki" class="logo-img">
             </a>
-            <nav class="nav-container">
+            
+            <h1 id="logo-wiki">FUTFEM <span>WIKI</span></h1>
+
+            <!-- 🍔 Botón Hamburguesa para móvil -->
+            <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <!-- Menú de navegación -->
+            <nav class="nav-container" id="nav-menu">
                 <ul class="nav-links">
                     <li><a href="jugadoras.html">Jugadoras</a></li>
                     <li><a href="ligas.html" class="active">Equipos</a></li>
@@ -42,409 +53,413 @@
             </nav>
         </div>
     </header>
-
+    <canvas id="canvas" width="500" height="500" class="canvas-bg"></canvas>
     <!-- 2. Contenedor Principal del Equipo -->
     <div id="equipo-container">
+        <div id="ficha-equipo-container">
 
-        <div id="equipo-info">
-            <div class="equipo-img-wrapper">  
-                <img src="/img/predeterm.png" id="equipo-img" alt="{{ jugadora.Nombre }} {{ jugadora.Apellidos }}" fetchpriority="high" style="max-height: 125px; width: 125px; object-fit: cover;">
-            </div>  
-            <div id="datos-equipo">
-                <div style="display: flex; align-items: center;">
-                    <div id="posicion"></div>
-                </div>
-                <div class="bloque-nombre-pais">
-                    <div id="pais">
-                        <span id="pais-bandera" class="fi fi-xx"></span>
+            <div id="equipo-info">
+                <div class="equipo-img-wrapper">  
+                    <img src="/img/predeterm.png" id="equipo-img" alt="{{ jugadora.Nombre }} {{ jugadora.Apellidos }}" fetchpriority="high" style="max-height: 125px; width: 125px; object-fit: cover;">
+                </div>  
+                <div id="datos-equipo">
+                    <div style="display: flex; align-items: center;">
+                        <div id="posicion">
+                            <span>EQUIPO</span>
+                        </div>
                     </div>
-                    <h1 id="nombre-equipo">Nombre Equipo</h1>
+                    <div class="bloque-nombre-pais">
+                        <div id="pais">
+                            <span id="pais-bandera" class="fi fi-xx"></span>
+                        </div>
+                        <h1 id="nombre-equipo">Nombre Equipo</h1>
+                    </div>
+                    <div class="row">   
+                            <div>
+                                <div class="bloque-dato">
+                                    <!--<p>Nacimiento</p>-->
+                                    <span id="fundacion">0000</span>
+                                </div>
+                                |
+                                <div class="bloque-dato">
+                                    <!--<p>Altura</p>-->
+                                    <span id="formacion">0-0-0</span>
+                                </div>
+                                |
+                                <!--<div id="pie-habil" class="bloque-dato">
+                                    <p id="pie">Pie</p>
+                                    <img id="pie-img" src="/img/none.webp" alt="pie-habil" style="max-height: 50px;">
+                                </div>--> 
+                                | 
+                                <!--<div class="bloque-dato">
+                                    <p id="value">Valor</p>
+                                    <span id="valor">10000 €</span>
+                                </div>-->
+                            </div>
+                    </div>
                 </div>
-                <div class="row">   
-                        <div>
-                            <div class="bloque-dato">
-                                <!--<p>Nacimiento</p>-->
-                                <span id="fundacion">0000</span>
+            </div>
+
+            <hr>
+
+            <div id="resto">
+
+                <!-- Pestaña 1: INFORMACIÓN GENERAL -->
+                <div id="info" class="tab-content active">
+                    <div style="display: flex; flex-direction: row; height: 100%; align-items: center; width: 75%;">
+                        <div class="column">
+                            <div id="nacionalidad" class="bloque-dato">
+                                <p>Nacionalidad</p>
+                                <span id="nacionalidad-nombre">
+                                    <a href="#">
+                                        <span id="bandera-pais" class="fi fi-xx"></span>
+                                        <span id="nacionalidad-nombre-texto">Nacionalidad</span>
+                                    </a>
+                                </span>
                             </div>
-                            |
-                            <div class="bloque-dato">
-                                <!--<p>Altura</p>-->
-                                <span id="formacion">0-0-0</span>
+                            <div id="liga" class="bloque-dato">
+                                <p>Liga</p>
+                                <span id="liga-nombre">
+                                    <a href="/equipo_ficha?id={{ jugadora.Equipo.id_equipo }}&slug={{ jugadora.Equipo.slug }}">
+                                        <img id="logo-liga" src="/img/equipo-predeterm.svg" id="escudo" alt="liga" style="max-width: 50px; max-height: 50px;">
+                                        <span id="liga-nombre-texto">Liga Nombre</span>
+                                    </a>
+                                </span>
                             </div>
-                            |
-                            <!--<div id="pie-habil" class="bloque-dato">
-                                <p id="pie">Pie</p>
-                                <img id="pie-img" src="/img/none.webp" alt="pie-habil" style="max-height: 50px;">
-                            </div>--> 
-                            | 
-                            <!--<div class="bloque-dato">
+                            <div class="bloque-dato">
+                                <p>Fundación</p>
+                                <span id="fundacion-datos">0000</span>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="bloque-dato">
                                 <p id="value">Valor</p>
                                 <span id="valor">10000 €</span>
-                            </div>-->
+                            </div>
+                            <div class="bloque-dato">
+                                <p>Estadio</p>
+                                <span id="estadio-datos"><a id="btn-estadio" href="#" target="_blank" rel="noopener noreferrer">Ubicación</a></span>
+                            </div>
+                            <div id="pie-habil" class="bloque-dato" style="opacity: 0; visibility: hidden;">
+                                <p id="pie">Pie</p>
+                                <img id="pie-img" src="/img/none.webp" alt="pie-habil" style="max-width: 50px;">
+                            </div> 
                         </div>
-                </div>
-            </div>
-        </div>
 
-        <hr>
-
-        <div id="resto">
-            <!-- Selector de Pestañas -->
-            <div id="selector">
-                <a href="#info" class="active">Información</a>
-                <div class="vr"></div>
-                <a href="#plantilla">Plantilla</a>
-                <div class="vr"></div>
-                <a href="#historicas">Históricas</a>
-            </div>
-
-            <!-- Pestaña 1: INFORMACIÓN GENERAL -->
-            <div id="info" class="tab-content active">
-                <div style="display: flex; flex-direction: row; height: 100%; align-items: center; width: 75%;">
-                    <div class="column">
-                        <div id="nacionalidad" class="bloque-dato">
-                            <p>Nacionalidad</p>
-                            <span id="nacionalidad-nombre">
-                                <a href="#">
-                                    <span id="bandera-pais" class="fi fi-xx"></span>
-                                    <span id="nacionalidad-nombre-texto">Nacionalidad</span>
-                                </a>
-                            </span>
-                        </div>
-                        <div id="liga" class="bloque-dato">
-                            <p>Liga</p>
-                            <span id="liga-nombre">
-                                <a href="/equipo_ficha?id={{ jugadora.Equipo.id_equipo }}&slug={{ jugadora.Equipo.slug }}">
-                                    <img id="logo-liga" src="/img/equipo-predeterm.svg" id="escudo" alt="liga" style="max-width: 50px; max-height: 50px;">
-                                    <span id="liga-nombre-texto">Liga Nombre</span>
-                                </a>
-                            </span>
-                        </div>
-                        <div class="bloque-dato">
-                            <p>Fundación</p>
-                            <span id="fundacion-datos">0000</span>
-                        </div>
-                    </div>
-                    <div class="column">
-                        <div class="bloque-dato">
-                            <p id="value">Valor</p>
-                            <span id="valor">10000 €</span>
-                        </div>
-                        <div class="bloque-dato">
-                            <p>Estadio</p>
-                            <span id="estadio-datos"><a id="btn-estadio" href="#" target="_blank" rel="noopener noreferrer">Ubicación</a></span>
-                        </div>
-                        <div id="pie-habil" class="bloque-dato">
-                            <p id="pie">Pie</p>
-                            <img id="pie-img" src="/img/none.webp" alt="pie-habil" style="max-width: 50px;">
-                        </div> 
-                    </div>
-
-                        </div>
-                <div class="resto" style="height: 100%;">
-                    <div class="row">
-                        <div>
-                            <div id="tabla-info" class="tabla-jugadoras">
-                                <div id="cabecera-tabla" class="cabecera-tabla">
-                                    <h3>Club</h3>
-                                </div>
-                                <div class="container-jugadoras">
-                                    <div id="fundacion" style="height: 20%; display: flex; flex-direction: column; justify-content: center;">
-                                        <p style="margin-bottom: 0;">Fundado</p>
-                                        <h3 id="equipo-fundacion">--</h3>
+                            </div>
+                    <div class="resto" style="height: 100%;">
+                        <div class="row">
+                            <div>
+                                <div id="tabla-info" class="tabla-jugadoras">
+                                    <div id="cabecera-tabla" class="cabecera-tabla">
+                                        <h3>Club</h3>
                                     </div>
-                                    <div id="datos-equipo">
-                                        <h3 id="equipo-nombre">Cargando equipo...</h3>
-                                            <div id="escudo-container" style="overflow: hidden; max-width: 50%;">
-                                                <img src="" id="escudo" alt="Escudo" fetchpriority="high" style="width: 100%;">
-                                            </div>
-                                            <div id="liga-pais">
-                                                <span class="" id="pais-bandera"></span>
-                                                <img src="" id="liga-item" alt="Liga">
-                                            </div>
-                                        
-                                        <span>Estadio: 
-                                            <a href="#" id="btn-mapa-google" target="_blank" rel="noopener noreferrer" class="btn-mapa">
-                                                <i class="bi bi-geo-alt-fill"></i> Google Maps
-                                            </a>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <hr>
-
-                        <div class="right" style="display: none;">
-                            <div id="tabla-map" class="tabla-jugadoras">
-                                <div class="cabecera-tabla">
-                                    <h3>Mapa</h3>
-                                    <a id="ver-map" href="#">Ver Más</a>
-                                </div>
-                                <div id="mapa-equipos" class="container-jugadoras" style="width: 100%; height: 400px; display: block;"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="left" id="left" style="height: 100%;">
-                    <section id="jugadoras-actuales-sec">
-                        <div id="tabla-jugadoras-actuales" class="tabla-jugadoras" style="height: 100%; width: 95%; min-height: 300px;">
-                            <div class="cabecera-tabla">
-                                <h3>Plantilla</h3>
-                            </div>
-                            <div id="jugadoras-actuales">
-                                <div id="campo-destacadas" class="campo-contenedor-wrapper">
-                                    <!-- El campo de fútbol dinámico -->
-                                    <div id="football-field-container"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    <section id="jugadoras-destacadas">
-                        <div id="tabla-trofeos" class="tabla-jugadoras">
-                                        <div class="cabecera-tabla">
-                                            <h3>Palmarés</h3>
+                                    <div class="container-jugadoras">
+                                        <div id="fundacion" style="height: 20%; display: flex; flex-direction: column; justify-content: center;">
+                                            <p style="margin-bottom: 0;">Fundado</p>
+                                            <h3 id="equipo-fundacion">--</h3>
                                         </div>
-                                        <div id="palmares" class="container-jugadoras"></div>
-                                    </div>
-                        <div id="tabla-jugadoras-destacadas" class="tabla-jugadoras">
-                            <div class="cabecera-tabla">
-                                <h3>Destacadas</h3>
-                            </div>
-                            <div id="jugadoras-destacadas-container" class="container-jugadoras"></div>
-                        </div>
-                    </section>
-                </div>
-            </div>
-
-            <!-- Pestaña 2: PLANTILLA COMPLETA -->
-            <div id="plantilla" class="tab-content">  
-                <div id="jugadoras-actuales-container" class="container-jugadoras">
-                    <div id="campo">
-                        <div class="football-pitch">
-                            <!-- DELANTERAS -->
-                            <div class="pos-slot slot-dc1" data-pos="10">
-                                <div class="jugadora">
-                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
-                                    <div class="jugadora-text">
-                                        <span>DC</span>
-                                        <p>Nombre</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="pos-slot slot-dc2" data-pos="10">
-                                <div class="jugadora">
-                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
-                                    <div class="jugadora-text">
-                                        <span>DC</span>
-                                        <p>Nombre</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="pos-slot slot-dc3" data-pos="10">
-                                <div class="jugadora">
-                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
-                                    <div class="jugadora-text">
-                                        <span>DC</span>
-                                        <p>Nombre</p>
+                                        <div id="datos-equipo">
+                                            <h3 id="equipo-nombre">Cargando equipo...</h3>
+                                                <div id="escudo-container" style="overflow: hidden; max-width: 50%;">
+                                                    <img src="" id="escudo" alt="Escudo" fetchpriority="high" style="width: 100%;">
+                                                </div>
+                                                <div id="liga-pais">
+                                                    <span class="" id="pais-bandera"></span>
+                                                    <img src="" id="liga-item" alt="Liga">
+                                                </div>
+                                            
+                                            <span>Estadio: 
+                                                <a href="#" id="btn-mapa-google" target="_blank" rel="noopener noreferrer" class="btn-mapa">
+                                                    <i class="bi bi-geo-alt-fill"></i> Google Maps
+                                                </a>
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- EXTREMOS / MCO -->
-                            <div class="pos-slot slot-ei" data-pos="11">
-                                <div class="jugadora">
-                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
-                                    <div class="jugadora-text">
-                                        <span>EI</span>
-                                        <p>Nombre</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="pos-slot slot-mco" data-pos="7">
-                                <div class="jugadora">
-                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
-                                    <div class="jugadora-text">
-                                        <span>MCO</span>
-                                        <p>Nombre</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="pos-slot slot-ed" data-pos="12">
-                                <div class="jugadora">
-                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
-                                    <div class="jugadora-text">
-                                        <span>ED</span>
-                                        <p>Nombre</p>
-                                    </div>
-                                </div>
-                            </div>
+                            <hr>
 
-                            <!-- MEDIOCAMPISTAS -->
-                            <div class="pos-slot slot-mi" data-pos="8">
-                                <div class="jugadora">
-                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
-                                    <div class="jugadora-text">
-                                        <span>MI</span>
-                                        <p>Nombre</p>
+                            <div class="right" style="display: none;">
+                                <div id="tabla-map" class="tabla-jugadoras">
+                                    <div class="cabecera-tabla">
+                                        <h3>Mapa</h3>
+                                        <a id="ver-map" href="#">Ver Más</a>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="pos-slot slot-mc1" data-pos="5">
-                                <div class="jugadora">
-                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
-                                    <div class="jugadora-text">
-                                        <span>MC</span>
-                                        <p>Nombre</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="pos-slot slot-mc2" data-pos="5">
-                                <div class="jugadora">
-                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
-                                    <div class="jugadora-text">
-                                        <span>MC</span>
-                                        <p>Nombre</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="pos-slot slot-mc3" data-pos="5">
-                                <div class="jugadora">
-                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
-                                    <div class="jugadora-text">
-                                        <span>MC</span>
-                                        <p>Nombre</p>
-                                    </div>
-                                </div>
-                            </div> <!-- 🟢 NUEVO MC -->
-                            <div class="pos-slot slot-md" data-pos="9">
-                                <div class="jugadora">
-                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
-                                    <div class="jugadora-text">
-                                        <span>MD</span>
-                                        <p>Nombre</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- PIVOTES / MCD (2 MCDs) -->
-                            <div class="pos-slot slot-mcd1" data-pos="6">
-                                <div class="jugadora">
-                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
-                                    <div class="jugadora-text">
-                                        <span>MCD</span>
-                                        <p>Nombre</p>
-                                    </div>
-                                </div>
-                            </div> <!-- 🟢 NUEVO MCD 1 -->
-                            <div class="pos-slot slot-mcd2" data-pos="6">
-                                <div class="jugadora">
-                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
-                                    <div class="jugadora-text">
-                                        <span>MCD</span>
-                                        <p>Nombre</p>
-                                    </div>
-                                </div>
-                            </div> <!-- 🟢 NUEVO MCD 2 -->
-
-                            <div class="pos-slot slot-mcd3" data-pos="6">
-                                <div class="jugadora">
-                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
-                                    <div class="jugadora-text">
-                                        <span>MCD</span>
-                                        <p>Nombre</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- DEFENSAS -->
-                            <div class="pos-slot slot-li" data-pos="4">
-                                <div class="jugadora">
-                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
-                                    <div class="jugadora-text">
-                                        <span>LI</span>
-                                        <p>Nombre</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="pos-slot slot-dfc1" data-pos="3">
-                                <div class="jugadora">
-                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
-                                    <div class="jugadora-text">
-                                        <span>DFC</span>
-                                        <p>Nombre</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="pos-slot slot-dfc2" data-pos="3">
-                                <div class="jugadora">
-                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
-                                    <div class="jugadora-text">
-                                        <span>DFC</span>
-                                        <p>Nombre</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="pos-slot slot-dfc3" data-pos="3">
-                                <div class="jugadora">
-                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
-                                    <div class="jugadora-text">
-                                        <span>DFC</span>
-                                        <p>Nombre</p>
-                                    </div>
-                                </div>
-                            </div> <!-- 🟢 NUEVO DFC 3 -->
-                            <div class="pos-slot slot-ld" data-pos="2">
-                                <div class="jugadora">
-                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
-                                    <div class="jugadora-text">
-                                        <span>LD</span>
-                                        <p>Nombre</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- PORTERA -->
-                            <div class="pos-slot slot-por" data-pos="1">
-                                <div class="jugadora">
-                                    <img src="/img/predeterm.png" alt="jugadora-silueta">
-                                    <span class="nacionalidad fi fi-es"></span>
-                                    <div class="jugadora-text">
-                                        <span>POR</span>
-                                        <p>Nombre</p>
-                                    </div>
+                                    <div id="mapa-equipos" class="container-jugadoras" style="width: 100%; height: 400px; display: block;"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div id="suplentes"></div>
-                </div>
-            </div>
 
-            <!-- Pestaña 3: JUGADORAS HISTÓRICAS -->
-            <div id="historicas" class="tab-content">
-                <div id="jugadoras-container" class="container-jugadoras" style="display: none;"></div>
-                <div id="historicas-placeholder" style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
-                    <h3 id="historicas-equipo-nombre">--</h3>
-                    <img id="historicas-escudo" src="" alt="Escudo">
-                    <p>Haz clic en una temporada para ver las jugadoras que han estado en el club</p>
+                    <div class="left" id="left" style="height: 100%;">
+                        <section id="jugadoras-actuales-sec">
+                            <div id="tabla-jugadoras-actuales" class="tabla-jugadoras" style="height: 100%; width: 95%; min-height: 300px;">
+                                <div class="cabecera-tabla">
+                                    <h3>Plantilla</h3>
+                                </div>
+                                <div id="jugadoras-actuales">
+                                    <div id="campo-destacadas" class="campo-contenedor-wrapper">
+                                        <!-- El campo de fútbol dinámico -->
+                                        <div id="football-field-container"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        <section id="jugadoras-destacadas">
+                            <div id="tabla-trofeos" class="tabla-jugadoras">
+                                            <div class="cabecera-tabla">
+                                                <h3>Palmarés</h3>
+                                            </div>
+                                            <div id="palmares" class="container-jugadoras"></div>
+                                        </div>
+                            <div id="tabla-jugadoras-destacadas" class="tabla-jugadoras">
+                                <div class="cabecera-tabla">
+                                    <h3>Destacadas</h3>
+                                </div>
+                                <div id="jugadoras-destacadas-container" class="container-jugadoras"></div>
+                            </div>
+                        </section>
+                    </div>
                 </div>
 
-                <div id="slider-temporadas">
-                    <button id="prev-temporada" class="slider-button">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
-                        </svg>
-                    </button>
-                    <div id="temporadas-container"></div>
-                    <button id="next-temporada" class="slider-button">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
-                        </svg>
-                    </button>
+                <!-- Pestaña 2: PLANTILLA COMPLETA -->
+                <div id="plantilla" class="tab-content">  
+                    <div id="jugadoras-actuales-container" class="container-jugadoras">
+                        <div id="campo">
+                            <div class="football-pitch">
+                                <!-- DELANTERAS -->
+                                <div class="pos-slot slot-dc1" data-pos="10">
+                                    <div class="jugadora">
+                                        <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                        <div class="jugadora-text">
+                                            <span>DC</span>
+                                            <p>Nombre</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="pos-slot slot-dc2" data-pos="10">
+                                    <div class="jugadora">
+                                        <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                        <div class="jugadora-text">
+                                            <span>DC</span>
+                                            <p>Nombre</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="pos-slot slot-dc3" data-pos="10">
+                                    <div class="jugadora">
+                                        <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                        <div class="jugadora-text">
+                                            <span>DC</span>
+                                            <p>Nombre</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- EXTREMOS / MCO -->
+                                <div class="pos-slot slot-ei" data-pos="11">
+                                    <div class="jugadora">
+                                        <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                        <div class="jugadora-text">
+                                            <span>EI</span>
+                                            <p>Nombre</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="pos-slot slot-mco" data-pos="7">
+                                    <div class="jugadora">
+                                        <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                        <div class="jugadora-text">
+                                            <span>MCO</span>
+                                            <p>Nombre</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="pos-slot slot-ed" data-pos="12">
+                                    <div class="jugadora">
+                                        <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                        <div class="jugadora-text">
+                                            <span>ED</span>
+                                            <p>Nombre</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- MEDIOCAMPISTAS -->
+                                <div class="pos-slot slot-mi" data-pos="8">
+                                    <div class="jugadora">
+                                        <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                        <div class="jugadora-text">
+                                            <span>MI</span>
+                                            <p>Nombre</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="pos-slot slot-mc1" data-pos="5">
+                                    <div class="jugadora">
+                                        <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                        <div class="jugadora-text">
+                                            <span>MC</span>
+                                            <p>Nombre</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="pos-slot slot-mc2" data-pos="5">
+                                    <div class="jugadora">
+                                        <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                        <div class="jugadora-text">
+                                            <span>MC</span>
+                                            <p>Nombre</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="pos-slot slot-mc3" data-pos="5">
+                                    <div class="jugadora">
+                                        <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                        <div class="jugadora-text">
+                                            <span>MC</span>
+                                            <p>Nombre</p>
+                                        </div>
+                                    </div>
+                                </div> <!-- 🟢 NUEVO MC -->
+                                <div class="pos-slot slot-md" data-pos="9">
+                                    <div class="jugadora">
+                                        <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                        <div class="jugadora-text">
+                                            <span>MD</span>
+                                            <p>Nombre</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- PIVOTES / MCD (2 MCDs) -->
+                                <div class="pos-slot slot-mcd1" data-pos="6">
+                                    <div class="jugadora">
+                                        <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                        <div class="jugadora-text">
+                                            <span>MCD</span>
+                                            <p>Nombre</p>
+                                        </div>
+                                    </div>
+                                </div> <!-- 🟢 NUEVO MCD 1 -->
+                                <div class="pos-slot slot-mcd2" data-pos="6">
+                                    <div class="jugadora">
+                                        <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                        <div class="jugadora-text">
+                                            <span>MCD</span>
+                                            <p>Nombre</p>
+                                        </div>
+                                    </div>
+                                </div> <!-- 🟢 NUEVO MCD 2 -->
+
+                                <div class="pos-slot slot-mcd3" data-pos="6">
+                                    <div class="jugadora">
+                                        <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                        <div class="jugadora-text">
+                                            <span>MCD</span>
+                                            <p>Nombre</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- DEFENSAS -->
+                                <div class="pos-slot slot-li" data-pos="4">
+                                    <div class="jugadora">
+                                        <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                        <div class="jugadora-text">
+                                            <span>LI</span>
+                                            <p>Nombre</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="pos-slot slot-dfc1" data-pos="3">
+                                    <div class="jugadora">
+                                        <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                        <div class="jugadora-text">
+                                            <span>DFC</span>
+                                            <p>Nombre</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="pos-slot slot-dfc2" data-pos="3">
+                                    <div class="jugadora">
+                                        <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                        <div class="jugadora-text">
+                                            <span>DFC</span>
+                                            <p>Nombre</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="pos-slot slot-dfc3" data-pos="3">
+                                    <div class="jugadora">
+                                        <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                        <div class="jugadora-text">
+                                            <span>DFC</span>
+                                            <p>Nombre</p>
+                                        </div>
+                                    </div>
+                                </div> <!-- 🟢 NUEVO DFC 3 -->
+                                <div class="pos-slot slot-ld" data-pos="2">
+                                    <div class="jugadora">
+                                        <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                        <div class="jugadora-text">
+                                            <span>LD</span>
+                                            <p>Nombre</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- PORTERA -->
+                                <div class="pos-slot slot-por" data-pos="1">
+                                    <div class="jugadora">
+                                        <img src="/img/predeterm.png" alt="jugadora-silueta">
+                                        <span class="nacionalidad fi fi-es"></span>
+                                        <div class="jugadora-text">
+                                            <span>POR</span>
+                                            <p>Nombre</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="suplentes"></div>
+                    </div>
                 </div>
-            </div>
-        </div> <!-- Cierre del div #resto -->
+
+                <!-- Pestaña 3: JUGADORAS HISTÓRICAS -->
+                <div id="historicas" class="tab-content">
+                    <div id="jugadoras-container" class="container-jugadoras" style="display: none;"></div>
+                    <div id="historicas-placeholder" style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+                        <h3 id="historicas-equipo-nombre">--</h3>
+                        <img id="historicas-escudo" src="" alt="Escudo">
+                        <p>Haz clic en una temporada para ver las jugadoras que han estado en el club</p>
+                    </div>
+
+                    <div id="slider-temporadas">
+                        <button id="prev-temporada" class="slider-button">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
+                            </svg>
+                        </button>
+                        <div id="temporadas-container"></div>
+                        <button id="next-temporada" class="slider-button">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div> <!-- Cierre del div #resto -->
+            <!-- Selector de Pestañas -->
+                <div id="selector">
+                    <a href="#info" class="active">Información</a>
+                    <div class="vr"></div>
+                    <a href="#plantilla">Plantilla</a>
+                    <div class="vr"></div>
+                    <a href="#historicas">Históricas</a>
+                </div>
+        </div>
     </div>
 
     <!-- Librerías Externas -->
@@ -453,6 +468,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous" defer></script>
     <!-- Script de Inicialización de la Ficha -->
     <script type="module" src="./js/ficha-equipo.js"></script>
+    <script src="/js/index.js" defer></script>
     <script type="module">
         import { initFicha } from './js/ficha-equipo.js';
 
@@ -461,9 +477,9 @@
         const equipoId = urlParams.get('id');
         const equipoSlug = urlParams.get('slug');
 
-
-
-        console.log("ID del equipo obtenido de la URL:", equipoId);
+        const heroCanvas = new CanvasBackground('canvas', {
+            colors: ["#210936", "#836FFF", "#FF007A"] // Cyberpunk
+        });
 
         // Función asíncrona autoejecutada para manejo seguro de await
         (async () => {

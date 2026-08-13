@@ -1,4 +1,7 @@
-
+body{
+    overflow-y: hidden;
+    background: var(--color-primario) !important;
+}
 /* Capa fija de fondo para el estadio difuminado */
 body::before {
     content: "";
@@ -9,12 +12,7 @@ body::before {
     bottom: -10px;
     z-index: -1;   /* Mantiene la imagen por detrás de todo el contenido */
     
-    background-image: 
-        linear-gradient(
-            color-mix(in srgb, var(--color-secundario) 100%, transparent 80%),
-            color-mix(in srgb, var(--color-secundario) 100%, transparent 80%)
-        ),
-        url(../img/estadio1.webp) !important;
+    background: color-mix(in srgb, var(--color-secundario) 100%, transparent 80%);
     background-size: cover !important;
     background-repeat: no-repeat !important;
     background-position: center center !important;
@@ -51,6 +49,7 @@ body::before{
     padding-block: 20px;
     max-width: 1200px;
     overflow-y: hidden;
+    gap: 5px;
 }
 #resto{
     order: 2;
@@ -66,31 +65,90 @@ body::before{
     /*background-color: color-mix(in srgb, var(--color-secundario, #121212) 80%, var(--equipo-color) 10%);*/
 }
 
-#resto #selector{
+#resto {
+  background: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  /*box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 0 20px 10px rgba(255, 255, 255, 1);*/
+  position: relative;
+  overflow: hidden;
+}
+
+#resto::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.8),
+    transparent
+  );
+}
+
+#resto::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.8),
+    transparent,
+    rgba(255, 255, 255, 0.3)
+  );
+}
+
+#selector{
+    position: sticky; /* 'fixed' funciona mejor que 'sticky' cuando html/body tienen overflow:hidden */
+    /*bottom: 3dvh;*/
+    left: 50%;
+    transform: translateX(-50%); /* Centra el menú horizontalmente */
     display: flex;
     flex-direction: row;
-    align-items: center;
-    gap: 5px;
-    order: 4;
+    z-index: 100; /* Asegura que siempre esté sobre el fondo */
+    background: rgba(15, 13, 24, 0.6);
+    padding: 6px 6px;
+    border-radius: 30px;
+    order: 2;
+    /*backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);*/
 }
 
-#resto #selector .vr {
-  width: 1px;
-  height: 80%; /* alto de la línea */
-  background-color: #ccc;
+@media (max-width:768px){
+    #selector{
+        left: unset;
+        transform: none;
+    }
 }
 
-#resto #selector a{
+#selector a {
     text-decoration: none;
-    padding: 5px;
-    color: color-mix(in srgb, var(--color-detalles) 75%, transparent 25%);
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 600;
+    transition: all 0.3s ease;
+    padding: 6px 12px;
 }
 
-#selector a.active{
-    color: var(--color-detalles) !important;
-    text-shadow: 0 0 5px color-mix(in srgb, white 70%, transparent 30%);
-    /*background: var(--color-primario);*/
+/* 🎯 Clase para iluminar la sección activa */
+#selector a.active {
+    color: #ffffff;
+    background: var(--color-primario);
+    border-radius: 30px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
 }
+
 #selector a:hover{
     color: var(--color-detalles) !important;
     text-shadow: 0 0 5px color-mix(in srgb, white 70%, transparent 30%);
@@ -261,6 +319,51 @@ body::before{
     order: 1;
 }
 
+#jugadora-info {
+  background: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  /*box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 0 20px 10px rgba(255, 255, 255, 1);*/
+  position: relative;
+  overflow: hidden;
+}
+
+#jugadora-info::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.8),
+    transparent
+  );
+}
+
+#jugadora-info::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.8),
+    transparent,
+    rgba(255, 255, 255, 0.3)
+  );
+}
+
 #jugadora-info #escudo-container{
     max-width: 55px;
     max-height: 55px;
@@ -336,6 +439,7 @@ hr {
     flex-direction: row !important;
     align-items: center;
     overflow: hidden;
+    padding-inline: 2%;
 }
 
 #jugadora-datos #campo{
@@ -348,6 +452,10 @@ hr {
     border-radius: 20px;
     text-align: center;
     width: 80%;
+}
+
+#jugadora-datos #campo .pos-slot .jugadora-text span{
+    font-size: small;
 }
 
 #jugadora-datos #campo .jugadora.delantera .jugadora-text{
@@ -800,7 +908,7 @@ span.swiper-pagination-bullet-active{
         max-height: 100vh;
     }
     #ficha-jugadora-container{
-        padding-block: 10px;
+        padding-block: 20px;
         max-width: 500px;
     }
     .mySwiper {

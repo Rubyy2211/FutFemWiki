@@ -19,19 +19,32 @@
     <link rel="modulepreload" href="js/wiki.js">
 
     <link rel="stylesheet" href="css/bootstrap.css">
-    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" href="/css/estilos.css">
     <link rel="stylesheet" href="css/combo.css">
     <link rel="stylesheet" href="css/wiki.css">
     <link rel="stylesheet" href="css/jugadoras.css">
 </head>
 <body>
 
+<canvas id="canvas" width="500" height="500" class="canvas-bg"></canvas>
+
 <header class="navbar">
     <div class="header-container">
         <a href="index.html" class="logo-link">
             <img src="img/logo.webp" alt="Logo FutFemWiki" class="logo-img">
         </a>
-        <nav class="nav-container">
+        
+        <h1 id="logo-wiki">FUTFEM <span>WIKI</span></h1>
+
+        <!-- 🍔 Botón Hamburguesa para móvil -->
+        <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <!-- Menú de navegación -->
+        <nav class="nav-container" id="nav-menu">
             <ul class="nav-links">
                 <li><a href="jugadoras.html" class="active">Jugadoras</a></li>
                 <li><a href="ligas.html">Equipos</a></li>
@@ -134,10 +147,15 @@
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.2/color-thief.umd.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous" defer></script>
+<script src="/js/index.js" defer></script>
 <script type="module">
     import { iniciarJugadoras } from './js/jugadoras.js';
     document.addEventListener('DOMContentLoaded', () => {
         iniciarJugadoras();
+    });
+
+    const heroCanvas = new CanvasBackground('canvas', {
+        colors: ["#210936", "#836FFF", "#FF007A"] // Cyberpunk
     });
 </script>
 

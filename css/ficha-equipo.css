@@ -64,12 +64,27 @@ body::before{
     /*background-color: color-mix(in srgb, var(--color-secundario, #121212) 80%, var(--equipo-color) 10%);*/
 }
 
-#resto #selector{
+#selector {
+    position: sticky; /* 'fixed' funciona mejor que 'sticky' cuando html/body tienen overflow:hidden */
+    /*bottom: 3dvh;*/
+    left: 50%;
+    transform: translateX(-50%); /* Centra el menú horizontalmente */
     display: flex;
     flex-direction: row;
-    align-items: center;
-    gap: 5px;
+    z-index: 100; /* Asegura que siempre esté sobre el fondo */
+    background: rgba(15, 13, 24, 0.6);
+    padding: 6px 6px;
+    border-radius: 30px;
     order: 4;
+    /*backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);*/
+}
+
+@media (max-width: 768px){
+    #selector{
+        left: unset;
+        transform: none;
+    }
 }
 
 #resto #selector .vr {
@@ -78,17 +93,20 @@ body::before{
   background-color: #ccc;
 }
 
-#resto #selector a{
+#selector a {
     text-decoration: none;
-    padding: 5px;
-    font-size: medium;
-    color: color-mix(in srgb, var(--color-detalles) 75%, transparent 25%);
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 600;
+    transition: all 0.3s ease;
+    padding: 6px 12px;
 }
 
-#selector a.active{
-    color: var(--color-detalles) !important;
-    text-shadow: 0 0 5px color-mix(in srgb, white 70%, transparent 30%);
-    /*background: var(--color-primario);*/
+/* 🎯 Clase para iluminar la sección activa */
+#selector a.active {
+    color: #ffffff;
+    background: var(--color-primario);
+    border-radius: 30px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
 }
 #selector a:hover{
     color: var(--color-detalles) !important;
@@ -100,6 +118,26 @@ body::before{
     width: 100%;
     flex-direction: column;
     max-width: 1200px;
+    padding-inline: 2%;
+}
+.prev, .next {
+    width: 2rem;
+}
+.slider .box .details p{
+    font-size: 0.8rem;
+}
+.slider .box .details button{
+    display: none;
+}
+.slider .box .details h1{
+    font-size: 2rem;
+}
+.slider .box .details {
+    padding: 3rem;
+}
+.trail div{
+    font-size: small;
+    padding: 1rem;
 }
 #info.tab-content{
     flex-direction: row;
@@ -129,7 +167,7 @@ body::before{
 /* 1. El contenedor padre maneja la distribución vertical */
 #jugadoras-actuales-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center; /* 🎯 Centra el campo horizontalmente si sobra espacio a los lados */
     height: 100vh; /* O la altura total deseada (ej. calc(100vh - header)) */
     width: 100%;
@@ -139,18 +177,15 @@ body::before{
 /* 2. El campo ocupa todo el alto restante sin deformarse */
 #plantilla #campo {
     /* 🎯 Toma todo el alto que no ocupan los suplentes */
-    flex: 1; 
-    min-height: 0; /* Crucial en Flexbox para permitir que se ajuste al espacio */
-    
-    /* 🎯 Mantiene la proporción: el ancho se calcula automáticamente a partir del alto */
+    flex: 1;
+    min-height: 0;
     aspect-ratio: 2600 / 1556 !important;
-    height: 100%;
-    width: auto; 
-    max-width: 100%; /* No permite que se salga de la pantalla a lo ancho */
-
-    /* Fondo */
+    max-height: 90%;
+    width: auto;
+    max-width: fit-content !important;
+    /* max-width: fit-content; */
     background-image: url(/img/pitch.webp);
-    background-size: 100% 100%; /* Ajusta exacto porque la caja ya tiene la proporción correcta */
+    background-size: 100% 100%;
     background-position: center;
     background-repeat: no-repeat;
     position: relative;
@@ -223,37 +258,58 @@ body::before{
 }
 
 #plantilla #suplentes {
-    flex-shrink: 0; /* Evita que el campo los aplaste */
-    min-height: 15%;
-    max-height: 15%;
+    flex-shrink: 0;
+    max-width: 20%;
+    max-height: 100%;
     width: 100%;
-    /*background: red;*/
-    display: flex;
-    flex-direction: row;
-    overflow: hidden;
-    overflow-x: auto;
+    
+    /* 1. Cambiamos a CSS Grid */
+    display: grid;
+    grid-template-columns: repeat(3, 30%); /* 2 columnas iguales */
+    grid-template-rows: repeat(5, 1fr);    /* 5 filas iguales */
+    gap: 2px;                              /* Espacio opcional entre elementos */
+    
+    /* 2. Ajuste de Scroll vertical si hay más de 10 elementos */
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
-#plantilla #suplentes .jugadora-wrapper, #plantilla #suplentes .jugadora-item{
-    max-height: 100%;
-    min-height: 100%;
+@media (max-width:768px){
+    #suplentes{
+        grid-template-columns: repeat(6, 16.6667%) !important; /* 2 columnas iguales */
+        grid-template-rows: repeat(2, 50%) !important;    /* 5 filas iguales */
+        height: 90%;
+        max-width: 100% !important;
+        max-height: 20% !important;
+    }
+}
+
+#plantilla #suplentes .jugadora-wrapper, 
+#plantilla #suplentes .jugadora-item {
+    width: 100%;
     height: 100%;
+    min-height: 0; /* Crucial en Grid para evitar que el contenido desborde las celdas */
+    max-height: 100%;
     transform: none;
 }
 
-#plantilla #suplentes .jugadora{
+#plantilla #suplentes .jugadora {
     aspect-ratio: 1/1;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 5px;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
 }
 
 #plantilla #suplentes .jugadora .jugadora-text{
     display: flex;
     flex-direction: row;
     max-height: 30%;
+    min-height: fit-content;
     overflow: hidden;
 }
 
@@ -428,7 +484,7 @@ body::before{
     max-width: 80dvw;
     position: absolute;
     z-index: 10;
-    bottom: 0px;
+    bottom: 10px;
 }
 
 #historicas #slider-temporadas::-webkit-scrollbar, #historicas #slider-temporadas #temporadas-container::-webkit-scrollbar {
@@ -503,16 +559,30 @@ body::before{
     box-shadow: none;
 }
 
-#equipo-container {
+#equipo-container{
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    width: 95%;
-    max-width: 1200px; /* Evita el scroll horizontal */
-    max-height: 100dvh;
-    height: 100%;
     align-items: center;
-    overflow-y: hidden !important;
+    padding: 0 !important;
+}
+#ficha-equipo-container{
+    width: 95%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 100%;
+    padding-block: 0;
+    padding-inline: 0;
+    max-height: 100%;
     padding-block: 20px;
+    max-width: 1200px;
+    overflow-y: hidden;
+    gap: 5px;
 }
 
 #equipo-info{
@@ -539,6 +609,51 @@ body::before{
     padding-inline: 2%;
 }
 
+#equipo-info {
+  background: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  /*box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 0 20px 10px rgba(255, 255, 255, 1);*/
+  position: relative;
+  overflow: hidden;
+}
+
+#equipo-info::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.8),
+    transparent
+  );
+}
+
+#equipo-info::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.8),
+    transparent,
+    rgba(255, 255, 255, 0.3)
+  );
+}
+
 #equipo-info #escudo-container{
     max-width: 55px;
     max-height: 55px;
@@ -560,8 +675,8 @@ body::before{
     display: flex;
     align-items: center;
     padding-inline: 5px;
-    background: color-mix(in srgb, var(--equipo-color) 40%, transparent 60%);
-    /* glow */ box-shadow: 0 0 10px color-mix(in srgb, var(--equipo-color) 70%, transparent 30%);
+    /*background: color-mix(in srgb, var(--equipo-color) 40%, transparent 60%);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--equipo-color) 70%, transparent 30%);*/
 }
 
 #equipo-info #equipo-img{
@@ -574,29 +689,25 @@ body::before{
     position: relative;
 }
 /* Esquina superior izquierda */
-#equipo-info .equipo-img-wrapper::after {
+/*#equipo-info .equipo-img-wrapper::after {
     content: '';
     position: absolute;
-    inset: 0; /* Cubre todo el cuadro */
-    pointer-events: none; /* No bloquea clics */
+    inset: 0; 
+    pointer-events: none; 
 
     background:
-        /* Superior Izquierda */
         linear-gradient(var(--equipo-color), var(--equipo-color)) top left / 20px 2px no-repeat,
         linear-gradient(var(--equipo-color), var(--equipo-color)) top left / 2px 20px no-repeat,
 
-        /* Superior Derecha */
         linear-gradient(var(--equipo-color), var(--equipo-color)) top right / 20px 2px no-repeat,
         linear-gradient(var(--equipo-color), var(--equipo-color)) top right / 2px 20px no-repeat,
 
-        /* Inferior Izquierda */
         linear-gradient(var(--equipo-color), var(--equipo-color)) bottom left / 20px 2px no-repeat,
         linear-gradient(var(--equipo-color), var(--equipo-color)) bottom left / 2px 20px no-repeat,
 
-        /* Inferior Derecha */
         linear-gradient(var(--equipo-color), var(--equipo-color)) bottom right / 20px 2px no-repeat,
         linear-gradient(var(--equipo-color), var(--equipo-color)) bottom right / 2px 20px no-repeat;
-}
+}*/
 
 #equipo-info p{
     margin-bottom: 0;
@@ -623,7 +734,6 @@ body::before{
 
 #equipo-info #datos-equipo .bloque-nombre-pais h1{
     margin-bottom: 0;
-    font-size: large;
 }
 
 #equipo-info #datos-equipo #bloque-nombre-pais #pais{
@@ -670,12 +780,6 @@ hr {
     margin: 0 0; /* Espaciado arriba y abajo para separar los bloques */
 }
 
-#selector .vr {
-  width: 1px;
-  height: 80%; /* alto de la línea */
-  background-color: #ccc;
-}
-
 /*#equipo-container>div{
     display: flex;
     flex-direction: row;
@@ -692,7 +796,7 @@ hr {
 #info div.bloque-dato{
     display: flex;
     flex-direction: column;
-    justify-content: start;
+    justify-content: center;
     max-height: 30%;
     min-height: 30%;
     overflow: hidden;
@@ -734,6 +838,53 @@ div.bloque-dato a{
     height: 95%;
     min-height: 40%;
 }
+
+#resto {
+  background: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  /*box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 0 20px 10px rgba(255, 255, 255, 1);*/
+  position: relative;
+  overflow: hidden;
+}
+
+#resto::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.8),
+    transparent
+  );
+}
+
+#resto::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.8),
+    transparent,
+    rgba(255, 255, 255, 0.3)
+  );
+}
+
+
 .right, .left{
     display: flex;
     /*width: 35%;*/
@@ -1105,11 +1256,12 @@ section#jugadoras-actuales, section#jugadoras-destacadas{
     /*display: grid;
     grid-template-columns: repeat(4, minmax(0, 150px));*/
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     overflow-y: hidden;
-    justify-items: center;
+    justify-content: center;
     width: 100%;
     height: 100%;
+    gap: 0 !important;
     /*max-width: 1000px;*/
 }
 
@@ -1730,7 +1882,7 @@ body.no-scroll {
     }*/
     #resto{
         height: 80%;
-        min-height: 80%;
+        max-height: 80%;
     }
     #info{
         gap: 10px;
@@ -1758,6 +1910,7 @@ body.no-scroll {
         min-height: 100%;
         max-height: 100%;
         justify-content: center;
+        align-items: center;
     }
 
     #info .column .bloque-dato img{
@@ -1782,7 +1935,6 @@ body.no-scroll {
     }
 
     #equipo-info{
-        padding-inline: 1%;
         justify-content: center;
         min-height: 20%;
         height: 20%;
@@ -1867,6 +2019,10 @@ body.no-scroll {
         min-width: 0 !important;
     }
 
+    #info .bloque-dato p {
+        font-size: x-small;
+    }
+
    .resto{
         width: 100%;
         /*height: fit-content !important;*/
@@ -1913,6 +2069,8 @@ body.no-scroll {
         order: 2;
         gap: 5px;
         justify-content: flex-start;
+        padding-inline: 2%;
+        padding-bottom: 2%;
     }
 
     .left section{
@@ -2173,6 +2331,22 @@ body.no-scroll {
         height: 75% !important;
     }
 
+    .football-pitch .jugadora img {
+        height: 60%;
+    }
+
+    .football-pitch .jugadora .jugadora-text{
+        flex-direction: column-reverse;
+        gap: 0;
+        height: 40%;
+        align-items: center;
+        justify-content: left;
+    }
+
+    .football-pitch .jugadora .jugadora-text p{
+        display: none;
+    }
+
     /*#jugadoras-actuales .football-field tr{
         height: 7vh !important;
     }
@@ -2197,6 +2371,7 @@ body.no-scroll {
 
     #jugadoras-actuales-container{
         gap: 5px;
+        flex-direction: column;
     }
 
     #jugadoras-actuales-container .jugadora-item, #jugadoras-container .jugadora-item{
@@ -2313,6 +2488,6 @@ body.no-scroll {
 
 @media (max-width: 600px){
     #jugadoras-actuales-container{
-        grid-template-columns: repeat(3, 1fr);
+        flex-direction: column;
     }
 }

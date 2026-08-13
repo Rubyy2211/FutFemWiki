@@ -36,21 +36,12 @@ export async function inicializarLigas(){
     // Despliegue dropdown Países
     dropdownBtnPais.onclick = (e) => {
         e.stopPropagation();
-        //dropdownMenuLigas.classList.remove('open'); // Evita solapamiento
         dropdownMenuPais.classList.toggle('open');
     };
-
-    // Despliegue dropdown Ligas
-    /*dropdownBtnLiga.onclick = (e) => {
-        e.stopPropagation();
-        dropdownMenuPais.classList.remove('open'); // Evita solapamiento
-        //dropdownMenuLigas.classList.toggle('open');
-    };*/
 
     // Un solo listener global limpio para cerrar ambos menús si hacen clic fuera
     document.onclick = () => {
         dropdownMenuPais.classList.remove('open');
-        //dropdownMenuLigas.classList.remove('open');
     };
 
     // ==========================================
@@ -72,43 +63,42 @@ export async function inicializarLigas(){
 
         // Evento interactivo de selección
         li.addEventListener('click', () => {
-            dropdownBtnPais.dataset.id = pais.id_pais;
+            dropdownBtnPais.dataset.id = pais.iso;
             selectedTextPais.textContent = pais.nombre;
             selectedFlagPais.className = `fi fi-${codigoIso}`;
             
             dropdownMenuPais.classList.remove('open');
             
-            /*if (typeof ligasxpais === 'function') {
-                ligasxpais(pais.id_pais);
-            }*/
+            const targetPais = document.getElementById(pais.iso);
+            if (targetPais) {
+                // Cálculo de posición relativa dentro del contenedor
+                const containerTop = container.getBoundingClientRect().top;
+                const targetTop = targetPais.getBoundingClientRect().top;
+                const targetPosition = targetTop - containerTop + container.scrollTop;
+
+                container.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
+            }
         });
 
         dropdownMenuPais.appendChild(li);
     });
 
     sectionWiki.classList.add('equipos');
-            cabecera.classList.add('equipos');
-            cabeceraLigas.classList.add('active');
-            
-            // 1. Buscamos España (ID: 1) dentro de los datos que devolvió la caché/API
-            const paisPorDefecto = paisesConLigas.find(p => Number(p.id_pais) === 1);
-            
-            if (paisPorDefecto) {
-                // 2. Forzamos a la maqueta visual a pintar España y su bandera de inicio
-                dropdownBtnPais.dataset.id = paisPorDefecto.id_pais;
-                selectedTextPais.textContent = paisPorDefecto.nombre;
-                selectedFlagPais.className = `fi fi-${(paisPorDefecto.iso || 'xx').toLowerCase()}`;
-            }
+    cabecera.classList.add('equipos');
+    cabeceraLigas.classList.add('active');
     
-            // 3. Traemos las ligas de España (esto llamará a displayLigas que rellenará el 2º dropdown)
-            /*await ligasxpais(1).then(ligas => {
-                //displayLigas(ligas.success);
-            });*/
+    // 1. Buscamos España (ID: 1) dentro de los datos que devolvió la caché/API
+    const paisPorDefecto = paisesConLigas.find(p => Number(p.id_pais) === 1);
     
-            /*if (ligasContainer && ligasContainer.firstChild) {
-                ligasContainer.firstChild.classList.add('selected');
-            }*/
-
+    if (paisPorDefecto) {
+        // 2. Forzamos a la maqueta visual a pintar España y su bandera de inicio
+        dropdownBtnPais.dataset.id = paisPorDefecto.id_pais;
+        selectedTextPais.textContent = paisPorDefecto.nombre;
+        selectedFlagPais.className = `fi fi-${(paisPorDefecto.iso || 'xx').toLowerCase()}`;
+    }
 }
 
 export function displayPaises(data) {
@@ -133,6 +123,7 @@ export function displayPaises(data) {
         const headerPais = document.createElement('div');
         const elementosPais = document.createElement('div');
         containerPais.className = 'container-pais';
+        containerPais.id = pais.iso;
         headerPais.id = 'header-'+pais.id_pais
         headerPais.className = 'header-pais';
 
@@ -204,7 +195,7 @@ export function displayLigas(data, container) {
     }
 
     data.forEach(async (liga, index) => {
-        console.log(liga)
+        if(liga.tipo === 2){ return; }
         ///if(liga.)
         const ligaItem = document.createElement('div');
         const img = document.createElement('img');
@@ -231,17 +222,20 @@ export function displayLigas(data, container) {
                 console.error('Error extrayendo colores de la imagen:', error);
             }
         };
-        container.appendChild(ligaItem);
 
-        // NAVEGACIÓN HACIA LA PÁGINA DE LA LIGA
-        ligaItem.addEventListener('click', () => {
-            const ligaSlug = (liga.nombre || '')
-                .toLowerCase()
-                .replace(/\s+/g, '-')
-                .replace(/[^a-z0-9\-]/g, '');
+        if(ligaItem && container){
+            container.appendChild(ligaItem);
 
-            // Redirige a la página dedicada de la liga
-            window.location.href = `liga.html?id=${liga.liga || liga.id}&slug=${ligaSlug}`;
-        });
+            // NAVEGACIÓN HACIA LA PÁGINA DE LA LIGA
+            ligaItem.addEventListener('click', () => {
+                const ligaSlug = (liga.nombre || '')
+                    .toLowerCase()
+                    .replace(/\s+/g, '-')
+                    .replace(/[^a-z0-9\-]/g, '');
+
+                // Redirige a la página dedicada de la liga
+                window.location.href = `liga.html?id=${liga.liga || liga.id}&slug=${ligaSlug}`;
+            });
+        }
     });
 }

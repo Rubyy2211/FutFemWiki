@@ -81,7 +81,7 @@ export function ponerJugadoraEnField(jugadora, posicionId) {
 
     const img = document.createElement('img');
     img.src = jugadora.foto || jugadora.imagen || '/img/predeterm.png';
-    img.alt = jugadora.nombre || 'jugadora-silueta';
+    img.alt = jugadora.apodo || 'jugadora-silueta';
 
     const spanPais = document.createElement('span');
     const iso = (jugadora.nacionalidades_isos && jugadora.nacionalidades_isos[0]) 
@@ -100,7 +100,7 @@ export function ponerJugadoraEnField(jugadora, posicionId) {
         : 'SUP';
 
     const pNombre = document.createElement('p');
-    pNombre.textContent = jugadora.nombre_corto || jugadora.nombre || 'Jugadora';
+    pNombre.textContent = jugadora.apodo || jugadora.nombre || 'Jugadora';
 
     divText.appendChild(spanPos);
     divText.appendChild(pNombre);
