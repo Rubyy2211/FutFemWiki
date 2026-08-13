@@ -468,9 +468,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous" defer></script>
     <!-- Script de Inicialización de la Ficha -->
     <script type="module" src="./js/ficha-equipo.js"></script>
-    <script src="/js/index.js" defer></script>
     <script type="module">
         import { initFicha } from './js/ficha-equipo.js';
+        import { CanvasBackground } from '/js/index.js';
 
         // Obtener los parámetros de la URL actual
         const urlParams = new URLSearchParams(window.location.search);
