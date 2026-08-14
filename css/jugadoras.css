@@ -109,6 +109,7 @@ body #wiki-equipos #wiki-container .pagination {
     flex-direction: row;
     height: fit-content;
     align-items: center;
+    justify-content: center;
 }
 
 body #wiki-equipos #wiki-container .pagination span{

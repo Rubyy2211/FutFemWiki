@@ -257,6 +257,10 @@ body::before{
     color: var(--color-delantera);
 }
 
+.jugadora-text span{
+    font-size: x-small;
+}
+
 #plantilla #suplentes {
     flex-shrink: 0;
     max-width: 20%;
@@ -324,6 +328,7 @@ body::before{
 #plantilla #suplentes .jugadora .jugadora-text p{
     margin-bottom: 0;
     text-align: center;
+    font-size: x-small;
 }
 
 #plantilla #suplentes .jugadora img{
@@ -360,12 +365,14 @@ body::before{
     display: flex;
     flex-direction: row;
     height: fit-content;
+    align-items: center;
     gap: 10px;
 }
 
 .football-pitch .jugadora .jugadora-text p{
     text-wrap: nowrap;
     margin-bottom: 0;
+    font-size: x-small;
 }
 
 /* Estilo para las fichas/posiciones */
@@ -485,6 +492,114 @@ body::before{
     position: absolute;
     z-index: 10;
     bottom: 10px;
+}
+
+/* 1. Contenedor del Select (Aquí SÍ luce el Glassmorphism completo) */
+/* 1. Botón del Select desplegado (Estilo Píldora / Cristal) */
+#historicas #select-temporadas {
+    display: block;
+    width: auto;
+    padding: 5px 28px 5px 12px;   /* Altura reducida y espacio para la flecha */
+    font-size: 0.8rem;            /* Letra más pequeña */
+    font-weight: 600;
+    color: #ffffff;
+    
+    /* Fondo Glassmorphism estilo la captura */
+    background-color: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 12px;          /* Forma redondeada tipo píldora */
+    outline: none;
+    cursor: pointer;
+
+    /* Flecha desplegable blanca e integrada */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+}
+
+/* 2. Lista de Opciones desplegadas */
+#historicas #select-temporadas option {
+    font-size: 0.78rem;           /* Fuente compacta para que ocupen menos altura */
+    padding: 4px 8px;             /* Filas más finas y juntas */
+    background-color: #140423;    /* Fondo morado oscuro idéntico al de la imagen */
+    color: #ffffff;
+}
+
+/* Estilo para la opción seleccionada */
+#historicas #select-temporadas option:checked {
+    background-color: #3b2a52;    /* Gris/morado resaltado para la opción activa */
+    color: #ffffff;
+}
+
+#historicas #select-temporadas::-webkit-scrollbar{
+    display: none;
+}
+
+#historicas #select-temporadas{
+    display: none;
+}
+
+/* 2. Opciones desplegables individuales */
+#historicas #select-temporadas option {
+    /* Letra más pequeña */
+    font-size: 0.8rem; 
+    font-weight: 500;
+    
+    /* Fondo compatible que simula la tonalidad oscura del diseño */
+    background-color: #1a0927; 
+    color: rgba(255, 255, 255, 0.9);
+    
+    /* Espaciado interno de cada opción */
+    padding: 8px 10px;
+}
+
+#historicas #select-temporadas option::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.8),
+    transparent
+  );
+}
+
+#historicas #select-temporadas option::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.8),
+    transparent,
+    rgba(255, 255, 255, 0.3)
+  );
+}
+
+@media(max-width:768px){
+    #historicas #slider-temporadas{
+        display: none;
+    }
+
+    #historicas #select-temporadas{
+        display: block;
+    }
+    
+    #historicas #jugadoras-container{
+        margin-bottom: 0;
+    }
 }
 
 #historicas #slider-temporadas::-webkit-scrollbar, #historicas #slider-temporadas #temporadas-container::-webkit-scrollbar {
@@ -1342,6 +1457,16 @@ section#jugadoras-actuales, section#jugadoras-destacadas{
     max-width: 30px;
 }
 
+@media (max-width: 768px){
+    #jugadoras-container .jugadora-item .jugadora-div1 .jugadora-banderas img{
+        max-width: 20px;
+    }
+
+    .jugadora-banderas{
+        font-size: x-small;
+    }
+}
+
 #jugadoras-actuales-container .jugadora-item .jugadora-div1 .jugadora-banderas>*,
 #jugadoras-container .jugadora-item .jugadora-div1 .jugadora-banderas>*{
     max-width: 30%;
@@ -1350,13 +1475,16 @@ section#jugadoras-actuales, section#jugadoras-destacadas{
 }
 
 #jugadoras-actuales-container .jugadora-item .jugadora-div1 img,
-#jugadoras-container .jugadora-item .jugadora-div1 img{
-    /*height: 100%;*/
-    max-width: 100%;
-    max-height: 100%;
-    aspect-ratio: 1/1 !important;
+#jugadoras-container .jugadora-item .jugadora-div1>img{
+    max-width: 95%;
+    max-height: 80%;
+    height: 80% !important;
+    aspect-ratio: 1 / 1 !important;
     width: 100%;
     height: auto;
+    align-self: center;
+        /*transform: translateY(10px);*/
+    z-index: -1;
 }
 
 #jugadoras-actuales-container .jugadora-item .jugadora-posicion,
@@ -2375,7 +2503,7 @@ body.no-scroll {
     }
 
     #jugadoras-actuales-container .jugadora-item, #jugadoras-container .jugadora-item{
-        min-height: 100%;
+        min-height: fit-content;
         min-width: 20% !important;
 
     }
@@ -2450,10 +2578,11 @@ body.no-scroll {
         margin-bottom: unset;
     }
 
-     .down section .jugadora-item p{
+     .jugadora-item p{
         font-size: x-small;
         text-align: center;
         white-space: nowrap;
+        font-size: x-small;
     }
 
     .slider .details{
@@ -2467,6 +2596,14 @@ body.no-scroll {
         text-align: center;
     }
 
+    .slider .box .details {
+        grid-row: 1 / -1;
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 2rem;
+        transform: translateY(-9rem);
+    }
+
     .slider .illustration{
         transform: translateX(-7.5%);
     }
@@ -2476,7 +2613,12 @@ body.no-scroll {
     }
 
     .trail{
-        bottom: 5%;
+        bottom: 0%;
+    }
+
+    .trail div{
+        font-size: xx-small;
+        padding: 1rem;
     }
 
     .bg-icon{

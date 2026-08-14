@@ -779,9 +779,10 @@ header{
         top: 100%; /* Se despliega justo debajo del header */
         left: 0;
         width: 100%;
-        background-color: rgba(33, 25, 81, 0.95); /* Color de fondo traslúcido */
+        /*background-color: rgba(33, 25, 81, 0.95); /* Color de fondo traslúcido */
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
+        justify-content: center;
         
         /* Animación de apertura/cierre */
         max-height: 0;
@@ -1591,6 +1592,10 @@ header .dropdown-menu1 nav ul li.dropdown .submenu{
 
     .hamburger-menu .bar{
         width: 35px;
+    }
+
+    #selector a{
+        font-size: small !important;
     }
 }
 

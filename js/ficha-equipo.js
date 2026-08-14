@@ -186,7 +186,7 @@ function crearCardDestacada(jugadora, etiqueta) {
     badge.style.fontSize = '0.8em';
 
     const img = document.createElement('img');
-    img.src = jugadora.imagen ? jugadora.imagen : '/static/img/predeterm.png';
+    img.src = jugadora.imagen ? jugadora.imagen : '/img/predeterm.png';
     img.className = 'jugadora-imagen';
     img.loading = 'lazy';
     img.alt = jugadora.nombre_completo || jugadora.apodo || jugadora.nombre;
@@ -466,64 +466,107 @@ export function filtrarJugadorasPorTemporada(temporada) {
     return jugadorasFiltradas;
 }
 
-// funcion slider de temporadas
+// Función para inicializar listeners de navegación y del select
 export function setupSliderTemporadas() {
     const container = document.getElementById('temporadas-container');
     const btnPrev = document.getElementById('prev-temporada');
     const btnNext = document.getElementById('next-temporada');
+    const selectMobile = document.getElementById('select-temporadas');
 
-    btnPrev.addEventListener('click', () => {
-        container.scrollBy({ left: -200, behavior: 'smooth' });
-    });
+    if (btnPrev && container) {
+        btnPrev.addEventListener('click', () => {
+            container.scrollBy({ left: -200, behavior: 'smooth' });
+        });
+    }
 
-    btnNext.addEventListener('click', () => {
-        container.scrollBy({ left: 200, behavior: 'smooth' });
-    });
+    if (btnNext && container) {
+        btnNext.addEventListener('click', () => {
+            container.scrollBy({ left: 200, behavior: 'smooth' });
+        });
+    }
 
+    // Listener para cuando se cambia de temporada desde el selector de MÓVIL
+    if (selectMobile) {
+        selectMobile.addEventListener('change', (e) => {
+            const temporadaSeleccionada = e.target.value;
+
+            // Sincronizamos la clase '.activo' en los botones de escritorio
+            if (container) {
+                const botones = container.querySelectorAll('.temporada-button');
+                botones.forEach(btn => {
+                    btn.classList.toggle('activo', btn.textContent === temporadaSeleccionada);
+                });
+            }
+
+            // Ejecutamos tu función de filtrado
+            filtrarJugadorasPorTemporada(temporadaSeleccionada);
+        });
+    }
 }
 
 function crearBotonesTemporada(anyo_fundacion, color) {
-        const mainContainer = document.getElementById('historicas');
-        const containerTemporadas = document.getElementById('temporadas-container');
+    const containerTemporadas = document.getElementById('temporadas-container');
+    const selectTemporadas = document.getElementById('select-temporadas');
 
-        // Limpiamos el contenedor por si acaso se vuelve a ejecutar la función
-        if (containerTemporadas) containerTemporadas.innerHTML = '';
+    // Limpiamos ambos contenedores
+    if (containerTemporadas) containerTemporadas.innerHTML = '';
+    if (selectTemporadas) selectTemporadas.innerHTML = '';
 
-        if (anyo_fundacion) {
-            const currentYear = new Date().getFullYear(); // En 2026 generará hasta la 2026-2027
+    if (anyo_fundacion) {
+        const currentYear = new Date().getFullYear();
 
-            for (let year = anyo_fundacion; year <= currentYear; year++) {
-                const button = document.createElement('button');
-                button.style.background =
-                `radial-gradient(
-                    farthest-corner at left bottom,
-                    color-mix(in srgb, var(--color-secundario) 80%, black) 0%,
-                    ${color} 100%
-                )`;
-                button.textContent = year + '-' + (year + 1);
-                button.classList.add('temporada-button', 'season-badge'); // Añadimos tus clases de diseño estético
-                
-                button.addEventListener('click', () => {
-                    // 👉 LA MAGIA: Buscamos si ya había algún botón activo en el contenedor y le quitamos la clase
-                    const botonActivoAnterior = containerTemporadas.querySelector('.activo');
-                    if (botonActivoAnterior) {
-                        botonActivoAnterior.classList.remove('activo');
-                    }
+        for (let year = anyo_fundacion; year <= currentYear; year++) {
+            const seasonText = `${year}-${year + 1}`;
 
-                    // Ahora hacemos que el botón actual pase a ser el único activo
-                    button.classList.add('activo');
-                    
-                    // Tu lógica para cargar y mostrar los datos de las jugadoras
-                    const jugadorasFiltradas = filtrarJugadorasPorTemporada(button.textContent);
-                });
-                
-                containerTemporadas.appendChild(button);
+            // --- 1. Crear Botón para Desktop ---
+            const button = document.createElement('button');
+            button.style.background = `radial-gradient(
+                farthest-corner at left bottom,
+                color-mix(in srgb, var(--color-secundario) 80%, black) 0%,
+                ${color} 100%
+            )`;
+            button.textContent = seasonText;
+            button.classList.add('temporada-button', 'season-badge');
+
+            button.addEventListener('click', () => {
+                // Quitar 'activo' del botón previo
+                const botonActivoAnterior = containerTemporadas.querySelector('.activo');
+                if (botonActivoAnterior) {
+                    botonActivoAnterior.classList.remove('activo');
+                }
+                button.classList.add('activo');
+
+                // Sincronizar el select de móvil
+                if (selectTemporadas) {
+                    selectTemporadas.value = seasonText;
+                }
+
+                // Filtrar jugadoras
+                filtrarJugadorasPorTemporada(seasonText);
+            });
+
+            if (containerTemporadas) containerTemporadas.appendChild(button);
+
+            // --- 2. Crear Option para Móvil ---
+            if (selectTemporadas) {
+                const option = document.createElement('option');
+                option.value = seasonText;
+                option.textContent = seasonText;
+                selectTemporadas.appendChild(option);
             }
-        } else {
+        }
+    } else {
+        if (containerTemporadas) {
             const mensaje = document.createElement('p');
-            mensaje.textContent = '{% trans "No hay información de fundación disponible para este equipo." %}';
+            mensaje.textContent = 'No hay información de fundación disponible para este equipo.';
             containerTemporadas.appendChild(mensaje);
         }
+        if (selectTemporadas) {
+            const option = document.createElement('option');
+            option.textContent = 'Sin datos de fundación';
+            selectTemporadas.appendChild(option);
+        }
+    }
 }
 
 
