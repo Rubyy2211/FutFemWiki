@@ -127,74 +127,113 @@
     }
 
     // --- MARQUESINA DE JUGADORAS (VERTICAL / COLUMNAS) ---
-    function crearFondoJugadoras(listaJugadoras) {
-        if (!listaJugadoras || listaJugadoras.length === 0) return;
-        const fotosBase = listaJugadoras.map(j => j.foto || j.imagen).filter(Boolean);
+// 🔍 Helper para verificar que la URL/Ruta sea válida
+function esUrlValida(url) {
+    if (!url || typeof url !== 'string') return false;
+    
+    const urlLimpia = url.trim().toLowerCase();
+    
+    // Descarta textos falsos comunes que vienen de APIs
+    if (urlLimpia === '' || urlLimpia === 'null' || urlLimpia === 'undefined' || urlLimpia === 'none') {
+        return false;
+    }
+    
+    try {
+        // Verifica si es una URL válida (absoluta tipo https:// o relativa tipo /img/...)
+        new URL(url, window.location.origin);
+        return true;
+    } catch (_) {
+        return false;
+    }
+}
 
-        const marqueeBg = document.createElement('div');
-        marqueeBg.className = 'bg-marquee';
+// --- MARQUESINA DE JUGADORAS (VERTICAL / COLUMNAS) ---
+function crearFondoJugadoras(listaJugadoras) {
+    if (!listaJugadoras || listaJugadoras.length === 0) return;
 
-        for (let i = 0; i < 5; i++) {
-            const col = document.createElement('div');
-            col.className = `marquee-col ${i % 2 === 0 ? 'scroll-up' : 'scroll-down'}`;
+    // Filtra solo URLs válidas y existentes
+    const fotosBase = listaJugadoras
+        .map(j => j?.foto || j?.imagen)
+        .filter(esUrlValida);
 
-            const base = mezclarFotos(fotosBase).slice(0, 15);
-            const fotosColumna = [...base, ...base];
-            fotosColumna.forEach(url => {
-                const img = document.createElement('img');
-                img.src = url;
-                img.alt = 'Jugadora';
-                img.loading = 'lazy';
-                col.appendChild(img);
-            });
-            marqueeBg.appendChild(col);
-        }
+    // Si tras filtrar no queda ninguna foto válida, cancelamos la creación
+    if (fotosBase.length === 0) return;
 
-        const overlay = document.createElement('div');
-        overlay.className = 'bg-overlay';
+    const marqueeBg = document.createElement('div');
+    marqueeBg.className = 'bg-marquee';
 
-        sectionJugadoras.prepend(overlay);
-        sectionJugadoras.prepend(marqueeBg);
+    for (let i = 0; i < 5; i++) {
+        const col = document.createElement('div');
+        col.className = `marquee-col ${i % 2 === 0 ? 'scroll-up' : 'scroll-down'}`;
+
+        const base = mezclarFotos(fotosBase).slice(0, 15);
+        const fotosColumna = [...base, ...base];
+
+        fotosColumna.forEach(url => {
+            const img = document.createElement('img');
+            img.src = url;
+            img.alt = 'Jugadora';
+            img.loading = 'lazy';
+
+            // 🛡️ Si la imagen da error 404 al cargar, se elimina del DOM automáticamente
+            img.onerror = () => img.remove();
+
+            col.appendChild(img);
+        });
+        marqueeBg.appendChild(col);
     }
 
-    // --- MARQUESINA DE EQUIPOS (HORIZONTAL / FILAS) ---
-    function crearFondoEquipos(listaEquipos) {
-        console.log(listaEquipos)
-        if (!listaEquipos || listaEquipos.length === 0) return;
+    const overlay = document.createElement('div');
+    overlay.className = 'bg-overlay';
 
-        // Extraer fotos o escudos de los equipos
-        const fotosBase = listaEquipos.map(e => e.escudo || e.foto || e.imagen || e.logo).filter(Boolean);
+    sectionJugadoras.prepend(overlay);
+    sectionJugadoras.prepend(marqueeBg);
+}
 
-        const marqueeBg = document.createElement('div');
-        marqueeBg.className = 'bg-marquee-equipos';
+// --- MARQUESINA DE EQUIPOS (HORIZONTAL / FILAS) ---
+function crearFondoEquipos(listaEquipos) {
+    if (!listaEquipos || listaEquipos.length === 0) return;
 
-        const numFilas = 4;
+    // Extraer fotos o escudos válidos de los equipos
+    const fotosBase = listaEquipos
+        .map(e => e?.escudo || e?.foto || e?.imagen || e?.logo)
+        .filter(esUrlValida);
 
-        for (let i = 0; i < numFilas; i++) {
-            const row = document.createElement('div');
-            // Pares (0 y 2) van a la izquierda, Impares (1 y 3) van a la derecha
-            row.className = `marquee-row ${i % 2 === 0 ? 'scroll-left' : 'scroll-right'}`;
+    // Si tras filtrar no quedan escudos válidos, cancelamos
+    if (fotosBase.length === 0) return;
 
-            // Multiplicamos el listado para asegurar que llene el ancho horizontal sin cortes
-            const fotosFila = [...mezclarFotos(fotosBase), ...mezclarFotos(fotosBase), ...mezclarFotos(fotosBase)];
+    const marqueeBg = document.createElement('div');
+    marqueeBg.className = 'bg-marquee-equipos';
 
-            fotosFila.forEach(url => {
-                const img = document.createElement('img');
-                img.src = url;
-                img.alt = 'Equipo';
-                img.loading = 'lazy';
-                row.appendChild(img);
-            });
+    const numFilas = 4;
 
-            marqueeBg.appendChild(row);
-        }
+    for (let i = 0; i < numFilas; i++) {
+        const row = document.createElement('div');
+        row.className = `marquee-row ${i % 2 === 0 ? 'scroll-left' : 'scroll-right'}`;
 
-        const overlay = document.createElement('div');
-        overlay.className = 'bg-overlay-equipos';
+        const fotosFila = [...mezclarFotos(fotosBase), ...mezclarFotos(fotosBase), ...mezclarFotos(fotosBase)];
 
-        sectionEquipos.prepend(overlay);
-        sectionEquipos.prepend(marqueeBg);
+        fotosFila.forEach(url => {
+            const img = document.createElement('img');
+            img.src = url;
+            img.alt = 'Equipo';
+            img.loading = 'lazy';
+
+            // 🛡️ Si la imagen da error 404 al cargar, se elimina del DOM automáticamente
+            img.onerror = () => img.remove();
+
+            row.appendChild(img);
+        });
+
+        marqueeBg.appendChild(row);
     }
+
+    const overlay = document.createElement('div');
+    overlay.className = 'bg-overlay-equipos';
+
+    sectionEquipos.prepend(overlay);
+    sectionEquipos.prepend(marqueeBg);
+}
 
     // Ejecutar ambas funciones
     crearFondoJugadoras(jugadoras);

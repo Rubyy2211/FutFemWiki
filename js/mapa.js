@@ -4,7 +4,7 @@ let bloqueado = false;
 let orbitando = false;
 let lastTime = null;
 
-export function inicializarMapaEquipos(centerInicial = [7, 40], zoomInicial = 5) {
+export function inicializarMapaEquipos(centerInicial = [7, 40], zoomInicial = 6) {
     if (map) {
         markersGroup.forEach(m => m.marker.remove());
         markersGroup = [];
@@ -18,57 +18,22 @@ export function inicializarMapaEquipos(centerInicial = [7, 40], zoomInicial = 5)
         projection: 'globe',
         center: centerInicial,
         zoom: zoomInicial,
-        minZoom: 5,
-        antialias: true
+        minZoom: 6,
+        antialias: true,
+        attributionControl: false // 👈 Desactiva la barra de atribución
     });
 
     map.addControl(new maplibregl.NavigationControl());
 
     map.on("movestart", () => { bloqueado = true; });
     map.on("moveend", () => { bloqueado = false; });
-
-    // Escuchar eventos de zoom usando la función unificada
     map.on("zoom", actualizarMarkersZoom);
 
     map.on("load", () => {
-        const layers = map.getStyle().layers;
-        const labelLayerId = layers.find(
-            l => l.type === "symbol" && l.layout?.["text-field"]
-        )?.id;
-
-        map.addSource("satellite", {
-            type: "raster",
-            tiles: [
-                "https://api.maptiler.com/tiles/satellite-v2/tiles.json?key=LYmhz1BKy6QniXWrxK2S"
-            ],
-            tileSize: 256,
-            //attribution: "© MapTiler © OpenStreetMap contributors"
-        });
-
-        /*map.addLayer({
-            id: "3d-buildings",
-            source: "openmaptiles",
-            "source-layer": "building",
-            type: "fill-extrusion",
-            minzoom: 13,
-            paint: {
-                "fill-extrusion-color": "#c000ff",
-                "fill-extrusion-height": [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    13, ["get", "render_height"],
-                    16, ["*", ["get", "render_height"], 0.6]
-                ],
-                "fill-extrusion-base": ["get", "render_min_height"],
-                "fill-extrusion-opacity": 0.85
-            }
-        }, labelLayerId);*/
-
         map.setLight({
             anchor: "viewport",
             color: "#ffffff",
-            intensity: 0.6,
+            intensity: 0.5,
             position: [1.5, 180, 80]
         });
     });

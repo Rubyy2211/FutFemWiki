@@ -248,7 +248,7 @@ async function cargarTrayectorias(jugadora, trayectorias, palmaresPromise) {
         front.style.border = `1px solid ${colorPrimario}`;
 
         // 5. Lógica de contenido
-        const imgSrc = trayectoria.imagen?.trim() ? `${trayectoria.imagen}` : jugadora.imagen?.trim() ? `${jugadora.imagen}` : "/static/img/predeterm.jpg";
+        const imgSrc = trayectoria.imagen?.trim() ? `${trayectoria.imagen}` : jugadora.imagen?.trim() ? `${jugadora.imagen}` : "/img/predeterm.png";
         const iso = jugadora.pais_iso && jugadora.pais_iso.length > 0 ? jugadora.pais_iso[0] : 'xx';
         const anyos = trayectoria.fecha_inicio ? (trayectoria.fecha_inicio.substring(0, 4) + (trayectoria.fecha_fin ? ' - ' + trayectoria.fecha_fin.substring(0, 4) : ' - Act.')) : '';
 
@@ -308,11 +308,12 @@ async function cargarCompanyeras(equipoId) {
         const slugNombre = (compañera.Nombre_Completo || compañera.nombre).toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, ''); // Limpiamos caracteres especiales para el slug
         const card = document.createElement('div');
         card.classList.add('companyera-card', 'glass');
-        const imgSrc = compañera.imagen?.trim()
-    ? `${compañera.imagen.replace(/^\/+/, "")}`
-    : "/img/predeterm.png";
+        let imgSrc = compañera.imagen?.trim()
+        ? `${compañera.imagen.replace(/^\/+/, "")}`
+        : "/img/predeterm.png";
 
-        console.log(`Cargando compañera: ${compañera.Nombre_Completo} con imagen ${imgSrc}`);
+        if(imgSrc==='img/predeterm.jpg'){ imgSrc = '/img/predeterm.png' }
+
         card.innerHTML = `
             <img src="${imgSrc}" alt="${compañera.Nombre_Completo}" width="100" height="130" style="width: 100%; height: auto; object-fit: cover;" loading="lazy">
             <p>${compañera.Nombre_Completo}</p>
