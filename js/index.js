@@ -78,12 +78,14 @@ export class CanvasBackground {
 
 // Lógica del menú responsive
 document.addEventListener('DOMContentLoaded', () => {
+    const header = document.querySelector('header');
     const navToggle = document.getElementById('nav-toggle');
     const navMenu = document.getElementById('nav-menu');
 
     if (navToggle && navMenu) {
         navToggle.addEventListener('click', () => {
             navToggle.classList.toggle('open');
+            header.classList.toggle('open');
             navMenu.classList.toggle('open');
         });
     }

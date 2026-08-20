@@ -205,7 +205,7 @@ function crearCardDestacada(jugadora, etiqueta) {
     cardContainer.appendChild(card);
     cardContainer.appendChild(info);
     
-    card.onclick = () => window.location.href = `/jugadora/${jugadora.id_jugadora}/${slugNombre}/`;
+    card.onclick = () => window.location.href = `jugadora_ficha.html?id=${jugadora.id_jugadora}&slug=${slugNombre}`;;
     return cardContainer;
 }
 
@@ -279,15 +279,14 @@ function crearFichaBaseJugadora(jugadora, colorPredeterminado, mostrarEtapas = f
     // Posiciones
     const pPosicion = document.createElement('div');
     pPosicion.className = 'jugadora-posicion';
-    (jugadora.posiciones_abrev || []).forEach(pos => {
-        const span = document.createElement('span');
-        span.textContent = typeof gettext === 'function' ? gettext(pos) : pos;
-        if (jugadora.posiciones_ids) {
-            span.id = jugadora.posiciones_ids[jugadora.posiciones_abrev.indexOf(pos)];
-        }
-        span.className = 'pos-' + pos;
-        pPosicion.appendChild(span);
-    });
+
+    const span = document.createElement('span');
+    span.textContent = typeof gettext === 'function' ? gettext(jugadora.posiciones_abrev[0]) : jugadora.posiciones_abrev[0];
+    if (jugadora.posiciones_ids) {
+        span.id = jugadora.posiciones_ids[jugadora.posiciones_abrev.indexOf(jugadora.posiciones_abrev[0])];
+    }
+    span.className = 'pos-' + jugadora.posiciones_abrev[0];
+    pPosicion.appendChild(span);
 
     divBanderaYPosicion.appendChild(divBanderas);
     divBanderaYPosicion.appendChild(pPosicion);
@@ -311,7 +310,7 @@ function crearFichaBaseJugadora(jugadora, colorPredeterminado, mostrarEtapas = f
     div.style.border = '1px solid ' + colorPrimario;
 
     div.addEventListener('click', () => {
-        window.location.href = `/jugadora/${jugadora.id_jugadora}/${slugNombre}/`;
+        window.location.href = `jugadora_ficha.html?id=${jugadora.id_jugadora}&slug=${slugNombre}`;;
     });
 
     wrapper.appendChild(div);

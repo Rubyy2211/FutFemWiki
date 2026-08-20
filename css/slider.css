@@ -155,6 +155,7 @@ html {
 @media only screen and (max-width: 800px) {
   .slider .box .details p {
     margin-right: 0;
+    margin-bottom: 0;
   }
 }
 

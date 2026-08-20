@@ -299,7 +299,7 @@ function renderJugadorasPage(page = 1) {
             `;*/
         }
 
-        pNombre.addEventListener('click', () => {
+        div.addEventListener('click', () => {
             window.location.href = `jugadora_ficha.html?id=${jugadora.id_jugadora}&slug=${slugNombre}`;
         });
 

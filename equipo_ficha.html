@@ -85,13 +85,13 @@
                                     <!--<p>Altura</p>-->
                                     <span id="formacion">0-0-0</span>
                                 </div>
-                                |
-                                <!--<div id="pie-habil" class="bloque-dato">
+                                <!--|
+                                <div id="pie-habil" class="bloque-dato">
                                     <p id="pie">Pie</p>
                                     <img id="pie-img" src="/img/none.webp" alt="pie-habil" style="max-height: 50px;">
-                                </div>--> 
+                                </div>
                                 | 
-                                <!--<div class="bloque-dato">
+                                <div class="bloque-dato">
                                     <p id="value">Valor</p>
                                     <span id="valor">10000 €</span>
                                 </div>-->
@@ -227,6 +227,10 @@
                 <!-- Pestaña 2: PLANTILLA COMPLETA -->
                 <div id="plantilla" class="tab-content">  
                     <div id="jugadoras-actuales-container" class="container-jugadoras">
+                        <div class="selector">
+                            <a href="#campo">Titulares</a>
+                            <a href="#suplentes">Suplentes</a>
+                        </div>
                         <div id="campo">
                             <div class="football-pitch">
                                 <!-- DELANTERAS -->
@@ -454,13 +458,13 @@
                 </div>
             </div> <!-- Cierre del div #resto -->
             <!-- Selector de Pestañas -->
-                <div id="selector">
-                    <a href="#info" class="active">Información</a>
-                    <div class="vr"></div>
-                    <a href="#plantilla">Plantilla</a>
-                    <div class="vr"></div>
-                    <a href="#historicas">Históricas</a>
-                </div>
+            <div id="selector">
+                <a href="#info" class="active">Información</a>
+                <div class="vr"></div>
+                <a href="#plantilla">Plantilla</a>
+                <div class="vr"></div>
+                <a href="#historicas">Históricas</a>
+            </div>
         </div>
     </div>
 
@@ -539,35 +543,39 @@
     const idEquipo = '{{equipo.id_equipo}}';    
     let equipoData = null;
 
-    // 1. Carga inmediata de datos de texto y jugadoras (Pesa poco)
-    //actualizarHeader();
-    //crearFichaJugadorasActuales(idEquipo, color);
-    //crearFichaJugadorasDeSiempre(idEquipo, color);
+    document.addEventListener('DOMContentLoaded', () => {
+        const linksSelector = document.querySelectorAll('.selector a');
+        const secciones = document.querySelectorAll('#campo, #suplentes');
 
-    /*async function cargarDatosPrincipales() {
-        // Ejecutamos las peticiones de datos en paralelo
-        [equipoData] = await Promise.all([
-            fetchEquipoById(idEquipo),
-            displayPalmares(idEquipo)
-        ]);
+        // Estado inicial: activar primer enlace y primera sección
+        linksSelector[0]?.classList.add('active');
+        secciones[0]?.classList.add('active');
 
-        console.log("Datos del equipo:", equipoData);
+        linksSelector.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
 
-        if (equipoData) {
-            // 2. CARGA BAJO DEMANDA (Lazy Import)
-            // Solo descargamos la lógica del campo de fútbol cuando tenemos los datos
-            const { crearAlineacion } = await import('{% static "js/football_field.js" %}');
-            crearAlineacion(equipoData.formacion.nombre);
+                const targetId = link.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
 
-            // 3. MAPA: Activamos el disparador por interacción
-            //prepararDisparadorMapa(equipoData);
-        }
-    }
-    window.addEventListener('pageshow', async (event) => {
-        // Reiniciamos la lógica
-        //await cargarDatosPrincipales();
-        //crearBotonesTemporada(equipoData.fundacion);
-    });*/
+                if (!targetSection) return;
+
+                // 1. Actualizar clase 'active' en los enlaces
+                linksSelector.forEach(a => a.classList.remove('active'));
+                link.classList.add('active');
+
+                // 2. Ocultar secciones y remover clase 'active' de todas
+                secciones.forEach(sec => {
+                    sec.style.display = 'none';
+                    sec.classList.remove('active');
+                });
+
+                // 3. Mostrar la sección seleccionada y añadir la clase 'active'
+                targetSection.style.display = 'block';
+                targetSection.classList.add('active');
+            });
+        });
+    });
 </script>
 </body>
 </html>

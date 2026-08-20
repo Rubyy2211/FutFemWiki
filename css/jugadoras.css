@@ -154,6 +154,10 @@ body #wiki-equipos #wiki-container #cabecera-jugadora #filtros>div.filtro-group{
     color: #fff;
 }
 
+#cerrar-filtros{
+    width: fit-content;
+}
+
 .filtro-group {
     display: flex;
     flex-direction: column;
@@ -494,6 +498,11 @@ body #wiki-equipos #wiki-container #items-container .jugadora-item {
     #ver-filtros {
         display: block;
     }
+
+    #resto{
+        display: flex;
+        flex-direction: column;
+    }
 }
 
 @media (max-width: 768px){
@@ -514,6 +523,10 @@ body #wiki-equipos #wiki-container #items-container .jugadora-item {
     body #wiki-equipos #wiki-container #items-container .jugadora-item {
         max-height: 45px;
         min-height: 45px;
+    }
+
+    .jugadora-item>p{
+        font-size: small;
     }
 
     body #wiki-equipos #wiki-container #items-container .jugadora-item .jugadora-div1{

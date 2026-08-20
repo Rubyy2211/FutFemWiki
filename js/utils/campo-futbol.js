@@ -109,6 +109,10 @@ export function ponerJugadoraEnField(jugadora, posicionId) {
     divJugadora.appendChild(spanPais);
     divJugadora.appendChild(divText);
 
+    divJugadora.addEventListener('click', () => {
+        window.location.href = `jugadora_ficha.html?id=${jugadora.id_jugadora}`;;
+    });
+
     // 2. Insertar según la disponibilidad en el campo
     if (slotLibre) {
         // ⚽ Hay un slot libre en el campo

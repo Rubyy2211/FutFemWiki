@@ -10,7 +10,7 @@ const pais = document.getElementById('pais');
 const posicion = document.getElementById('posicion');
 const info = document.getElementById('jugadora-info');
 const palmaresIndiv = document.getElementById('palmares-individual');
-const contenedorPais = document.getElementById('pais');
+const contenedorPais = document.getElementById('pais-info');
 const contenedorPais2 = document.querySelector('#nacionalidad-nombre a');
 const campo = document.getElementById('campo');
 
@@ -27,16 +27,28 @@ export async function cargarFichaJugadora(id_jugadora) {
     const ultimo = trayectorias.at(-1);
     const posiciones = jugadora.Posiciones.map(pos => pos.abreviatura || pos.nombre.substring(0, 3).toUpperCase());
     // colocar clase primaria/secundaria en el campo según la posición principal de la jugadora usando el data-pos del slot correspondiente
-    const slotPrincipal = document.querySelector(`.pos-slot[data-pos="${jugadora.Posiciones[0].id}"]`);
-    if (slotPrincipal) {
-        slotPrincipal.classList.add('pos-principal');
+    // Posición principal: colorear TODOS los slots que tengan esa posición
+    const posPrincipal = jugadora.Posiciones[0];
+
+    if (posPrincipal) {
+        const slotsPrincipales = document.querySelectorAll(
+            `.pos-slot[data-pos="${posPrincipal.id}"]`
+        );
+
+        slotsPrincipales.forEach(slot => {
+            slot.classList.add('pos-principal');
+        });
     }
-    // posiciones secundarias: añadir clase pos-secundaria a los slots correspondientes
+
+    // Posiciones secundarias: colorear TODOS los slots correspondientes
     jugadora.Posiciones.slice(1).forEach(pos => {
-        const slotSecundario = document.querySelector(`.pos-slot[data-pos="${pos.id}"]`);
-        if (slotSecundario) {
-            slotSecundario.classList.add('pos-secundaria');
-        }
+        const slotsSecundarios = document.querySelectorAll(
+            `.pos-slot[data-pos="${pos.id}"]`
+        );
+
+        slotsSecundarios.forEach(slot => {
+            slot.classList.add('pos-secundaria');
+        });
     });
 
     document.documentElement.style.setProperty('--equipo-color', ultimo.color)
@@ -82,14 +94,22 @@ export async function cargarFichaJugadora(id_jugadora) {
     });
     // 1. Limpiamos el contenido previo (por si cambias de jugadora)
     contenedorPais.innerHTML = ''; 
+    contenedorPais2.innerHTML = ''; 
+    bandera2.classList.add('fi', `fi-${jugadora.pais_iso[0].toLowerCase()}`);
     // 2. Comprobamos que existan nacionalidades
     if (jugadora.pais_iso && jugadora.pais_iso.length > 0) {
         
         jugadora.pais_iso.forEach((iso, index) => {
+
+            const span = document.createElement('span');
+
+            span.classList.add('fi', `fi-${iso.toLowerCase()}`);
+            span.style.display = 'inline-block';
+
+            contenedorPais.appendChild(span)
             
             // Añadimos las clases de la librería
-            bandera.classList.add('fi', `fi-${iso.toLowerCase()}`);
-            bandera2.classList.add('fi', `fi-${iso.toLowerCase()}`);
+            //bandera.classList.add('fi', `fi-${iso.toLowerCase()}`);
             
             // Estilos para diferenciar principal de secundarias
             bandera.style.display = 'inline-block';
@@ -112,7 +132,6 @@ export async function cargarFichaJugadora(id_jugadora) {
             nacionalidadNombreTexto.textContent = jugadora.nacionalidad.nombre || jugadora.Nacionalidad?.nombre || 'Desconocida';
 
             // Añadimos la bandera al contenedor principal
-            contenedorPais.appendChild(bandera);
             contenedorPais2.appendChild(bandera2);
             contenedorPais2.appendChild(nacionalidadNombreTexto);
         });

@@ -248,9 +248,28 @@ body::before{
     gap: 12px; 
 }
 
+#ficha-jugadora-container .section #header-compañeras div button{
+    box-shadow: none !important;
+    border: none !important;
+    transform: none !important;
+    opacity: 0.5;
+    transform: scale(0.8) !important;
+    transition: all 0.25s ease-in-out;
+}
+
+#ficha-jugadora-container .section #header-compañeras div button:hover{
+    opacity: 1;
+    transform: scale(1) !important;
+}
+
+#ficha-jugadora-container .section #header-compañeras div button:focus{
+    opacity: 1;
+    transform: scale(1) !important;
+}
+
 @media(max-width:768px){
     #container-companyeras{
-        grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
+        /*grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));*/
     }
 }
 
@@ -383,6 +402,17 @@ body::before{
     transparent,
     rgba(255, 255, 255, 0.3)
   );
+}
+
+#jugadora-info #pais-info{
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+#jugadora-info #pais-info span:nth-child(2){
+    transform: scale(0.8);
+    opacity: 0.5;
 }
 
 #jugadora-info #escudo-container{
@@ -1087,7 +1117,7 @@ span.swiper-pagination-bullet-active{
     }
 
     #jugadora-datos .bloque-dato span {
-        font-size: medium;
+        font-size: small;
         font-weight: 500;
         font-family: "Oswald", sans-serif;
     }
