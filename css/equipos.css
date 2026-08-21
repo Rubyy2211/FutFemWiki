@@ -4,6 +4,7 @@ body {
     align-items: center;
     overflow-y: auto;
     color: var(--color-detalles);
+    /*background: color-mix(in srgb, var(--color-secundario) 100%, transparent 80%);;*/
     min-height: 100dvh;
     max-width: 100vw;
     font-family: var(--font-cuerpo), sans-serif !important;
@@ -22,12 +23,12 @@ body::before {
     bottom: -10px;
     z-index: -1;   /* Mantiene la imagen por detrás de todo el contenido */
     
-    background-image: 
+    /*background-image: 
         linear-gradient(
             color-mix(in srgb, var(--color-secundario) 100%, transparent 80%),
             color-mix(in srgb, var(--color-secundario) 100%, transparent 80%)
         ),
-        url(../img/estadio1.webp) !important;
+        url(../img/estadio1.webp) !important;*/
     background-size: cover !important;
     background-repeat: no-repeat !important;
     background-position: center center !important;

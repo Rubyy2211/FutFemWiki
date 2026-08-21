@@ -758,7 +758,7 @@ body::before{
     padding-inline: 2%;
 }
 
-#equipo-info {
+/*#equipo-info {
   background: rgba(255, 255, 255, 0.16);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -769,7 +769,7 @@ body::before{
     inset 0 1px 0 rgba(255, 255, 255, 0.5),
     inset 0 -1px 0 rgba(255, 255, 255, 0.1),
     inset 0 0 20px 10px rgba(255, 255, 255, 1);*/
-  position: relative;
+  /*position: relative;
   overflow: hidden;
 }
 
@@ -801,7 +801,7 @@ body::before{
     transparent,
     rgba(255, 255, 255, 0.3)
   );
-}
+}*/
 
 #equipo-info #escudo-container{
     max-width: 55px;
@@ -900,6 +900,9 @@ body::before{
     font-weight: 500;
     font-family: "Oswald", sans-serif;
 }
+#equipo-info .row{
+    margin-left: 0;
+}
 #equipo-info .row>div{
     display: flex;
     flex-direction: row !important;
@@ -918,13 +921,13 @@ body::before{
 
 hr {
     border: none; /* Quitamos el borde gris por defecto */
-    height: 1.5px;  /* Le damos el grosor mínimo */
+    height: 2px;  /* Le damos el grosor mínimo */
     min-height: 1.5px;
     width: 100%;
     order: 1;
     
     /* Usamos color-mix para que sea una línea sutil que no rompa el diseño */
-    background-color: color-mix(in srgb, var(--color-detalles) 50%, transparent); 
+    background: color-mix(in srgb, var(--color-detalles) 100%, transparent); 
     
     margin: 0 0; /* Espaciado arriba y abajo para separar los bloques */
 }
@@ -988,7 +991,7 @@ div.bloque-dato a{
     min-height: 40%;
 }
 
-#resto {
+/*#resto {
   background: rgba(255, 255, 255, 0.16);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -999,7 +1002,7 @@ div.bloque-dato a{
     inset 0 1px 0 rgba(255, 255, 255, 0.5),
     inset 0 -1px 0 rgba(255, 255, 255, 0.1),
     inset 0 0 20px 10px rgba(255, 255, 255, 1);*/
-  position: relative;
+  /*position: relative;
   overflow: hidden;
 }
 
@@ -1031,7 +1034,7 @@ div.bloque-dato a{
     transparent,
     rgba(255, 255, 255, 0.3)
   );
-}
+}*/
 
 
 .right, .left{
@@ -2167,7 +2170,7 @@ body.no-scroll {
    .row{
         flex-direction: row;
         align-items: center;
-        justify-content: center;
+        justify-content: start;
         padding-inline: 0;
         flex-wrap: nowrap;
         /*height: 50%;*/

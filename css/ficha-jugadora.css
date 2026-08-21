@@ -77,7 +77,7 @@ body::before{
     /*background-color: color-mix(in srgb, var(--color-secundario, #121212) 80%, var(--equipo-color) 10%);*/
 }
 
-#resto {
+/*#resto {
   background: rgba(255, 255, 255, 0.16);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -88,7 +88,7 @@ body::before{
     inset 0 1px 0 rgba(255, 255, 255, 0.5),
     inset 0 -1px 0 rgba(255, 255, 255, 0.1),
     inset 0 0 20px 10px rgba(255, 255, 255, 1);*/
-  position: relative;
+  /*position: relative;
   overflow: hidden;
 }
 
@@ -120,7 +120,7 @@ body::before{
     transparent,
     rgba(255, 255, 255, 0.3)
   );
-}
+}*/
 
 #selector{
     position: sticky; /* 'fixed' funciona mejor que 'sticky' cuando html/body tienen overflow:hidden */
@@ -267,12 +267,6 @@ body::before{
     transform: scale(1) !important;
 }
 
-@media(max-width:768px){
-    #container-companyeras{
-        /*grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));*/
-    }
-}
-
 /* Estilo para cada cromo de compañera */
 .companyera-card {
     display: flex;
@@ -359,7 +353,7 @@ body::before{
     order: 1;
 }
 
-#jugadora-info {
+/*#jugadora-info {
   background: rgba(255, 255, 255, 0.16);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -370,11 +364,11 @@ body::before{
     inset 0 1px 0 rgba(255, 255, 255, 0.5),
     inset 0 -1px 0 rgba(255, 255, 255, 0.1),
     inset 0 0 20px 10px rgba(255, 255, 255, 1);*/
-  position: relative;
+  /*position: relative;
   overflow: hidden;
-}
+}*/
 
-#jugadora-info::before {
+/*#jugadora-info::before {
   content: '';
   position: absolute;
   top: 0;
@@ -402,7 +396,7 @@ body::before{
     transparent,
     rgba(255, 255, 255, 0.3)
   );
-}
+}*/
 
 #jugadora-info #pais-info{
     display: flex;
@@ -475,12 +469,13 @@ body::before{
 
 hr {
     border: none; /* Quitamos el borde gris por defecto */
-    height: 1.5px;  /* Le damos el grosor mínimo */
+    height: 2px;  /* Le damos el grosor mínimo */
+    min-height: 1.5px;
     width: 100%;
-    order: 2;
+    order: 1;
     
     /* Usamos color-mix para que sea una línea sutil que no rompa el diseño */
-    background-color: color-mix(in srgb, var(--color-detalles) 70%, transparent); 
+    background: color-mix(in srgb, var(--color-detalles) 100%, transparent); 
     
     margin: 0 0; /* Espaciado arriba y abajo para separar los bloques */
 }
@@ -640,6 +635,9 @@ div.bloque-dato a{
     font-size: x-large;
     font-weight: 500;
     font-family: "Oswald", sans-serif;
+}
+#jugadora-info .row{
+    margin-left: 0;
 }
 #jugadora-info .row>div{
     display: flex;
