@@ -11,9 +11,21 @@ h2{
     width: fit-content;
 }
 
+/* 🎯 Contenedor deslizante con transición suave */
+.sections-wrapper {
+    width: 100%;
+    height: 100vh;
+    will-change: transform;
+    transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* Asegura que las secciones ocupen exactamente el viewport sin desbordamiento */
 section {
     height: 100vh;
     width: 100%;
+    position: relative;
+    overflow: hidden;
+    background: none !important;
 }
 
 /* --- HERO CONTAINER --- */
@@ -30,9 +42,9 @@ section {
 
 .hero-section::before {
     content: "";
-    background: hsla(0, 0%, 41%, 0.15); /* Ligera capa traslúcida */
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
+    /*background: hsla(0, 0%, 41%, 0.15); /* Ligera capa traslúcida */
+    /*backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);*/
     position: absolute;
     inset: 0; /* Equivalente a top:0; left:0; width:100%; height:100%; */
     z-index: 0;
@@ -65,9 +77,9 @@ section {
 
 #jugadoras::before {
     content: "";
-    background: hsla(0, 0%, 41%, 0.15); /* Ligera capa traslúcida */
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
+    /*background: hsla(0, 0%, 41%, 0.15); /* Ligera capa traslúcida */
+    /*backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);*/
     position: absolute;
     inset: 0; /* Equivalente a top:0; left:0; width:100%; height:100%; */
     z-index: 0;
@@ -76,9 +88,9 @@ section {
 
 #equipos::before {
     content: "";
-    background: hsla(0, 0%, 41%, 0.15); /* Ligera capa traslúcida */
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
+    /*background: hsla(0, 0%, 41%, 0.15); /* Ligera capa traslúcida */
+    /*backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);*/
     position: absolute;
     inset: 0; /* Equivalente a top:0; left:0; width:100%; height:100%; */
     z-index: 0;
@@ -208,14 +220,14 @@ section {
         text-align: center;
     }
 
-    .bg-overlay{
+    /*.bg-overlay{
         background: radial-gradient(
         circle at center,
         rgba(15, 13, 24, 0.95) 25%,
         rgba(15, 13, 24, 0.65) 65%,
         rgba(15, 13, 24, 0.85) 100%
     ) !important;
-    }
+    }*/
 }
 
 /* El texto principal de la izquierda */
@@ -226,11 +238,11 @@ section {
 }
 
 /* --- OVERLAY CON DEGRADADO HORIZONTAL --- */
-.bg-overlay {
+/*.bg-overlay {
     position: absolute;
     inset: 0;
     /* 🎯 Oscuro a la izquierda (para leer el texto) y transparente a la derecha (para ver fotos nítidas) */
-    background: linear-gradient(
+    /*background: linear-gradient(
         90deg,
         rgba(15, 13, 24, 0.98) 0%,
         rgba(15, 13, 24, 0.85) 35%,
@@ -238,9 +250,9 @@ section {
         rgba(15, 13, 24, 0.05) 100%
     );
     /* 🎯 Eliminado el backdrop-filter: blur para maxima nitidez */
-    z-index: 1;
+    /*z-index: 1;
     pointer-events: none;
-}
+}*/
 
 /* --- CONTENEDOR DE COLUMNAS DESCENTRADO A LA DERECHA --- */
 .bg-marquee {
@@ -265,14 +277,23 @@ section {
 .marquee-col {
     display: flex;
     flex-direction: column;
-    gap: 15px;
     width: 170px;
     flex-shrink: 0;
+    will-change: transform;
 }
 
-.marquee-col img {
+/* 2. Definir flex, gap y padding en la pista interna */
+.marquee-track {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding-bottom: 15px; /* ⚠️ Mismo valor que el gap para empalme perfecto */
+}
+
+.marquee-track img {
     width: 100%;
-    height: 260px;
+    height: auto;
+    aspect-ratio: 1 / 1;
     object-fit: cover;
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
@@ -334,7 +355,7 @@ section {
 }
 
 /* OVERLAY DE EQUIPOS (Sombrea el centro para leer el texto fácilmente) */
-.bg-overlay-equipos {
+/*.bg-overlay-equipos {
     position: absolute;
     inset: 0;
     background: radial-gradient(
@@ -345,7 +366,7 @@ section {
     );
     z-index: 4;
     pointer-events: none;
-}
+}*/
 
 /* CONTENEDOR PRINCIPAL DE FILAS */
 .bg-marquee-equipos {
@@ -371,8 +392,8 @@ section {
 .marquee-row {
     display: flex;
     flex-direction: row;
-    gap: 20px;
     width: max-content;
+    will-change: transform;
 }
 
 /* 🎯 HUECO CENTRAL: Separa las filas 1 y 2 de las filas 3 y 4 */
@@ -380,15 +401,20 @@ section {
     margin-bottom: auto;
 }
 
-.marquee-row img {
+/* 2. Definir flex, gap y padding en la pista interna */
+.marquee-track-h {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    padding-right: 20px; /* ⚠️ Mismo valor que el gap para empalme perfecto */
+}
+
+.marquee-track-h img {
     height: 120px;
     width: 180px;
-    object-fit: contain; /* Usa 'cover' si son fotos completas o 'contain' si son escudos con transparencia */
+    object-fit: contain;
     border-radius: 12px;
-    /*background: rgba(255, 255, 255, 0.03);*/
     padding: 8px;
-    /*box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.1);*/
 }
 
 /* ANIMACIONES HORIZONTALES */

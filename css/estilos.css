@@ -167,6 +167,12 @@ canvas.canvas-bg {
     max-width: none !important;
 }
 
+.sections-wrapper {
+    width: 100%;
+    height: 100vh;
+    transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1); /* Transición de desplazamiento */
+}
+
 body::before {
     content: "";
     position: fixed;

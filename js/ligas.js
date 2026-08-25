@@ -104,6 +104,7 @@ export async function inicializarLigas(){
 export function displayPaises(data) {
     
     const containerEquipos = document.getElementById('items-container');
+    const paisesAptos = [1,2,4,6,7,15,16,18,62];
     
     // Limpieza de seguridad: vaciamos el contenedor de equipos y el dropdown de ligas viejo
     containerEquipos.innerHTML = '';
@@ -117,7 +118,7 @@ export function displayPaises(data) {
 
     data.forEach(async (pais, index) => {
 
-        console.log(pais)
+        if(!paisesAptos.includes(pais.id_pais)){return}
 
         const containerPais = document.createElement('div');
         const headerPais = document.createElement('div');

@@ -68,6 +68,10 @@ section::before {
     overflow: hidden;
 }
 
+#wiki-container::-webkit-scrollbar{
+    display: none;
+}
+
 .custom-dropdown{
     display: none;
 }
@@ -257,10 +261,11 @@ body #wiki-equipos #wiki-container #container-display .liga-item img{
     max-height: 100%;
     overflow: hidden;
     transition: filter 0.3s ease-in-out, transform 0.3s ease-in-out;
+    transform: scale(0.9);
     
 }
 body #wiki-equipos #wiki-container #container-display .liga-item:hover img {
     /* Parámetros: offset-x | offset-y | blur-radius | color */
     filter: drop-shadow(0 0 6px var(--liga-color-1, rgba(255, 255, 255, 0.6)));
-    transform: scale(1.05);
+    transform: scale(1);
 }

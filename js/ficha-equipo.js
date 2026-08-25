@@ -28,7 +28,7 @@ export async function initFicha(id){
 
     document.getElementById('fundacion-datos').textContent = equipo.fundacion;
     document.getElementById('fundacion').textContent = 'Est. ' + equipo.fundacion;
-    document.getElementById('formacion').textContent = equipo.formacion.nombre;
+    /*document.getElementById('formacion').textContent = equipo.formacion.nombre;*/
     document.getElementById('equipo-nombre').textContent = equipo.nombre;
     bandera.classList.add('fi');
     bandera.classList.add(`fi-${iso.toLowerCase()}`); 

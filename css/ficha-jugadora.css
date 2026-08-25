@@ -564,7 +564,7 @@ hr {
 #jugadora-datos div.bloque-dato{
     display: flex;
     flex-direction: column;
-    justify-content: start;
+    justify-content: center;
     max-height: 30%;
     min-height: 30%;
     overflow: hidden;
