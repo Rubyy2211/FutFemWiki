@@ -206,11 +206,19 @@ async function cargarTrayectorias(jugadora, trayectorias, palmaresPromise) {
     const escudoEquipo = document.getElementById('escudo-equipo');
     const escudoNombre = document.getElementById('equipo-nombre-texto');
     console.log('Trayectorias cargadas:', trayectorias);
-    escudoEquipo.src = (trayectorias[trayectorias.length - 1]?.escudo || '/img/predeterm.png') ;
-    escudoEquipo.alt = trayectorias[trayectorias.length - 1]?.nombre || '';
-    escudoEquipo.title = trayectorias[trayectorias.length - 1]?.nombre || '';
-    escudoNombre.textContent = trayectorias[trayectorias.length - 1]?.nombre || '';
-    mostrador.innerHTML = ''; // Limpiar
+    if (trayectorias[trayectorias.length - 1].equipo_actual) {
+        escudoEquipo.src = (trayectorias[trayectorias.length - 1]?.escudo || '/img/equipo-predeterm.svg') ;
+        escudoEquipo.alt = trayectorias[trayectorias.length - 1]?.nombre || '';
+        escudoEquipo.title = trayectorias[trayectorias.length - 1]?.nombre || '';
+        escudoNombre.textContent = trayectorias[trayectorias.length - 1]?.nombre || '';
+        mostrador.innerHTML = ''; // Limpiar
+    }else{
+        escudoEquipo.src = '/img/equipo-predeterm.svg';
+        escudoEquipo.alt = 'Sin equipo';
+        escudoEquipo.title = 'Sin equipo';
+        escudoNombre.textContent = 'Sin equipo';
+        mostrador.innerHTML = ''; // Limpiar
+    }
 
     // Nota: Aunque no use el palmarés en el "back", mantengo el await 
     // por si tu código lo requiere para no romper flujos asíncronos externos.
