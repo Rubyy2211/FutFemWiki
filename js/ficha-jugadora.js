@@ -50,8 +50,6 @@ export async function cargarFichaJugadora(id_jugadora) {
             slot.classList.add('pos-secundaria');
         });
     });
-
-    document.documentElement.style.setProperty('--equipo-color', ultimo.color)
     // 2. Cargamos lo secundario sin bloquear el primer render
     const companyeras = fetchJugadoraCompanyerasById(id_jugadora, 1000);
     document.getElementById('nombre-jugadora').textContent = jugadora.nombre_completo;
@@ -211,12 +209,14 @@ async function cargarTrayectorias(jugadora, trayectorias, palmaresPromise) {
         escudoEquipo.alt = trayectorias[trayectorias.length - 1]?.nombre || '';
         escudoEquipo.title = trayectorias[trayectorias.length - 1]?.nombre || '';
         escudoNombre.textContent = trayectorias[trayectorias.length - 1]?.nombre || '';
+        document.documentElement.style.setProperty('--equipo-color', trayectorias[trayectorias.length - 1]?.color || 'var(--color-primario)');
         mostrador.innerHTML = ''; // Limpiar
     }else{
         escudoEquipo.src = '/img/equipo-predeterm.svg';
         escudoEquipo.alt = 'Sin equipo';
         escudoEquipo.title = 'Sin equipo';
         escudoNombre.textContent = 'Sin equipo';
+        document.documentElement.style.setProperty('--equipo-color', 'grey');
         mostrador.innerHTML = ''; // Limpiar
     }
 
