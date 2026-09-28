@@ -13,3 +13,18 @@ export async function fetchLigasById(ids){
         return null;
     }
 }
+
+export async function ligasxPais(pais){
+    // Generar la URL
+    const response = await fetch(`${API_BASE_URL}/api/ligasxpais?pais=${pais}`);
+
+    if (!response.ok) {
+        throw new Error(`Error en la solicitud: ${response.statusText}`);
+    }
+    const data = await response.json();
+    if (data !== null) {
+        return data.success;
+    } else {
+        return null;
+    }
+}

@@ -46,10 +46,30 @@ body::before{
     max-height: 100%;
     overflow: hidden;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    max-width: 95%;
 }
+
+#jugadora-display-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    justify-self: start;
+    width: 25%; 
+    min-width: 25%;
+    padding-inline: 5px;
+}
+
+@media(max-width: 768px){
+    #jugadora-display-container{
+        display: none;
+    }
+}
+
 #ficha-jugadora-container{
-    width: 95%;
+    width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -59,7 +79,7 @@ body::before{
     padding-inline: 0;
     max-height: 100%;
     padding-block: 20px;
-    max-width: 1200px;
+    max-width: 70%;
     overflow-y: hidden;
     gap: 5px;
 }
@@ -426,14 +446,17 @@ body::before{
     position: relative;
     max-width: 200px !important;
     max-height: 100% !important;
+    height: 50%;
     aspect-ratio: 1/1;
     display: flex; /* O block / flex según tu layout */
+    align-items: center;
+    justify-content: center;
     padding-inline: 5px;
     background: color-mix(in srgb, var(--equipo-color) 40%, transparent 60%);
     /* glow */ box-shadow: 0 0 10px color-mix(in srgb, var(--equipo-color) 70%, transparent 30%);
 }
 
-#jugadora-info #jugadora-img{
+#jugadora-info #jugadora-imagen{
     padding: unset;
     max-width: 200px !important;
     max-height: 100% !important;
@@ -441,7 +464,15 @@ body::before{
     margin-bottom: 0;
     border: none;
     position: relative;
+    display: none;
 }
+
+.jugadora-img-wrapper span{
+    font-family: Oswald, sans-serif;
+    font-size: 3rem;
+    font-weight: 600;
+}
+
 /* Esquina superior izquierda */
 #jugadora-info .jugadora-img-wrapper::after {
     content: '';
@@ -491,17 +522,26 @@ hr {
 #jugadora-datos #campo{
     width: 100%;
     max-width: 30%;
+    height: auto;
+    max-height: 100%;
 }
 
 #jugadora-datos #campo .pos-slot .jugadora-text{
-    border: 1px solid color-mix(in srgb, var(--color-detalles) 70%, transparent);
+    background: color-mix(in srgb, var(--color-detalles) 70%, transparent);
     border-radius: 20px;
     text-align: center;
-    width: 80%;
+    width: 30%;
+    aspect-ratio: 1/1;
+    height: auto;
+}
+
+#jugadora-datos #campo .jugadora{
+    min-height: 100%;
 }
 
 #jugadora-datos #campo .pos-slot .jugadora-text span{
     font-size: small;
+    display: none;
 }
 
 #jugadora-datos #campo .jugadora.delantera .jugadora-text{
@@ -578,7 +618,7 @@ div.bloque-dato a{
 
 
 .bloque-dato span{
-    font-size: xx-large;
+    font-size: x-large;
     font-weight: 500;
     font-family: "Oswald", sans-serif;
 }
@@ -633,8 +673,12 @@ div.bloque-dato a{
 
 #jugadora-info #posicion span{
     font-size: x-large;
-    font-weight: 500;
+    font-weight: 200;
     font-family: "Oswald", sans-serif;
+    color: white !important;
+}
+#jugadora-info #posicion span:nth-child(1){
+    font-weight: 500;
 }
 #jugadora-info .row{
     margin-left: 0;
@@ -960,6 +1004,9 @@ span.swiper-pagination-bullet-active{
         padding-block: 20px;
         max-width: 500px;
     }
+    #span-posicion{
+        display: none;
+    }
     .mySwiper {
         /* Usa un valor fijo o una unidad estable. 
            Si usas vh, asegúrate de que sea el mismo antes y después de cargar */
@@ -1023,11 +1070,15 @@ span.swiper-pagination-bullet-active{
         width: 70px;
         height: 70px;
     }
+    #container-companyeras{
+        padding: unset;
+    }
     #jugadora-info{
         justify-content: center;
-        min-height: 20%;
-        height: 20%;
+        min-height: 30%;
+        height: 30%;
         min-width: 300px;
+        flex-direction: column;
     }
     #resto{
         max-height: 80%;
@@ -1039,14 +1090,16 @@ span.swiper-pagination-bullet-active{
     }
     #jugadora-info #datos-jugadora{
         width: 100%;
-        align-items: start;
+        align-items: center;
         overflow: hidden;
     }
     #jugadora-info .jugadora-img-wrapper{
-        max-height: 70% !important;
+        max-height: 50% !important;
     }
-    #jugadora-info #jugadora-img{
+    #jugadora-info #jugadora-imagen{
         width: 100% !important;
+        display: block;
+        transform: translateY(4px);
     }
     #jugadora-info .fi {
         font-size: large;
@@ -1151,5 +1204,12 @@ span.swiper-pagination-bullet-active{
             font-size: 8px;
             height: fit-content;
         }
+    }
+}
+
+@media (min-width: 769px) {
+    #pagina-container {
+        display: flex;
+        justify-content: flex-start; /* Se coloca a la izquierda */
     }
 }

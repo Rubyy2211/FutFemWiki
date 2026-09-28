@@ -179,7 +179,7 @@ body::before {
     inset: 0;
     z-index: -1;
     
-    background: color-mix(in srgb, var(--color-secundario) 100%, transparent 80%);
+    background: color-mix(in srgb, var(--color-secundario) 100%, transparent 0%);
     /*background-color: rgba(48, 0, 48, 0.5) !important; /* Color negro con transparencia */
     /*background-blend-mode: luminosity !important; /* Modo de mezcla */
     
@@ -233,51 +233,54 @@ p{
     font-family: var(--font-cuerpo);
 }
 button {
-    /* Reseteo y base */
-    border-radius: 12px; /* Un poco menos que 20px para que parezca más "tecnológico" */
-    height: 40px; /* Un poco más de aire */
+    /* Estructura y dimensiones */
+    height: 40px !important;
     width: 120px;
-    border: none;
-    color: white;
-    font-weight: bold;
-    font-family: 'Oswald', sans-serif !important;
-    cursor: pointer;
-    
-    /* El color base y el 3D */
-    background: var(--color-primario);
-    /* Sombra 1: El grosor (3D) | Sombra 2: La sombra proyectada en el suelo */
-    /*box-shadow: 
-        0 4px 0px 0px #800080, /* El "cuerpo" del botón (un tono más oscuro que el primario) */
-        /*0 8px 15px rgba(0, 0, 0, 0.4); */
-    
-    transition: all 0.1s ease-in-out;
+    border-radius: 30px;
     position: relative;
     outline: none;
-    text-transform: uppercase;
+    cursor: pointer;
+
+    /* Tipografía */
+    color: white;
+    font-family: 'Oswald', sans-serif !important;
+    font-weight: bold;
     letter-spacing: 1px;
+
+    /* Fondo y borde base */
+    background: var(--color-secundario);
+    border: 1px solid color-mix(in srgb, var(--color-primario), transparent 30%);
+    box-shadow: 0 0 0px transparent; /* Prepara el glow para animar suavemente */
+
+    /* Transición suave (0.3s para color/brillo, 0.15s para respuesta al clic) */
+    transition: 
+        background 0.3s ease,
+        color 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease,
+        transform 0.15s ease;
 }
 
-/* Efecto Hover: Brillo neón */
+/* Efecto Hover: Brillo neón fluido */
 button:hover {
-    background: var(--accent-glow);
-    box-shadow: 
-        0 4px 0px 0px var(--color-primario), 
-        0 0 20px rgba(255, 0, 255, 0.6); /* Glow neón que baña el input de al lado */
-    /*transform: translateY(-2px); /* Se eleva un poco */
-}
-
-/* Efecto Active: El "Click" 3D */
-button:active {
-    transform: translateY(4px); /* Baja justo la distancia del grosor */
-    box-shadow: 
-        0 0px 0px 0px var(--color-primario), /* Desaparece el grosor */
-        0 2px 5px rgba(0, 0, 0, 0.3); /* Sombra de contacto pequeña */
-}
-
-button:hover{
-    /*background: var(--color-texto);*/
     color: var(--color-texto);
-    transition: background 0.3s ease;
+    
+    /* Degradado donde predomina el color primario (~65%) */
+    background: linear-gradient(135deg, var(--color-primario) 0%, var(--color-primario) 60%, var(--color-secundario) 100%);
+    border-color: var(--color-primario);
+    
+    /* Glow neón en dos capas (definición + halo suave) */
+    box-shadow: 
+        0 0 4px var(--color-primario),
+        0 0 12px rgba(255, 0, 255, 0.5);
+}
+
+/* Efecto Active: Respuesta táctil al hacer clic */
+button:active {
+    transform: translateY(0) scale(0.96); /* Sutil compresión al pulsar */
+    box-shadow: 
+        0 0 4px var(--color-primario),
+        0 0 10px rgba(255, 0, 255, 0.3);
 }
 
 input:not([type='checkbox']), input:not([type='range']) {
@@ -742,13 +745,21 @@ header{
     }
 }
 
+@view-transition {
+    navigation: auto; /* Activa la transición automática entre páginas .html */
+}
+
+#jugadora-display-container {
+    view-transition-name: jugadora-card-anim;
+}
+
 /* Botón hamburguesa (oculto por defecto en escritorio) */
 .nav-toggle {
     display: none;
     flex-direction: column;
     justify-content: space-between;
     width: 28px;
-    height: 20px;
+    height: 20px !important;
     background: none;
     border: none;
     cursor: pointer;

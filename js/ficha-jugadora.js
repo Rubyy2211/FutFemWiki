@@ -1,5 +1,6 @@
 import {calcularEdad, fetchJugadoraTrayectoriaById, fetchJugadoraPalmaresById, cargarJugadoraDatos, fetchJugadoraCompanyerasById, formatearValorMercado} from '/js/api/jugadora.js'; 
-import {fetchEquipoById} from '/js/api/equipos.js';    
+import {fetchEquipoById} from '/js/api/equipos.js';
+import { actualizarCardJugadora } from '/js/wiki.js';    
 
 let trayectorias, palmares, jugadora, companyeras;
 // Variable global o superior para guardar las compañeras
@@ -13,6 +14,7 @@ const palmaresIndiv = document.getElementById('palmares-individual');
 const contenedorPais = document.getElementById('pais-info');
 const contenedorPais2 = document.querySelector('#nacionalidad-nombre a');
 const campo = document.getElementById('campo');
+const nombreCompleto = document.getElementById('nombre-completo');
 
 // si el width de la pantalla es menor a 768px, quitamos la clase vertical al campo
 
@@ -23,6 +25,8 @@ export async function cargarFichaJugadora(id_jugadora) {
     ]);   
 
     console.log(jugadora)
+
+    actualizarCardJugadora(jugadora);
 
     const ultimo = trayectorias.at(-1);
     const posiciones = jugadora.Posiciones.map(pos => pos.abreviatura || pos.nombre.substring(0, 3).toUpperCase());
@@ -53,10 +57,13 @@ export async function cargarFichaJugadora(id_jugadora) {
     // 2. Cargamos lo secundario sin bloquear el primer render
     const companyeras = fetchJugadoraCompanyerasById(id_jugadora, 1000);
     document.getElementById('nombre-jugadora').textContent = jugadora.nombre_completo;
+    //nombreCompleto.textContent = jugadora.nombre;
     document.getElementById('jugadora-img').src = jugadora.imagen
+    document.getElementById('jugadora-imagen').src = jugadora.imagen
     document.getElementById('nacimiento').textContent = jugadora.Nacimiento + ' (' + calcularEdad(jugadora.Nacimiento) + ')'
     document.getElementById('nacimiento-datos').textContent = jugadora.Nacimiento + ' (' + calcularEdad(jugadora.Nacimiento) + ')'
     document.getElementById('altura').textContent = jugadora.altura + ' cm'
+    document.getElementById('span-posicion').textContent = jugadora.Posiciones[0].abreviatura
     document.getElementById('altura-datos').textContent = jugadora.altura + ' cm'
     document.getElementById('pie-img').src = '/img/'+jugadora.pie+'.webp'
     document.getElementById('pie-img').style.maxHeight = '50px' ;
@@ -82,7 +89,7 @@ export async function cargarFichaJugadora(id_jugadora) {
     window.companyeras = companyeras;
 
     //edad.textContent = jugadora.Nacimiento + '(' + calcularEdad(jugadora.Nacimiento) + ')';
-
+    
     jugadora.Posiciones.forEach(pos => {
         const abrev = pos.abreviatura || pos.nombre.substring(0, 3).toUpperCase();
         const span = document.createElement('span');
@@ -224,16 +231,9 @@ async function cargarTrayectorias(jugadora, trayectorias, palmaresPromise) {
     // por si tu código lo requiere para no romper flujos asíncronos externos.
     await palmaresPromise; 
 
+    const equiposAñadidos = new Set();
+
     trayectorias.forEach((trayectoria, index) => {
-
-        const botonEquipo = document.createElement('button');
-        botonEquipo.innerHTML = `<img src="${trayectoria.escudo}">`
-        botonEquipo.dataset.id = trayectoria.equipo;
-        filtros.appendChild(botonEquipo);
-
-        botonEquipo.addEventListener('click', async function() {
-            await cargarCompanyeras(botonEquipo.dataset.id);
-        });
         
         // 1. Extraer colores con los mismos fallbacks
         const colorPrimario = trayectoria.color || trayectoria.equipo?.color || 'var(--color-primario)';
@@ -313,6 +313,20 @@ async function cargarTrayectorias(jugadora, trayectorias, palmaresPromise) {
             return anyosDiv;
         })() : document.createElement('div')); // Añadimos un div vacío si no hay años
         fragment.appendChild(swiperSlide);
+
+        if (equiposAñadidos.has(trayectoria.equipo)) return;
+
+        // Registramos el equipo para no repetirlo
+        equiposAñadidos.add(trayectoria.equipo);
+
+        const botonEquipo = document.createElement('button');
+        botonEquipo.innerHTML = `<img src="${trayectoria.escudo}">`;
+        botonEquipo.dataset.id = trayectoria.equipo;
+        filtros.appendChild(botonEquipo);
+
+        botonEquipo.addEventListener('click', async function() {
+            await cargarCompanyeras(botonEquipo.dataset.id);
+        });
     });
     
     mostrador.appendChild(fragment);
@@ -329,8 +343,19 @@ async function cargarCompanyeras(equipoId) {
     // Filtrar las compañeras que coincidan con el equipo del slide activo
     // Asegúrate de comparar el ID como número o string según tu BD
     const filtradas = window.todasLasCompanyeras.filter(c => String(c.equipo) === String(equipoId));
+
     let contadorCompanyeras = 1;
+
+    const companyerasAnyadidas = new Set();
+
     filtradas.forEach(compañera => {
+
+        if (companyerasAnyadidas.has(compañera.id_jug_comp)) return;
+
+        companyerasAnyadidas.add(compañera.id_jug_comp);
+
+        
+
         contadorCompanyeras += 1;
         const slugNombre = (compañera.Nombre_Completo || compañera.nombre).toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, ''); // Limpiamos caracteres especiales para el slug
         const card = document.createElement('div');

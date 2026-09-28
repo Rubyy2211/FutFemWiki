@@ -3,7 +3,7 @@ import { API_BASE_URL } from '../config.js';
 export async function equiposxliga(ligaId) {
     return fetch(`${API_BASE_URL}/api/equiposxliga?liga=${ligaId}`)
         .then(response => response.json())
-        .then(data => data)
+        .then(data => data.success)
         .catch(error => {
             console.error('Error fetching equipos by liga:', error);
             throw error;

@@ -75,7 +75,7 @@ body #wiki-equipos {
 body #wiki-equipos #wiki-container {
     flex: 1;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     width: 100%;
     max-width: 100%;
     overflow: hidden;
@@ -89,19 +89,42 @@ body #wiki-equipos #wiki-container #cabecera-wiki-equipos {
 
 #resto{
     width: 100%;
-    min-width: 75%;
+    min-width: 100%;
+    min-height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
+    display: flex;
+    flex-direction: row;
+    padding-inline: 15px;
+}
+
+#resto::-webkit-scrollbar{
+    display: none; /* Oculta el scroll en navegadores Webkit (Chrome, Safari) */
+}
+
+#jugadoras-list-container{
+    width: 70%;
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    align-self: end;
+}
+
+#jugadoras-list-container::-webkit-scrollbar{
+    display: none; /* Oculta el scroll en navegadores Webkit (Chrome, Safari) */
 }
 
 body #wiki-equipos #wiki-container #cabecera-jugadora {
-    position: relative;
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     padding-inline: 15px;
+}
+
+body #wiki-equipos #wiki-container #cabecera-jugadora h2{
+    display: none;
 }
 
 body #wiki-equipos #wiki-container .pagination {
@@ -131,27 +154,40 @@ body #wiki-equipos #wiki-container .pagination button:hover{
 }
 
 body #wiki-equipos #wiki-container #cabecera-jugadora #filtros {
-    display: flex;
-    flex-direction: row;
     gap: 15px;
-    flex-wrap: wrap;
-    max-width: 100%;
+    max-width: 90dvw;
+    max-height: 100dvh !important;
+    /*overflow: hidden;*/
 }
 
 body #wiki-equipos #wiki-container #cabecera-jugadora #filtros>div.filtro-group{
     display: flex;
     flex-direction: column;
+    justify-content: center;
     gap: 5px;
 }
 
 .filtros-container {
-    display: flex;
-    flex-direction: column;
+    display: none;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    
+    /* 💥 CAMBIO AQUÍ: 1fr para ambas filas iguala sus alturas */
+    grid-template-rows: repeat(2, 1fr); 
+    
     gap: 12px;
-    /*background: #1e1e24;*/
-    /*padding: 16px;*/
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
     border-radius: 12px;
     color: #fff;
+}
+
+/* Mantiene los elementos hijos adaptables a la altura de su celda */
+.filtros-container > * {
+    min-width: 0;
+    width: 100%;
+    height: 100%; /* Asegura que la tarjeta/filtro llene toda la altura de la fila */
+    box-sizing: border-box;
 }
 
 #cerrar-filtros{
@@ -164,6 +200,32 @@ body #wiki-equipos #wiki-container #cabecera-jugadora #filtros>div.filtro-group{
     gap: 4px;
     position: relative;
     max-width: 100%;
+    transition: all 0.1s ease-in-out;
+}
+
+.filtro-group:hover{
+    background: color-mix(in srgb, white 60%, transparent 40%);
+    color: black;
+    transform: scale(1.025);
+    box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 0 20px 10px color-mix(in srgb, white 60%, transparent 40%);
+    z-index: 999;
+}
+
+.filtro-group:hover input{
+    background: color-mix(in srgb, var(--color-primario) 60%, transparent 0%);
+}
+
+/* Feedback visual para elementos bloqueados */
+.filtro-group:where(input:disabled) ,
+.filtro-group:where(button:disabled)  {
+    background-color: rgba(255, 255, 255, 0.05);
+    opacity: 0.6;
+    cursor: not-allowed;
+    border-color: transparent;
 }
 
 .tags-input-wrapper {
@@ -171,11 +233,40 @@ body #wiki-equipos #wiki-container #cabecera-jugadora #filtros>div.filtro-group{
     flex-wrap: wrap;
     align-items: center;
     gap: 6px;
-    background: var(--color-secundario) !important;
-    border: 1px solid var(--color-primario) !important;
+    background: none !important;
+    /*border: 1px solid var(--color-primario) !important;*/
     border-radius: 8px;
-    padding: 6px 10px;
     min-height: 42px;
+}
+
+.filtro-group,
+.tags-input-wrapper,
+.sugerencias-container {
+    position: relative;
+    overflow: visible !important;
+}
+
+/* 2. Cuando el usuario interactúa con un input, eleva la tarjeta entera sobre las demás */
+.filtro-group:focus-within {
+    z-index: 1000 !important;
+}
+
+/* 3. Ajuste de posición exacta de la lista desplegable */
+#sugerencias, 
+#sugerenciasLiga, 
+#sugerencias-pais, 
+#sugerencias-equipo, 
+#sugerencias-pais1, 
+#sugerencias-pais2, 
+#sugerencias-posicion, 
+#sugerencias-user {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    z-index: 9999 !important;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
 }
 
 .tags-input-wrapper input{
@@ -219,13 +310,19 @@ body #wiki-equipos #wiki-container #cabecera-jugadora #filtros>div.filtro-group{
 
 .inputs-rango {
     display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
     gap: 10px;
 }
 
 .inputs-rango input {
-    width: 50%;
-    background: var(--color-secundario);
-    border: 1px solid var(--color-primario);
+    width: 100%;
+    background: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    border: none;
     border-radius: 8px;
     padding: 8px;
     color: #fff;
@@ -245,13 +342,20 @@ body #wiki-equipos #wiki-container .jugadora-item.header-list {
     flex-shrink: 0;
     display: grid;
     grid-template-columns: 1fr max-content 0.5fr 0.5fr;
+    grid-template-columns: 10% 10% 40% 10% 20% 10%;
     align-items: center;
     height: 40px !important;
     min-height: 40px !important;
     border-bottom: 2px solid var(--color-primario, #bd00ff);
     color: var(--color-detalles, #fff);
     pointer-events: none;
+    padding-inline: 10px;
     text-align: center;
+}
+
+.jugadora-item.header-list .header-label:nth-child(3) {
+    justify-items: flex-start;
+    padding-left: 90px;
 }
 
 /* Estado cuando se desplaza el scroll (Fondo activo) */
@@ -271,7 +375,6 @@ body #wiki-equipos #wiki-container .jugadora-item.header-list .jugadora-div1 p {
 
 body #wiki-equipos #wiki-container .jugadora-item.header-list p {
     color: var(--color-detalles, #fff);
-    text-transform: uppercase;
     font-weight: 800;
     letter-spacing: 1px;
     font-size: 0.7rem;
@@ -286,12 +389,16 @@ body #wiki-equipos #wiki-container #items-container {
     width: 100%;
     min-width: 100%;
     /*padding-bottom: 20px; /* Margen de seguridad para que la última jugadora sea 100% visible */
+    -webkit-mask-image: linear-gradient(to bottom, black calc(100% - 60px), transparent 100%);
+    mask-image: linear-gradient(to bottom, black calc(100% - 60px), transparent 100%);
+}
+
+body #wiki-equipos #wiki-container #items-container.at-bottom {
+    -webkit-mask-image: none;
+    mask-image: none;
 }
 
 #items-container {
-  background: rgba(255, 255, 255, 0.16);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   /*border-radius: 20px;/*
   border: 1px solid rgba(255, 255, 255, 0.3);
   /*box-shadow: 
@@ -301,6 +408,10 @@ body #wiki-equipos #wiki-container #items-container {
     inset 0 0 20px 10px rgba(255, 255, 255, 1);*/
   position: relative;
   overflow: hidden;
+}
+
+#items-container::-webkit-scrollbar{
+    display: none; /* Oculta el scroll en navegadores Webkit (Chrome, Safari) */
 }
 
 /*#items-container::before {
@@ -336,7 +447,7 @@ body #wiki-equipos #wiki-container #items-container {
 /* ÍTEMS DE CADA JUGADORA */
 body #wiki-equipos #wiki-container #items-container .jugadora-item {
     display: grid;
-    grid-template-columns: 1fr max-content 0.5fr 0.5fr;
+    grid-template-columns: 10% 10% 40% 10% 20% 10%;
     width: 100%;
     height: 70px; /* Altura fija por fila */
     min-height: 70px;
@@ -406,8 +517,106 @@ body #wiki-equipos #wiki-container #items-container .jugadora-item {
     transform: scale(1); /* Encaja perfectamente en la tarjeta */
 }
 
+#jugadora-display-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    justify-self: end;
+    width: 30%; 
+    min-width: 30%;
+}
+
 #ver-filtros{
-    display: none;
+    display: block;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    z-index: 10;
+    height: 50px !important;
+    width: 50px !important;
+}
+
+.filtro-cascada-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.stepper-item label {
+    display: block;
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.stepper-control {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: none;
+    border: none;
+    border-radius: 8px;
+    padding: 4px;
+}
+
+.btn-stepper {
+    background: none;
+    border: none;
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.btn-stepper:hover {
+    background-color: #e4e4e7;
+}
+
+.stepper-display {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: center;
+    overflow: hidden;
+    min-width: 0;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.stepper-display img, .stepper-display span.fi {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+/* 2. Aplicar elipsis al texto del nombre */
+.stepper-display span {
+    white-space: nowrap;      /* Impide que el texto salte a otra línea */
+    overflow: hidden;         /* Oculta el texto excedente */
+    text-overflow: ellipsis;  /* Muestra los puntos suspensivos '...' */
+    min-width: 0;             /* Permite encoger el span dentro del flex */
+}
+
+/* 3. Asegurar que la imagen/icono mantenga su tamaño fijo */
+.stepper-display img,
+.stepper-display .fi {
+    flex-shrink: 0; /* Impide que el icono o bandera se aplaste por culpa del texto */
+}
+
+.stepper-item{
+    min-width: 100%;
+    max-width: 100%;
 }
 
 .filtros-header-mobile {
@@ -431,49 +640,41 @@ body #wiki-equipos #wiki-container #items-container .jugadora-item {
     display: block;
 }
 
-@media (max-width: 768px) {
-
-    body #wiki-equipos #wiki-container {
-        flex-direction: column;
-    }
-
-    #cabecera-wiki-equipos {
-        max-height: 25%;
-    }
-
-    /* Ocultar el panel de filtros normal en móvil */
-    #filtros {
-        display: none !important;
-    }
-
-    /* Formato Popup Modal cuando se activa */
+/* Formato Popup Modal cuando se activa */
     #filtros.active {
-        display: flex !important;
+        display: grid;
         flex-direction: column;
         position: fixed;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 90%;
+        width: 100%;
         max-width: 420px;
         max-height: 85vh;
-        overflow-y: auto;
+        /*overflow-y: auto;*/
         z-index: 999;
-        background: color-mix(in srgb, #1e1e24 50%, var(--color-secundario) 50%);
+        /*background: color-mix(in srgb, #1e1e24 50%, var(--color-secundario) 50%)
         border: 1px solid #3a3a46;
         border-radius: 16px;
-        padding: 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);*/
     }
 
     .filtros-header-mobile {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border-bottom: 1px solid #3a3a46;
+        border-bottom: none;
         padding-bottom: 10px;
         margin-bottom: 10px;
         width: 100%;
+    }
+
+    @media(min-width: 768px){
+        .filtros-header-mobile{
+            position: absolute;
+            top: -50px;
+            height: fit-content;
+        }
     }
 
     .filtros-header-mobile h3 {
@@ -490,18 +691,311 @@ body #wiki-equipos #wiki-container #items-container .jugadora-item {
         line-height: 1;
     }
 
-    body #wiki-equipos #wiki-container #items-container .jugadora-item {
-        max-height: 45px;
-        min-height: 45px;
+
+.filtro-group{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+    gap: 0px !important;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    max-height: calc((100dvh / 2) - 60px);
+}
+
+.filtro-group img{
+    max-height: 100px;
+    aspect-ratio: 1/1;
+    width: auto;
+    max-width: 100px;
+}
+
+.filtro-group span{
+    max-height: 100px;
+    min-height: 100%;
+}
+
+.filtro-group input{
+    max-width: 100%;
+    width: 100%;
+    border-radius: 8px;
+    text-align: center;
+    backdrop-filter: none;
+
+}
+
+.filtro-group {
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--color-primario) 60%, transparent 40%);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 10px;
+    box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 0 20px 10px var(--color-primario);
+}
+
+.filtro-group::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.8),
+    transparent
+  );
+}
+
+.filtro-group::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 100%;
+  /*background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.8),
+    transparent,
+    rgba(255, 255, 255, 0.3)
+  );*/
+}
+
+#fotos-paises{
+    height: 100%;
+    max-height: 100px;
+    width: 100%;
+}
+
+#fotos-paises span{
+    height: 100%;
+    max-height: 100px;
+    width: 100%;
+    max-width: 100px;
+}
+
+#fotos-equipos, #fotos-paises{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+
+
+
+@media (max-width: 768px) {
+
+    .filtros-container.active{
+        display: flex !important;
     }
 
-    #ver-filtros {
+    /* 1. Transforma el contenedor en un desplegable lateral / modal */
+    .filtros-container {
+        position: fixed;
+        top: 0;
+        right: -100%; /* Oculto fuera de pantalla por defecto */
+        width: 100%;
+        max-width: 380px; /* Ancho máximo en móviles grandes/tablets */
+        height: 100vh;
+        height: 100dvh; /* Soporte para navegadores móviles modernos */
+        z-index: 9999;
+        /*overflow-y: auto;*/
+        
+        /* Layout vertical en 1 sola columna */
+        display: none;
+        flex-direction: column;
+        gap: 5px !important;
+        padding: 20px 16px 80px 16px; /* Espacio inferior para scroll cómodo */
+        
+        /* Fondo con blur glassmorphism */
+        transition: right 0.3s ease-in-out;
+    }
+
+    /* Estado activo cuando se abre el panel */
+    .filtros-container.active {
+        right: 0;
+    }
+
+    /* 2. Cabecera móvil para cerrar */
+    .filtros-header-mobile {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        margin-bottom: 8px;
+    }
+
+    .filtros-header-mobile h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        color: #fff;
+    }
+
+    #cerrar-filtros {
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-size: 2rem;
+        line-height: 1;
+        cursor: pointer;
+        padding: 0 8px;
+    }
+
+    /* 3. Ajuste de tarjetas individuales */
+    .filtro-group {
+        width: 100% !important;
+        min-height: auto !important; /* Elimina alturas fijas de PC */
+        box-sizing: border-box;
+        padding: 14px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        flex-direction: row !important;
+        justify-content: center;
+        align-items: center;
+        max-height: calc((100dvh / 6) - 60px);
+    }
+
+    .filtro-group.filtro-rango{
+        justify-content: space-between !important;
+    }
+
+    .filtro-group label{
+        display: none;
+    }
+
+    .tags-input-wrapper{
+        width: 40%;
+        min-width: max-content;
+    }
+
+    #foto-jugadora{
+        max-height: 42px;
+    }
+
+    #fotos-paises{
+        width: 10%;
+    }
+
+    /* 4. Rangos numéricos (Edad, Valor, Altura): colocar Mín y Máx LADO A LADO */
+    .inputs-rango {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 10px;
+        width: 60%;
+        height: fit-content;
+    }
+
+    .inputs-rango input {
+        flex: 1;
+        width: 50%;
+        max-width: 50%;
+        min-width: 0; /* Evita desbordamientos */
+        text-align: center;
+        padding: 8px 12px;
+        font-size: 16px; /* Evita auto-zoom molesto en iOS */
+    }
+
+    /* 5. Filtro Cascada (País -> Liga -> Equipo) */
+    .filtro-cascada-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .stepper-control {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        margin-top: 4px;
+    }
+
+    .stepper-display {
+        flex: 1;
+        justify-content: center;
+        text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* 6. Inputs generales para facilitar la pulsación táctil */
+    .filtro-group input[type="text"],
+    .filtro-group input[type="search"],
+    .filtro-group input[type="number"] {
+        font-size: 16px; /* Previene zoom automático en iOS */
+        padding: 10px;
+    }
+
+    #filtro-edad{
+        order: -3;
+        height: fit-content;
+    }
+
+    #filtro-edad label{
         display: block;
     }
 
-    #resto{
-        display: flex;
-        flex-direction: column;
+    #filtro-valor{
+        order: -2;
+        height: fit-content;
+    }
+
+    #filtro-valor label{
+        display: block;
+    }
+
+    #filtro-altura{
+        order: -1;
+        height: fit-content;
+    }
+
+    #filtro-altura label{
+        display: block;
+    }
+
+    #filtro-estado{
+        height: fit-content;
+        display: none !important;
+    }
+
+    #filtro-estado label{
+        display: block;
+    }
+
+    #filtro-nombre{
+        order: 4;
+    }
+
+    #filtro-posicion{
+        order: 1;
+    }
+
+    #filtro-pais{
+        order: 2;
+    }
+
+    .filtro-cascada-container{
+        order: 3;
+        flex-direction: column !important;
+        max-height: fit-content !important;
+    }
+
+    .filtros-header-mobile{
+        order: 5;
+        border: none;
+        justify-content: center;
     }
 }
 
@@ -520,6 +1014,15 @@ body #wiki-equipos #wiki-container #items-container .jugadora-item {
         width: 100%;
     }
 
+    #jugadora-display-container{
+        display: none;
+    }
+
+    #jugadoras-list-container{
+        width: 100%;
+        overflow-y: auto;
+    }
+
     body #wiki-equipos #wiki-container #items-container .jugadora-item {
         max-height: 45px;
         min-height: 45px;
@@ -527,6 +1030,10 @@ body #wiki-equipos #wiki-container #items-container .jugadora-item {
 
     .jugadora-item>p{
         font-size: small;
+    }
+
+    .jugadora-item.header-list .header-label:nth-child(3){
+        padding-left: 20px;
     }
 
     body #wiki-equipos #wiki-container #items-container .jugadora-item .jugadora-div1{
@@ -547,10 +1054,48 @@ body #wiki-equipos #wiki-container #items-container .jugadora-item {
     }
 }
 
+@media (max-width: 768px) {
+
+    body #wiki-equipos #wiki-container {
+        flex-direction: column;
+    }
+
+    #cabecera-wiki-equipos {
+        max-height: 25%;
+    }
+
+    body #wiki-equipos #wiki-container #items-container .jugadora-item {
+        max-height: 45px;
+        min-height: 45px;
+    }
+
+    #ver-filtros {
+        display: block;
+    }
+
+    #resto{
+        display: flex;
+        flex-direction: column;
+        overflow-y: hidden;
+        justify-content: center;
+    }
+}
+
+@media (min-width: 769px) {
+    #wiki-container {
+        display: flex;
+        justify-content: flex-end; /* Se coloca a la derecha */
+    }
+}
+
 body #wiki-equipos #wiki-container #items-container .jugadora-item img {
-    max-height: 80%;
+    max-height: 60%;
     object-fit: contain;
     overflow: hidden;
+}
+
+body #wiki-equipos #wiki-container #items-container .jugadora-item p, body #wiki-equipos #wiki-container #items-container .jugadora-item span{
+    font-size: smaller;
 }
 
 body #wiki-equipos #wiki-container #items-container .jugadora-item .jugadora-div1 {
@@ -559,7 +1104,7 @@ body #wiki-equipos #wiki-container #items-container .jugadora-item .jugadora-div
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 20px;
+    gap: 10px;
     padding-left: 10px;
     overflow: hidden;
     max-height: 100%;

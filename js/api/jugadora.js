@@ -10,9 +10,10 @@ import { API_BASE_URL } from '../config.js';
  * @param {event}
  * @returns {}
  */
-export async function handleAutocompletePlayer(event) {
+export async function handleAutocompletePlayer(event, onSelectCallback = null) {
     const input = event.target;
     const texto = input.value.trim();
+    const fotoJugadora = document.getElementById('foto-jugadora');
     const suggestionsList = document.getElementById("sugerencias");
 
     // Limpiamos el temporizador previo cada vez que se pulsa una tecla
@@ -53,7 +54,7 @@ export async function handleAutocompletePlayer(event) {
                     listItem.classList.add('suggestion-item');
 
                     listItem.innerHTML = `
-                        <img src="/${imagen}" alt="${Nombre_Completo}" class="jugadora-img">
+                        <img src="${imagen}" alt="${Nombre_Completo}" class="jugadora-img">
                         <div class="jugadora-info">
                             <strong>${Nombre_Completo}</strong>
                         </div>
@@ -62,7 +63,11 @@ export async function handleAutocompletePlayer(event) {
                     listItem.addEventListener('click', () => {
                         input.value = Nombre_Completo;
                         input.setAttribute('data-id', id_jugadora);
+                        fotoJugadora.src = imagen || '../img/predeterm.png';
                         suggestionsList.innerHTML = '';  // Limpiar al seleccionar
+                        if (onSelectCallback) {
+                            onSelectCallback(jugadora);
+                        }
                     });
 
                     suggestionsList.appendChild(listItem);

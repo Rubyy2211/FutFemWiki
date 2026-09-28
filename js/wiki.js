@@ -576,6 +576,70 @@ export function displayEquipos(equipos, container) {
     });
 }
 
+export function actualizarCardJugadora(jugadora) {
+    if (!jugadora) return;
+
+    // Elementos de la Card
+    const cardContainer = document.getElementById('jugadora-card');
+    const imgCard = document.getElementById('jugadora-img');
+    const posCard = document.getElementById('jugadora-posicion');
+    const nombreCard = document.getElementById('jugadora-nombre');
+    const paisCard = document.getElementById('jugadora-pais');
+    const ligaCard = document.getElementById('jugadora-liga');
+    const clubLogoCard = document.getElementById('jugadora-club-logo');
+    cardContainer.style.setProperty('--color-equipo', jugadora.equipo.color || 'var(--color-primario)');
+
+    // 1. Imagen de la jugadora
+    if (imgCard) {
+        imgCard.src = jugadora.imagen || '/img/predeterm.png';
+        imgCard.onerror = () => { imgCard.src = '/img/predeterm.png'; };
+    }
+
+    // 2. Posición (Unifica o muestra la principal)
+    if (posCard) {
+        posCard.textContent = jugadora.posiciones_abrev?.[0] 
+                        || jugadora.Posiciones[0]?.abreviatura 
+                        || 'POS';
+    }
+
+    // 3. Nombre o Apodo
+    if (nombreCard) {
+        nombreCard.textContent = jugadora.apodo || jugadora.nombre_completo || 'Nombre Jugadora';
+    }
+
+    // 4. Banderas de Nacionalidad
+    if (paisCard) {
+        paisCard.innerHTML = '';
+
+        // 1. Obtener la ISO probando ambas opciones (y asegurando que sea string)
+        const iso = jugadora.nacionalidades_isos?.[0] || jugadora.nacionalidad?.iso;
+
+        // 2. Si existe la ISO, crear el icono de la bandera; si no, poner la bandera por defecto
+        if (iso) {
+            const span = document.createElement('span');
+            span.className = `fi fi-${iso.toLowerCase()}`;
+            paisCard.appendChild(span);
+        } else {
+            paisCard.innerHTML = '<i class="fi fi-xx"></i>';
+        }
+    }
+
+    // 5. Escudo de la Liga
+    if (ligaCard) {
+        const logoLiga = jugadora.liga?.logo || jugadora.equipo?.liga?.logo || '/img/equipo-predeterm.svg';
+        console.log("Logo de la liga a mostrar:", jugadora);
+        ligaCard.src = logoLiga;
+        ligaCard.onerror = () => { ligaCard.src = '/img/equipo-predeterm.svg'; };
+    }
+
+    // 6. Escudo del Club
+    if (clubLogoCard) {
+        const escudoClub = jugadora.equipo?.escudo || '/img/equipo-predeterm.svg';
+        clubLogoCard.src = escudoClub;
+        clubLogoCard.onerror = () => { clubLogoCard.src = '/img/equipo-predeterm.svg'; };
+    }
+}
+
 /*export function displayEquiposMapa(equipos) {
     inicializarMapaEquipos();
 

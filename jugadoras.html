@@ -11,6 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@100..900&family=Oswald:wght@200..700&family=Plus+Jakarta+Sans:wght@200..800&family=Russo+One&display=swap" media="print" onload="this.media='all'"> 
 
     <link rel="modulepreload" href="js/api/pais.js">
@@ -23,6 +24,7 @@
     <link rel="stylesheet" href="css/combo.css">
     <link rel="stylesheet" href="css/wiki.css">
     <link rel="stylesheet" href="css/jugadoras.css">
+    <link rel="stylesheet" href="css/jugadora-card.css">
 </head>
 <body>
 
@@ -60,64 +62,129 @@
         <div id="cabecera-wiki-equipos">
             <div id="cabecera-jugadora" class="panel">
                 <h2>Selección de Jugadora</h2>
-                <button id="ver-filtros">Filtrar</button>
+                <button id="ver-filtros"><i class="bi bi-funnel"></i></button>
                 <div id="filtros" class="filtros-container">
                     <!-- Cabecera exclusiva para cerrar en móvil -->
                     <div class="filtros-header-mobile">
                         <h3>Filtros</h3>
                         <button id="cerrar-filtros">&times;</button>
                     </div>
-                    <!-- Equipo / Clubes -->
-                    <div class="filtro-group">
-                        <label>Clubes / Equipos:</label>
+                    
+                    <!-- Nombre -->
+                    <div class="filtro-group" id="filtro-nombre">
+                        <label>Nombre</label>
+                        <img src="/img/predeterm.png" alt="Icono de jugadora" class="icono-jugadora" id="foto-jugadora">
                         <div class="tags-input-wrapper">
-                            <div id="tags-equipo" class="tags-box"></div>
-                            <input id="input-equipo" type="text" placeholder="Añadir equipo..." autocomplete="off">
-                        </div>
-                        <div class="sugerencias-container">
-                            <ul id="sugerencias-equipo"></ul>
-                        </div>
-                    </div>
-
-                    <!-- Nacionalidad / Países -->
-                    <div class="filtro-group">
-                        <label>Nacionalidades:</label>
-                        <div class="tags-input-wrapper">
-                            <div id="tags-pais" class="tags-box"></div>
-                            <input id="input-pais" class="input-pais" type="text" placeholder="Añadir país..." autocomplete="off">
-                        </div>
-                        <div class="sugerencias-container">
-                            <ul id="sugerencias-pais2"></ul>
+                            <input id="input-nombre" type="search" placeholder="Añadir nombre..." autocomplete="off">
+                            <div class="sugerencias-container">
+                                <ul id="sugerencias"></ul>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Posición -->
-                    <div class="filtro-group">
-                        <label>Posiciones:</label>
+                    <div class="filtro-group" id="filtro-posicion">
+                        <label>Posiciones</label>
                         <div class="tags-input-wrapper">
                             <div id="tags-posicion" class="tags-box"></div>
                             <input id="input-posicion" class="input-posicion" type="text" placeholder="Añadir posición..." autocomplete="off">
-                        </div>
-                        <div class="sugerencias-container">
-                            <ul id="sugerencias-posicion"></ul>
+                            <div class="sugerencias-container">
+                                <ul id="sugerencias-posicion"></ul>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Valor de Mercado -->
-                    <div class="filtro-group filtro-rango">
-                        <label>Valor de mercado (€):</label>
+                    <!-- Nacionalidad / Países -->
+                    <div class="filtro-group" id="filtro-pais">
+                        <label>Nacionalidades</label>
+                        <div id="fotos-paises">
+                            <span class="fi fi-xx" id="foto-pais"></span>
+                        </div>
+                        <div class="tags-input-wrapper">
+                            <div id="tags-pais" class="tags-box"></div>
+                            <input id="input-pais" class="input-pais" type="search" placeholder="Añadir país..." autocomplete="off">
+                            <div class="sugerencias-container">
+                                <ul id="sugerencias-pais2"></ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Estado -->
+                    <div class="filtro-group" id="filtro-estado">
+                        <label>Estado</label>
+                        <div>
+                            <input id="input-estado" type="text" placeholder="Cualquiera" min="15" max="50">
+                        </div>
+                    </div>
+
+                    <!-- Edad -->
+                    <div class="filtro-group filtro-rango" id="filtro-edad">
+                        <label>Edad</label>
                         <div class="inputs-rango">
-                            <input id="input-valor-min" type="number" placeholder="Mín" min="0" step="50000">
-                            <input id="input-valor-max" type="number" placeholder="Máx" min="0" step="50000">
+                            <input id="input-edad-min" type="number" placeholder="Mín" min="15" max="50" value="15">
+                            <input id="input-edad-max" type="number" placeholder="Máx" min="15" max="50" value="50">
+                        </div>
+                    </div>
+
+                    <!-- Filtro en Cascada con Flechas: País -> Liga -> Equipo -->
+                    <div class="filtro-group filtro-cascada-container">
+                        
+                        <!-- 1. SECTOR PAÍS -->
+                        <div class="stepper-item">
+                            <label>País</label>
+                            <div class="stepper-control">
+                                <button type="button" class="btn-stepper" id="btn-pais-prev">&lt;</button>
+                                <div class="stepper-display" id="display-pais">
+                                    <span id="pais-bandera" class="fi"></span>
+                                    <span id="pais-nombre">Todos los países</span>
+                                </div>
+                                <button type="button" class="btn-stepper" id="btn-pais-next">&gt;</button>
+                            </div>
+                        </div>
+
+                        <!-- 2. SECTOR LIGA -->
+                        <div class="stepper-item">
+                            <label>Liga</label>
+                            <div class="stepper-control">
+                                <button type="button" class="btn-stepper" id="btn-liga-prev">&lt;</button>
+                                <div class="stepper-display" id="display-liga">
+                                    <img id="liga-logo" src="/img/equipo-predeterm.svg" alt="Logo" class="icono-liga">
+                                    <span id="liga-nombre">Todas las ligas</span>
+                                </div>
+                                <button type="button" class="btn-stepper" id="btn-liga-next">&gt;</button>
+                            </div>
+                        </div>
+
+                        <!-- 3. SECTOR EQUIPO (ÚNICO) -->
+                        <div class="stepper-item">
+                            <label>Equipo</label>
+                            <div class="stepper-control">
+                                <button type="button" class="btn-stepper" id="btn-equipo-prev">&lt;</button>
+                                <div class="stepper-display" id="display-equipo">
+                                    <img id="equipo-escudo" src="/img/equipo-predeterm.svg" alt="Escudo" class="icono-club">
+                                    <span id="equipo-nombre">Todos los equipos</span>
+                                </div>
+                                <button type="button" class="btn-stepper" id="btn-equipo-next">&gt;</button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Valor de Mercado -->
+                    <div class="filtro-group filtro-rango" id="filtro-valor">
+                        <label>Valor (€)</label>
+                        <div class="inputs-rango">
+                            <input id="input-valor-min" type="number" placeholder="Mín (€)" min="0" max="2000000" step="10000" value="0">
+                            <input id="input-valor-max" type="number" placeholder="Máx (€)" min="0" max="2000000" step="10000" value="2000000">
                         </div>
                     </div>
 
                     <!-- Altura -->
-                    <div class="filtro-group filtro-rango">
-                        <label>Altura (cm):</label>
+                    <div class="filtro-group filtro-rango" id="filtro-altura">
+                        <label>Altura (cm)</label>
                         <div class="inputs-rango">
-                            <input id="input-altura-min" type="number" placeholder="Mín" min="120" max="220">
-                            <input id="input-altura-max" type="number" placeholder="Máx" min="120" max="220">
+                            <input id="input-altura-min" type="number" value="120" placeholder="Mín" min="120" max="220">
+                            <input id="input-altura-max" type="number" value="220" placeholder="Máx" min="120" max="220">
                         </div>
                     </div>
                 </div>
@@ -126,18 +193,37 @@
 
         <div id="resto">
 
-            <!-- Encabezado de la Tabla (Sticky) -->
-            <div class="jugadora-item header-list">
-                <div class="jugadora-div1"><p><b>JUGADORA</b></p></div>
-                <div class="header-label"><p><b>EDAD</b></p></div>
-                <div class="header-label"><p><b>CLUB</b></p></div>
-                <div class="header-label"><p><b>VALOR</b></p></div>
+            <div id="jugadoras-list-container">
+                <!-- Encabezado de la Tabla (Sticky) -->
+                <div class="jugadora-item header-list">
+                    <div class="header-label"><p><b>Pos</b></p></div>
+                    <div class="header-label"><p><b>Club</b></p></div>
+                    <div class="header-label"><p><b>Nombre</b></p></div>
+                    <div class="header-label"><p><b>Edad</b></p></div>
+                    <div class="header-label"><p><b>Valor</b></p></div>
+                    <div class="header-label"><p><b>Estado</b></p></div>
+                </div>
+
+                <!-- Contenedor SCROLLABLE con las Jugadoras -->
+                <div id="items-container"></div>
+                <div id="pagination" class="pagination"></div>
+            </div>
+            <div id="jugadora-display-container">
+                <div id="jugadora-card" class="jugadora-card">
+                    <img id="jugadora-img" src="/img/predeterm.png" alt="Imagen de la jugadora">
+                    <span id="jugadora-posicion">POS</span>
+                    <div id="jugadora-inform">
+                        <h2 id="jugadora-nombre">Nombre Jugadora</h2>
+                        <div id="jugadora-data">
+                            <span id="jugadora-pais"><i class="fi fi-xx"></i></span>
+                            <!--<img id="jugadora-liga" src="/img/equipo-predeterm.svg" alt="Logo de la liga">-->
+                            <img id="jugadora-club-logo" src="/img/equipo-predeterm.svg" alt="Logo del club">
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Contenedor SCROLLABLE con las Jugadoras -->
-            <div id="items-container"></div>
-            <div id="pagination" class="pagination"></div>
-        </div>
+        
 
         <div id="config-wiki" data-seccion="jugadoras"></div>
     </div>

@@ -34,6 +34,7 @@
     <link rel="stylesheet" href="/css/football-pitch.css">
     <link rel="stylesheet" href="/css/ficha-jugadora.css">
     <link rel="stylesheet" href="/css/tarjeta-jugadora.css">
+    <link rel="stylesheet" href="/css/jugadora-card.css">
 
     <style>
         .swiper {
@@ -91,10 +92,31 @@
 
     
     <div id="pagina-container">
+        <div id="jugadora-display-container">
+                <div id="jugadora-card" class="jugadora-card">
+                    <img id="jugadora-img" src="/img/predeterm.png" alt="Imagen de la jugadora">
+                    <span id="jugadora-posicion">POS</span>
+                    <div id="jugadora-inform">
+                        <h2 id="jugadora-nombre">Nombre Jugadora</h2>
+                        <div id="jugadora-data">
+                            <span id="jugadora-pais"><i class="fi fi-xx"></i></span>
+                            <!--<img id="jugadora-liga" src="/img/equipo-predeterm.svg" alt="Logo de la liga">-->
+                            <img id="jugadora-club-logo" src="/img/equipo-predeterm.svg" alt="Logo del club">
+                        </div>
+                    </div>
+                </div>
+                <!--<div id="info-display">
+                    <div class="bloque-dato">
+                        <p>Nombre</p>
+                        <span id="nombre-completo">Nombre</span>
+                    </div>
+                </div>-->
+            </div>
         <div id="ficha-jugadora-container" class="container">
             <div id="jugadora-info">
                 <div class="jugadora-img-wrapper">  
-                    <img src="/img/predeterm.png" id="jugadora-img" alt="{{ jugadora.Nombre }} {{ jugadora.Apellidos }}" fetchpriority="high" style="max-height: 125px; width: 125px; object-fit: cover;">
+                    <img src="/img/predeterm.png" id="jugadora-imagen" alt="{{ jugadora.Nombre }} {{ jugadora.Apellidos }}" fetchpriority="high" style="max-height: 125px; width: 125px; object-fit: cover;">
+                    <span id="span-posicion">POS</span>
                 </div>  
                 <div id="datos-jugadora">
                     <div style="display: flex; align-items: center;">
@@ -120,13 +142,13 @@
                                 <!--<p>Altura</p>-->
                                 <span id="altura">000 cm</span>
                             </div>
-                            |
-                            <!--<div id="pie-habil" class="bloque-dato">
+                            <!--|
+                            <div id="pie-habil" class="bloque-dato">
                                 <p id="pie">Pie</p>
                                 <img id="pie-img" src="/img/none.webp" alt="pie-habil" style="max-height: 50px;">
-                            </div>--> 
+                            </div>
                             | 
-                            <!--<div class="bloque-dato">
+                            <div class="bloque-dato">
                                 <p id="value">Valor</p>
                                 <span id="valor">10000 €</span>
                             </div>-->
