@@ -13,8 +13,8 @@ export async function inicializarEquiposLiga(id){
     const equiposLiga = await equiposxliga(id);
     console.log(equiposLiga)
 
-    displayEquipos(equiposLiga.success, document.getElementById('items-container'))
-    cargarVistaMapaEquipos(equiposLiga.success);
+    displayEquipos(equiposLiga, document.getElementById('items-container'))
+    cargarVistaMapaEquipos(equiposLiga);
 
 }
 
@@ -105,7 +105,7 @@ export function seleccionarEquipo(itemSeleccionado, container) {
 }
 
 export function displayEquipos(data, container) {
-    if (data.error) return;
+    //if (data.error) return;
 
     container.innerHTML = ''; // Limpiar contenedor por seguridad
 
