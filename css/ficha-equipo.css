@@ -51,23 +51,25 @@ body::before{
     will-change: filter, transform;
 }
 
+header.scrolled{
+    transition: all 0.3s ease-in-out;
+    background: var(--equipo-color) !important;
+}
+
 #resto{
     order: 2;
-    max-height: 70%;
-    height: 70%;
     width: 100%;
-    overflow: hidden;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
+    margin-bottom: 10%;
     /*background-color: color-mix(in srgb, var(--color-secundario, #121212) 80%, var(--equipo-color) 10%);*/
 }
 
 #selector {
-    position: sticky; /* 'fixed' funciona mejor que 'sticky' cuando html/body tienen overflow:hidden */
-    /*bottom: 3dvh;*/
+    position: absolute; /* 'fixed' funciona mejor que 'sticky' cuando html/body tienen overflow:hidden */
+    bottom: 0.5dvh;
     left: 50%;
     transform: translateX(-50%); /* Centra el menú horizontalmente */
     display: flex;
@@ -118,7 +120,7 @@ body::before{
 #info{
     width: 100%;
     flex-direction: column;
-    max-width: 1200px;
+    max-width: 1500px;
     padding-inline: 2%;
 }
 .prev, .next {
@@ -141,9 +143,10 @@ body::before{
     padding: 1rem;
 }
 #info.tab-content{
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     overflow: hidden;
+    height: 50vh;
 }
 .tab-content{
     display: none ;
@@ -159,10 +162,6 @@ body::before{
     justify-content: center;
     width: fit-content;
     width: 100%;
-}
-
-#plantilla{
-    overflow: hidden;
 }
 
 /* 1. El contenedor padre maneja la distribución vertical */
@@ -712,14 +711,13 @@ body::before{
     width: 100%;
     height: 100%;
     max-height: 100%;
-    overflow: hidden;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 0 !important;
 }
 #ficha-equipo-container{
-    width: 95%;
+    width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -729,18 +727,24 @@ body::before{
     padding-inline: 0;
     max-height: 100%;
     padding-block: 20px;
-    max-width: 1200px;
-    overflow-y: hidden;
+    /*max-width: 1200px;*/
+    overflow-y: auto;
     gap: 5px;
+}
+
+#ficha-equipo-container::-webkit-scrollbar{
+    display: none;
 }
 
 #equipo-info{
     display: flex;
     flex-direction: row;
     width: 100%;
+    max-width: 1200px;
     align-items: center;
-    min-height: 30%;
-    height: 30%;
+    justify-content: center;
+    min-height: 20vh;
+    height: 20vh;
     background-blend-mode: color-burn;
     position: relative;
     /*border-radius: 20px 20px 0 0;*/
@@ -753,7 +757,7 @@ body::before{
             color-mix(in srgb, var(--equipo-color) 60%, transparent 40%) 55%,
             rgba(0, 0, 0, 0.5) 100%
         );*/
-    gap: 2dvw;
+    gap: 0;
     order: 1;
     padding-inline: 2%;
 }
@@ -867,22 +871,22 @@ body::before{
     margin-bottom: 0;
 }
 #equipo-info #datos-equipo{
-    width: 100%;
     align-self: center;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    flex-direction: row;
+    justify-content: start;
 }
 
 #equipo-info #datos-equipo .bloque-nombre-pais{
     display: flex;
-    flex-direction: row;
+    flex-direction: row-reverse;
     align-items: center;
     gap: 10px;
 }
 
 #equipo-info #datos-equipo .bloque-nombre-pais h1{
     margin-bottom: 0;
+    font-size: 3rem;
 }
 
 #equipo-info #datos-equipo #bloque-nombre-pais #pais{
@@ -909,7 +913,7 @@ body::before{
     justify-content: start;
     align-items: center;
     gap: 15px;
-    background: linear-gradient(to right, color-mix(in srgb, var(--equipo-color) 50%, transparent 50%), color-mix(in srgb, var(--equipo-color) 0%, transparent 100%));
+    /*background: linear-gradient(to right, color-mix(in srgb, var(--equipo-color) 50%, transparent 50%), color-mix(in srgb, var(--equipo-color) 0%, transparent 100%));*/
 }
 #equipo-info .fi{
     border: none;
@@ -941,7 +945,7 @@ hr {
     width: 100%;
     height: 100%;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: space-evenly;
 }
 
@@ -949,9 +953,9 @@ hr {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    max-height: 30%;
-    min-height: 30%;
+    align-items: center;
     overflow: hidden;
+    width: 50%;
 }
 
 div.bloque-dato a{
@@ -962,6 +966,7 @@ div.bloque-dato a{
 
 .bloque-dato span{
     font-size: xx-large;
+    text-wrap: nowrap;
     font-weight: 500;
     font-family: "Oswald", sans-serif;
 }
@@ -1066,17 +1071,35 @@ div.bloque-dato a{
     /*width: max-content;*/
     /*align-self: flex-start;*/
     display: flex;
-    flex-direction: column !important;
+    flex-direction: column;
     justify-content: flex-start;
+    align-items: center;
     flex-shrink: 0; /* Que no se encoja más de esto */
     /*height: 95%;*/
+    width: 100%;
     max-width: 100%;
-    max-height: 90%;
-    min-height: 90%;
+    max-height: 80%;
+    min-height: 80%;
     overflow: hidden;
-    width: 35%;
     gap: 10px;
+    margin-top: 20px;
 }
+#left{
+    flex-direction: row;
+}
+
+@media (max-width: 768px){
+    #left{
+        flex-direction: column;
+        width: 100%;
+        max-width: 100%;
+        max-height: 100%;
+        min-height: 70% !important;
+        margin-top: 10px;
+        gap: 10px;
+    }
+}
+
 #info .row {
     display: flex;
     flex-direction: row;
@@ -1238,6 +1261,18 @@ flex-direction: row;    /*padding: 2.5%;*/
 #palmares > :nth-child(4) {
     grid-column: 2; /* Columna central */
 }
+.trofeo{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    min-width: 100px;
+    max-width: 150px;
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+}
 #palmares .trofeo{
     flex: 1;
 }
@@ -1312,12 +1347,13 @@ section#jugadoras-actuales{
     font-size: small;
 }
 
-section#jugadoras-destacadas{
+section#jugadoras-destacadas, section#palmares{
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: column-reverse;
-    height: 100%;
+    flex-direction: column;
+    height: 70%;
+    min-width: 100%;
     gap: 10px;
 }
 
@@ -1356,15 +1392,13 @@ section#jugadoras-destacadas span, section#jugadoras-destacadas .info-destacada{
 section#jugadoras-destacadas .jugadora-item{
     height: 100%;
     min-height: 100%;
-    min-width: fit-content;
+    min-width: 100%;
     padding-inline: 0 !important;
     width: fit-content;
     align-self: flex-end;
-    position: absolute;
     bottom: 0;
     border: 0;
     border-radius: 0;
-    background: none !important;
     box-shadow: none !important;
     width: auto;
     max-width: 50%;
@@ -1373,18 +1407,20 @@ section#jugadoras-destacadas .jugadora-item{
     height: auto;
     aspect-ratio: 1 / 1;
     z-index: 0;
-    border-radius: 0 0 20px 0;
     backdrop-filter: unset !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 section#jugadoras-destacadas .jugadora-item img{
-    width: 100%;
-    height: 100%;
+    width: 80%;
+    height: Auto;
 }
 
-section#jugadoras-actuales, section#jugadoras-destacadas{
-    min-width: 100%;
-    width: 100%;
+section#jugadoras-actuales, section#jugadoras-destacadas, section#palmares{
+    min-width: 50%;
+    width: 50%;
 }
 
 #jugadoras-actuales{
@@ -1414,7 +1450,7 @@ section#jugadoras-actuales, section#jugadoras-destacadas{
     justify-content: start;
     width: 100%;
     height: 100%;
-    gap: 0 !important;
+    gap: 10px !important;
     /*max-width: 1000px;*/
 }
 
@@ -1425,16 +1461,15 @@ section#jugadoras-actuales, section#jugadoras-destacadas{
 #jugadoras-actuales-container .jugadora-item, 
 #jugadoras-container .jugadora-item{
     padding-inline: 0;
-    justify-content: center;
     max-width: 150px;
     height: fit-content;
     overflow: hidden;
 }
 
-#jugadoras-actuales-container .jugadora-item .jugadora-nombre,
-#jugadoras-container .jugadora-item .jugadora-nombre{
+#jugadoras-actuales-container .jugadora-item .jugadora-nombre-container p,
+#jugadoras-container .jugadora-item .jugadora-nombre-container p,
+#tabla-jugadoras-destacadas #jugadoras-destacadas-container .jugadora-nombre-container p{
     text-align: center;
-    background-color: var(--color-primario);
     width: 100%;
     text-wrap: nowrap;
     text-shadow: 2px 2px 0px #000, 
@@ -1442,6 +1477,29 @@ section#jugadoras-actuales, section#jugadoras-destacadas{
                  1px -1px 0px #000, 
                 -1px 1px 0px #000, 
                  1px 1px 0px #000;
+    
+    font-family: "Oswald", sans-serif;
+    text-transform: uppercase;
+}
+
+#tabla-jugadoras-destacadas #jugadoras-destacadas-container .jugadora-nombre-container p{
+    text-align: start;
+    text-shadow: none;
+}
+
+#jugadoras-actuales-container .jugadora-item .jugadora-nombre-container .jugadora-nombre,
+#jugadoras-container .jugadora-item .jugadora-nombre-container .jugadora-nombre,
+#tabla-jugadoras-destacadas #jugadoras-destacadas-container .jugadora-nombre-container .jugadora-nombre{
+    font-size: small;
+}
+
+#jugadoras-actuales-container .jugadora-item .jugadora-nombre-container .jugadora-apellido,
+#jugadoras-container .jugadora-item .jugadora-nombre-container .jugadora-apellido{
+    font-size: x-large;
+}
+
+#tabla-jugadoras-destacadas #jugadoras-destacadas-container .jugadora-nombre-container .jugadora-apellido{
+    font-size: large;
 }
 
 #jugadoras-actuales-container .jugadora-item .jugadora-div1,
@@ -1464,35 +1522,54 @@ section#jugadoras-actuales, section#jugadoras-destacadas{
     overflow: hidden;
 }
 
+#jugadoras-actuales-container .jugadora-item .jugadora-div1 .jugadora-div1_2{
+    display: flex;
+    flex-direction: column;
+}
+
+.jugadora-nombre-container{
+    width: 100%;
+}
+#jugadoras-actuales-container .jugadora-nombre-container{
+    order: 1;
+}
+
 .jugadora-item .jugadora-div1 .jugadora-banderas-posicion{
     overflow: hidden;
     height: 100%;
+    order: 0;
 }
 
 #jugadoras-actuales-container .jugadora-item .jugadora-div1 .jugadora-banderas,
 #jugadoras-container .jugadora-item .jugadora-div1 .jugadora-banderas{
     justify-content: space-evenly;
     align-items: center;
-    max-height: 100%;
-    height: 100%;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     flex-wrap: wrap;
     overflow: hidden;
     /*background: var(--color-secundario);*/
 }
 
-#jugadoras-actuales-container .jugadora-item .jugadora-div1 .jugadora-banderas{
+#jugadoras-actuales-container .jugadora-item .jugadora-div1 .jugadora-banderas img{
     display: none;
+}
+
+#jugadoras-actuales-container .jugadora-item .jugadora-div1 .jugadora-banderas{
+    order: 0;
 }
 
 
 #jugadoras-container .jugadora-item .jugadora-div1 .jugadora-banderas img{
-    width: 30%;
-    max-width: 30%;
+    height: 50%;
+    max-height: 50%;
     aspect-ratio: 1/1;
     height: auto;
     max-width: 30px;
+}
+
+#jugadoras-container .jugadora-item .jugadora-div1 .jugadora-banderas img:nth-child(2){
+    display: none;
 }
 
 @media (max-width: 768px){
@@ -1503,13 +1580,6 @@ section#jugadoras-actuales, section#jugadoras-destacadas{
     .jugadora-banderas{
         font-size: x-small;
     }
-}
-
-#jugadoras-actuales-container .jugadora-item .jugadora-div1 .jugadora-banderas>*,
-#jugadoras-container .jugadora-item .jugadora-div1 .jugadora-banderas>*{
-    max-width: 30%;
-    max-height: 30px;
-    /*width: 30%;*/
 }
 
 #jugadoras-actuales-container .jugadora-item .jugadora-div1 img,
@@ -1525,12 +1595,12 @@ section#jugadoras-actuales, section#jugadoras-destacadas{
     z-index: -1;
 }
 
-#jugadoras-actuales-container .jugadora-item .jugadora-posicion,
-#jugadoras-container .jugadora-item .jugadora-posicion {
+#jugadoras-actuales-container .jugadora-item .jugadora-banderas-posicion,
+#jugadoras-container .jugadora-item .jugadora-banderas-posicion {
     position: absolute;
     display: flex;
     flex-direction: column;
-    left: 0;
+    right: 0;
     top: 0;
     padding-top: 10px;
     padding-inline: 5px;
@@ -1697,25 +1767,30 @@ section#jugadoras-actuales, section#jugadoras-destacadas{
 
 #tabla-jugadoras-destacadas #jugadoras-destacadas-container{
     padding-inline: 0;
-    flex-direction: column;
+    flex-direction: row;
     height: 100%;
 }
 
 #tabla-jugadoras-destacadas #jugadoras-destacadas-container>div{
     border: 0.5px solid rgba(255,255,255,0.5);
     border-radius: 0px !important;
-    height: 100%;
     width: 100%;
-    align-items: flex-start !important;
-    justify-content: space-between;
+    max-width: 20%;
+    min-width: 20%;
+    align-items: center !important;
+    text-align: start !important;
     padding: 10px;
     padding-right: 0;
     border: none;
     position: relative;
 }
 
+#tabla-jugadoras-destacadas #jugadoras-destacadas-container .jugadora-nombre-container{
+    display: none;
+}
+
 /* Esquina superior izquierda */
-#tabla-jugadoras-destacadas #jugadoras-destacadas-container>div::before {
+#tabla-jugadoras-destacadas #jugadoras-destacadas-container .jugadora-item::before {
     content: '';
     position: absolute;
     top: 0;
@@ -1728,7 +1803,7 @@ section#jugadoras-actuales, section#jugadoras-destacadas{
 }
 
 /* Esquina inferior derecha */
-#tabla-jugadoras-destacadas #jugadoras-destacadas-container>div::after {
+#tabla-jugadoras-destacadas #jugadoras-destacadas-container .jugadora-item::after {
     content: '';
     position: absolute;
     bottom: 0;
@@ -1867,7 +1942,7 @@ section#jugadoras-actuales, section#jugadoras-destacadas{
     max-width: 100%;
 }
 
-#jugadoras-container{
+#jugadoras-container, #jugadoras-actuales-container{
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 150px));
     overflow-y: auto;
@@ -2047,17 +2122,17 @@ body.no-scroll {
     /*#selector{
         order: 2;
     }*/
-    #resto{
-        height: 80%;
-        max-height: 80%;
-    }
     #info{
         gap: 10px;
         flex-direction: column !important;
         padding: 0;
         max-width: 500px;
-        height: 100%;
+        height: 60vh !important;
         overflow-y: hidden;
+    }
+
+    section#jugadoras-destacadas .container-jugadoras span{
+        font-size: 0.5em !important;
     }
 
     #info>div:nth-child(1){
@@ -2091,13 +2166,10 @@ body.no-scroll {
         font-family: "Oswald", sans-serif;
     }
 
-
-
     #equipo-container{
         flex-direction: column;
         align-items: center;
         overflow-y: auto;
-        max-width: 500px;
         padding-block: 10px;
     }
 
@@ -2205,18 +2277,18 @@ body.no-scroll {
         max-height: 33dvh !important;
     }
 
-    #jugadoras-container{
+    #jugadoras-container, #jugadoras-actuales-container{
         gap: 5px;
         grid-template-columns: repeat(3, 1fr);
         max-width: 100%;
     }
 
-    #jugadoras-container .jugadora-wrapper{
+    #jugadoras-container .jugadora-wrapper, #jugadoras-actuales-container .jugadora-wrapper{
         max-width: 100%;
         min-width: 100%;
     }
 
-    .resto #jugadoras-container .jugadora-item{
+    .resto #jugadoras-container .jugadora-item, .resto #jugadoras-actuales-container .jugadora-item{
         max-width: 10vw;
         width: 100%;
         height: max-content !important;
@@ -2472,6 +2544,10 @@ body.no-scroll {
         max-height: 100%;
     }
 
+    .destacada-card-container{
+        text-align: center !important;
+    }
+
     section#jugadoras-destacadas #jugadoras-destacadas-container .jugadora-item{
         aspect-ratio: 1/1;
         height: 50% !important;
@@ -2480,9 +2556,21 @@ body.no-scroll {
     }
 
     #tabla-jugadoras-destacadas #jugadoras-destacadas-container p{
-        font-size: small;
+        font-size: 0.6em;
         text-align: center;
         white-space: nowrap;
+    }
+
+    #tabla-jugadoras-destacadas #jugadoras-destacadas-container .jugadora-nombre-container .jugadora-nombre{
+        width: 100%;
+        text-align: center;
+        font-size: 0.6em;
+    }
+
+    #tabla-jugadoras-destacadas #jugadoras-destacadas-container .jugadora-nombre-container .jugadora-apellido{
+        width: 100%;
+        text-align: center;
+        font-size: 0.7em;
     }
 
     #tabla-jugadoras-actuales{
@@ -2670,5 +2758,13 @@ body.no-scroll {
 @media (max-width: 600px){
     #jugadoras-actuales-container{
         flex-direction: column;
+    }
+}
+
+@media (max-width: 500px){
+    #jugadoras-container, #jugadoras-actuales-container{
+        gap: 5px;
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 100%;
     }
 }

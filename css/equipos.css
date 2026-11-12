@@ -101,6 +101,13 @@ section::before {
     padding: 5px;
 }
 
+@media (max-width:400px){
+    #container-display .ligas {
+        gap: 0px;       /* Menos espacio entre tarjetas en pantallas muy pequeñas */
+        padding-inline: 0;
+    }
+}
+
 @media (max-width:768px){
     #wiki-container #container-display{
         max-width: 95% !important; 

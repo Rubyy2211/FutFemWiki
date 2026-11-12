@@ -1,3 +1,6 @@
+@view-transition {
+    navigation: auto;
+}
 /* RESET DE PANTALLA Y LAYOUT PRINCIPAL */
 body, html {
     margin: 0;
@@ -143,7 +146,6 @@ body #wiki-equipos #wiki-container .pagination span{
 body #wiki-equipos #wiki-container .pagination button{
     width: fit-content;
     height: fit-content;
-    background: none !important;
     font-size: x-large;
     text-align: center;
     box-shadow: none !important;
@@ -158,6 +160,15 @@ body #wiki-equipos #wiki-container #cabecera-jugadora #filtros {
     max-width: 90dvw;
     max-height: 100dvh !important;
     /*overflow: hidden;*/
+}
+
+@media (max-width: 768px) {
+    body #wiki-equipos #wiki-container #cabecera-jugadora #filtros {
+        gap: 5px;
+        max-width: 100%;
+        max-height: 100dvh !important;
+        overflow-y: auto;
+    }
 }
 
 body #wiki-equipos #wiki-container #cabecera-jugadora #filtros>div.filtro-group{
@@ -517,6 +528,13 @@ body #wiki-equipos #wiki-container #items-container .jugadora-item {
     transform: scale(1); /* Encaja perfectamente en la tarjeta */
 }
 
+.jugadora-nombre {
+    max-width: 100%;       /* Obliga al texto a no rebasar el ancho de su tarjeta/padre */
+    overflow: hidden;      /* Corta visualmente lo que sobra */
+    white-space: nowrap;   /* Evita que el texto salte de línea */
+    display: inline-block; /* Necesario para que calcule bien los anchos y las animaciones */
+}
+
 #jugadora-display-container{
     display: flex;
     flex-direction: column;
@@ -673,7 +691,6 @@ body #wiki-equipos #wiki-container #items-container .jugadora-item {
         .filtros-header-mobile{
             position: absolute;
             top: -50px;
-            height: fit-content;
         }
     }
 
@@ -801,7 +818,7 @@ body #wiki-equipos #wiki-container #items-container .jugadora-item {
     /* 1. Transforma el contenedor en un desplegable lateral / modal */
     .filtros-container {
         position: fixed;
-        top: 0;
+        bottom: 0;
         right: -100%; /* Oculto fuera de pantalla por defecto */
         width: 100%;
         max-width: 380px; /* Ancho máximo en móviles grandes/tablets */
@@ -814,7 +831,9 @@ body #wiki-equipos #wiki-container #items-container .jugadora-item {
         display: none;
         flex-direction: column;
         gap: 5px !important;
-        padding: 20px 16px 80px 16px; /* Espacio inferior para scroll cómodo */
+        /*padding: 20px 16px 80px 16px; /* Espacio inferior para scroll cómodo */
+        padding-inline: 16px;
+        padding-top: 10dvh;
         
         /* Fondo con blur glassmorphism */
         transition: right 0.3s ease-in-out;
@@ -829,6 +848,7 @@ body #wiki-equipos #wiki-container #items-container .jugadora-item {
     .filtros-header-mobile {
         display: flex;
         justify-content: space-between;
+        height: fit-content !important;
         align-items: center;
         padding-bottom: 12px;
         border-bottom: 1px solid rgba(255, 255, 255, 0.15);
@@ -1043,6 +1063,7 @@ body #wiki-equipos #wiki-container #items-container .jugadora-item {
 
     body #wiki-equipos #wiki-container #items-container .jugadora-item .jugadora-div1 p{
         font-size: x-small;
+        
     }
 
     body #wiki-equipos #wiki-container #items-container .jugadora-item .jugadora-banderas-posicion span{
@@ -1096,6 +1117,7 @@ body #wiki-equipos #wiki-container #items-container .jugadora-item img {
 
 body #wiki-equipos #wiki-container #items-container .jugadora-item p, body #wiki-equipos #wiki-container #items-container .jugadora-item span{
     font-size: smaller;
+    margin-bottom: 0;
 }
 
 body #wiki-equipos #wiki-container #items-container .jugadora-item .jugadora-div1 {

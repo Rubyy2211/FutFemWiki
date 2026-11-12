@@ -60,11 +60,11 @@
 
             <div id="equipo-info">
                 <div class="equipo-img-wrapper">  
-                    <img src="/img/predeterm.png" id="equipo-img" alt="{{ jugadora.Nombre }} {{ jugadora.Apellidos }}" fetchpriority="high" style="max-height: 125px; width: 125px; object-fit: cover;">
+                    <img src="/img/predeterm.png" id="equipo-img" alt="{{ jugadora.Nombre }} {{ jugadora.Apellidos }}" fetchpriority="high" style="max-height: 125px; width: 100%; object-fit: cover;">
                 </div>  
                 <div id="datos-equipo">
-                    <div style="display: flex; align-items: center;">
-                        <div id="posicion">
+                    <div style="display: none; align-items: center;">
+                        <div id="posicion" style="display: none;">
                             <span>EQUIPO</span>
                         </div>
                     </div>
@@ -76,12 +76,12 @@
                     </div>
                     <div class="row">   
                             <div>
-                                <div class="bloque-dato">
+                                <div class="bloque-dato" style="display: none;">
                                     <!--<p>Nacimiento</p>-->
                                     <span id="fundacion">0000</span>
                                 </div>
-                                |
-                                <div class="bloque-dato">
+                                <!--|-->
+                                <div class="bloque-dato" style="display: none;">
                                     <!--<p>Altura</p>-->
                                     <span id="formacion">0-0-0</span>
                                 </div>
@@ -106,9 +106,9 @@
 
                 <!-- Pestaña 1: INFORMACIÓN GENERAL -->
                 <div id="info" class="tab-content active">
-                    <div style="display: flex; flex-direction: row; height: 100%; align-items: center; width: 75%;">
+                    <div style="display: flex; flex-direction: row; height: 100%; align-items: center; width: 100%;">
                         <div class="column">
-                            <div id="nacionalidad" class="bloque-dato">
+                            <div id="nacionalidad" class="bloque-dato" style="display: none;">
                                 <p>Nacionalidad</p>
                                 <span id="nacionalidad-nombre">
                                     <a href="#">
@@ -140,7 +140,7 @@
                                 <p>Estadio</p>
                                 <span id="estadio-datos"><a id="btn-estadio" href="#" target="_blank" rel="noopener noreferrer">Ubicación</a></span>
                             </div>
-                            <div id="pie-habil" class="bloque-dato" style="opacity: 0; visibility: hidden;">
+                            <div id="pie-habil" class="bloque-dato" style="display: none;">
                                 <p id="pie">Pie</p>
                                 <img id="pie-img" src="/img/none.webp" alt="pie-habil" style="max-width: 50px;">
                             </div> 
@@ -208,18 +208,27 @@
                             </div>
                         </section>
                         <section id="jugadoras-destacadas">
-                            <div id="tabla-trofeos" class="tabla-jugadoras">
-                                            <div class="cabecera-tabla">
-                                                <h3>Palmarés</h3>
-                                            </div>
-                                            <div id="palmares" class="container-jugadoras"></div>
-                                        </div>
+                            
+                             <div style="display: flex; flex-direction: row; align-items: center; justify-content: center; width: 100%;">
+                            <hr style="width: 20%; margin-right: 10px; border: 1px solid #ccc; order: 0;">
+                            <h2 style="order: 1; margin-bottom: 0; text-wrap: nowrap;">Jugadoras Destacadas</h2>
+                            <hr style="width: 20%; margin-left: 10px; border: 1px solid #ccc; order: 2;">
+                        </div>
+                            
                             <div id="tabla-jugadoras-destacadas" class="tabla-jugadoras">
                                 <div class="cabecera-tabla">
                                     <h3>Destacadas</h3>
                                 </div>
                                 <div id="jugadoras-destacadas-container" class="container-jugadoras"></div>
                             </div>
+                        </section>
+                        <section id="palmares">
+                            <div style="display: flex; flex-direction: row; align-items: center; justify-content: center; width: 100%;">
+                                <hr style="width: 20%; margin-right: 10px; border: 1px solid #ccc; order: 0;">
+                                <h2 style="order: 1; margin-bottom: 0;">Palmarés</h2>
+                                <hr style="width: 20%; margin-left: 10px; border: 1px solid #ccc; order: 2;">
+                            </div>
+                            <data id="divPalmares" style="height: 100%; width: 100%; display: flex; flex-direction: row; align-items: center; justify-content: center;"></data>
                         </section>
                     </div>
                 </div>
@@ -480,11 +489,49 @@
 
         // Obtener los parámetros de la URL actual
         const urlParams = new URLSearchParams(window.location.search);
-        const equipoId = urlParams.get('id');
+        const equipoId = parseInt(urlParams.get('id'), 10); // Convertir a número entero
         const equipoSlug = urlParams.get('slug');
+        const idEquipo = '{{equipo.id_equipo}}';    
+        let equipoData = null;
+        let color1 = null;
+        let color2 = null;
+        let color3 = null;
+
+        /*if(equipoId === 2){
+            color1 = "#0000CC";
+            color2 = "#000000";
+            color3 = "#CC0000";
+        } else if(equipoId === 11){
+            "Valencia CF Femenino"
+            color1 = "#FF7F00";
+            color2 = "#000000";
+            color3 = "#FFFFFF";
+        } else {*/
+            color1 = "#210936"; // Color predeterminado
+            color2 = "#836FFF"; // Color predeterminado
+            color3 = "#FF007A"; // Color predeterminado
+        //}
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const navbar = document.querySelector('.navbar');
+            const equipoContainer = document.getElementById('ficha-equipo-container');
+
+            if (equipoContainer) {
+                equipoContainer.addEventListener('scroll', () => {
+                    // Si el contenedor se ha desplazado más de 20 píxeles hacia abajo
+                    if (equipoContainer.scrollTop > 20) {
+                        navbar.classList.add('scrolled');
+                    } else {
+                        navbar.classList.remove('scrolled');
+                    }
+                });
+            }
+        });
+
+        
 
         const heroCanvas = new CanvasBackground('canvas', {
-            colors: ["#210936", "#836FFF", "#FF007A"] // Cyberpunk
+            colors: [color1, color2, color3] // Cyberpunk
         });
 
         // Función asíncrona autoejecutada para manejo seguro de await
@@ -534,48 +581,43 @@
         document.addEventListener('DOMContentLoaded', () => {
             initTabs();
         });
-    </script>
-    <script type="module">
-    //import { crearFichaJugadorasActuales, crearFichaJugadorasDeSiempre, displayPalmares, filtrarJugadorasPorTemporada } from '{% static "FutFemWiki/js/ficha-equipo.js" %}';
-    //import { fetchEquipoById } from '{% static "futfem/js/equipos.js" %}';
 
-    const color = '{{equipo.color}}';
-    const idEquipo = '{{equipo.id_equipo}}';    
-    let equipoData = null;
+        const color = '{{equipo.color}}';
+   
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const linksSelector = document.querySelectorAll('.selector a');
-        const secciones = document.querySelectorAll('#campo, #suplentes');
+        document.addEventListener('DOMContentLoaded', () => {
+            const linksSelector = document.querySelectorAll('.selector a');
+            const secciones = document.querySelectorAll('#campo, #suplentes');
 
-        // Estado inicial: activar primer enlace y primera sección
-        linksSelector[0]?.classList.add('active');
-        secciones[0]?.classList.add('active');
+            // Estado inicial: activar primer enlace y primera sección
+            linksSelector[0]?.classList.add('active');
+            secciones[0]?.classList.add('active');
 
-        linksSelector.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
+            linksSelector.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
 
-                const targetId = link.getAttribute('href');
-                const targetSection = document.querySelector(targetId);
+                    const targetId = link.getAttribute('href');
+                    const targetSection = document.querySelector(targetId);
 
-                if (!targetSection) return;
+                    if (!targetSection) return;
 
-                // 1. Actualizar clase 'active' en los enlaces
-                linksSelector.forEach(a => a.classList.remove('active'));
-                link.classList.add('active');
+                    // 1. Actualizar clase 'active' en los enlaces
+                    linksSelector.forEach(a => a.classList.remove('active'));
+                    link.classList.add('active');
 
-                // 2. Ocultar secciones y remover clase 'active' de todas
-                secciones.forEach(sec => {
-                    sec.style.display = 'none';
-                    sec.classList.remove('active');
+                    // 2. Ocultar secciones y remover clase 'active' de todas
+                    secciones.forEach(sec => {
+                        sec.style.display = 'none';
+                        sec.classList.remove('active');
+                    });
+
+                    // 3. Mostrar la sección seleccionada y añadir la clase 'active'
+                    targetSection.style.display = 'block';
+                    targetSection.classList.add('active');
                 });
-
-                // 3. Mostrar la sección seleccionada y añadir la clase 'active'
-                targetSection.style.display = 'block';
-                targetSection.classList.add('active');
             });
         });
-    });
-</script>
+    </script>
 </body>
 </html>
