@@ -43,7 +43,7 @@ export async function initFicha(id){
     document.getElementById('logo-liga').src = equipo.liga.logo;
     document.getElementById('liga-nombre-texto').textContent = equipo.liga.nombre;
     document.getElementById('historicas-escudo').src = equipo.escudo;
-    document.getElementById('btn-estadio').href = `https://www.google.com/maps/search/?api=1&query=${equipo.lat},${equipo.long}`;
+    document.getElementById('btn-estadio').href = `https://earth.google.com/web/search/${equipo.lat},${equipo.long}`;
 
     await Promise.all([ crearFichaJugadorasActuales(id, equipo.color), crearFichaJugadorasDeSiempre(id, equipo.color)], displayPalmares(id));
     crearBotonesTemporada(equipo.fundacion, equipo.color);
@@ -59,7 +59,16 @@ export async function displayPalmares(equipo) {
 
     const palmaresAgrupado = agruparTrofeos(data.success[0]);
     console.log('Palmarés agrupado:', palmaresAgrupado);
-    renderSlider('#left', palmaresAgrupado);
+    
+    // ❌ Slider comentado / eliminado
+    // renderSlider('#left', palmaresAgrupado);
+
+    // Seleccionamos el contenedor (ajusta el ID según tu HTML, por ejemplo 'divPalmares')
+    const divPalmares = document.getElementById('divPalmares');
+    if (!divPalmares) return;
+
+    // Limpiamos el contenedor antes de pintar para evitar duplicados si se recarga
+    divPalmares.innerHTML = '';
 
     palmaresAgrupado.forEach(trofeo => {
         const div = document.createElement("div");
@@ -71,6 +80,9 @@ export async function displayPalmares(equipo) {
             <p class="trofeo-pc">${trofeo.count}</p>
             <p class="trofeo-movil">${trofeo.count}</p>
         `;
+        
+        // tooltip
+        div.title = `${trofeo.nombre} (${trofeo.competicion.nombre}) - ${trofeo.count} veces`;
 
         divPalmares.appendChild(div);
     });
@@ -152,7 +164,13 @@ function obtenerJugadorasDestacadas(jugadoras) {
         return (fechaCurr < fechaPrev) ? curr : prev;
     });
 
-    return { masCara, masJoven, masMayor };
+    const masAlta = [...jugadoras].reduce((prev, curr) => {
+        const altCurr = Number(curr.altura || curr.height || 0);
+        const altPrev = Number(prev.altura || prev.height || 0);
+        return (altCurr > altPrev) ? curr : prev;
+    });
+
+    return { masCara, masJoven, masMayor, masAlta };
 }
 
 // ==========================================
@@ -161,51 +179,85 @@ function obtenerJugadorasDestacadas(jugadoras) {
 
 function crearCardDestacada(jugadora, etiqueta) {
     const cardContainer = document.createElement('div');
+    const nombreCompleto = jugadora.nombre_completo || 'Desconocida';
     const slugNombre = (jugadora.nombre_completo || jugadora.nombre).toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, '');
-    const card = document.createElement('div');
-    card.style.setProperty('--equipo-color', jugadora.equipo.color);
-    card.className = 'jugadora-item destacada-card visible'; 
+    
+    // Contenedor principal
+    cardContainer.className = 'destacada-card-container';
     Object.assign(cardContainer.style, {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         flex: '1'
     });
-
-    cardContainer.style.background =
-    `radial-gradient(
-      farthest-corner at left bottom,
-      color-mix(in srgb, var(--color-secundario) 80%, black) 0%,
-      ${jugadora.equipo.color} 100%
-    )`;
     
+    // 1. 🏷️ ETIQUETA (Fuera de la card, arriba)
     const badge = document.createElement('span');
     badge.className = 'badge-destacada';
     badge.textContent = etiqueta;
     badge.style.textWrap = 'nowrap';
     badge.style.fontSize = '0.8em';
 
+    // 2. 🃏 CARD CENTRAL (Contiene imagen y nombre)
+    const card = document.createElement('div');
+    card.style.setProperty('--equipo-color', jugadora.equipo.color);
+    card.className = 'jugadora-item destacada-card visible'; 
+
+    card.style.background = `radial-gradient(
+        farthest-corner at left bottom,
+        color-mix(in srgb, var(--color-secundario) 80%, black) 0%,
+        ${jugadora.equipo.color} 100%
+    )`;
+
     const img = document.createElement('img');
     img.src = jugadora.imagen ? jugadora.imagen : '/img/predeterm.png';
     img.className = 'jugadora-imagen';
     img.loading = 'lazy';
     img.alt = jugadora.nombre_completo || jugadora.apodo || jugadora.nombre;
-    
+
+    const divNombre = document.createElement('div');
+    divNombre.className = 'jugadora-nombre-container';
+    const pNombre = document.createElement('p');
+    const pApellido = document.createElement('p');
+    pNombre.className = 'jugadora-nombre';
+    pNombre.textContent = nombreCompleto.split(' ')[0] || ''; 
+    pApellido.className = 'jugadora-apellido';
+    pApellido.textContent = nombreCompleto.split(' ').slice(1).join(' ') || '';
+    divNombre.appendChild(pNombre);
+    divNombre.appendChild(pApellido);
+
+    // Añadimos imagen y nombre a la card
+    card.appendChild(img);
+    card.appendChild(divNombre);
+
+    // 3. 📊 VALOR / INFO (Fuera de la card, abajo)
     const info = document.createElement('div');
     info.className = 'info-destacada';
     
-    let datoExtra = etiqueta === 'MÁS CARA' 
-        ? (formatearValorMercado(jugadora.market_value) || 'N/A')
-        : (calcularEdad(jugadora.nacimiento) + ' años');
+    let datoExtra = 'N/A';
+    if (etiqueta === 'MÁS CARA') {
+        datoExtra = formatearValorMercado(jugadora.market_value) || 'N/A';
+    } else if (etiqueta === 'MÁS JOVEN' || etiqueta === 'MÁS MAYOR') {
+        datoExtra = calcularEdad(jugadora.nacimiento) + ' años';
+    } else if (etiqueta === 'MÁS ALTA') {
+        const alturaVal = jugadora.altura || jugadora.height;
+        if (alturaVal) {
+            datoExtra = alturaVal < 3 ? `${alturaVal} m` : `${alturaVal} cm`;
+        } else {
+            datoExtra = 'N/A';
+        }
+    }
 
     info.innerHTML = `<p>${datoExtra}</p>`;
 
+    // Ensamblar ordenadamente en el contenedor principal
     cardContainer.appendChild(badge);
-    card.appendChild(img);
     cardContainer.appendChild(card);
     cardContainer.appendChild(info);
     
-    card.onclick = () => window.location.href = `jugadora_ficha.html?id=${jugadora.id_jugadora}&slug=${slugNombre}`;;
+    // Evento de clic en la tarjeta
+    card.onclick = () => window.location.href = `jugadora_ficha.html?id=${jugadora.id_jugadora}&slug=${slugNombre}`;
+    
     return cardContainer;
 }
 
@@ -239,11 +291,20 @@ function crearFichaBaseJugadora(jugadora, colorPredeterminado, mostrarEtapas = f
     div1.appendChild(img);
 
     // Nombre
+    const divNombre = document.createElement('div');
+    divNombre.className = 'jugadora-nombre-container';
+    div1_2.appendChild(divNombre);
     const pNombre = document.createElement('p');
+    const pApellido = document.createElement('p');
     pNombre.className = 'jugadora-nombre';
-    pNombre.textContent = nombreCompleto; 
-    pNombre.style.background = jugadora.equipo?.color || colorPredeterminado;
-    div1_2.appendChild(pNombre);
+    pNombre.textContent = nombreCompleto.split(' ')[0] || ''; 
+    pApellido.className = 'jugadora-apellido';
+    pApellido.textContent = nombreCompleto.split(' ').slice(1).join(' ') || '';
+    divNombre.appendChild(pNombre);
+    divNombre.appendChild(pApellido);
+
+    divNombre.style.background = jugadora.equipo?.color || colorPredeterminado;
+    pNombre.style.background = 'none';
 
     // Iconos (Bandera y Ligas)
     const divBanderaYPosicion = document.createElement('div');
@@ -265,7 +326,7 @@ function crearFichaBaseJugadora(jugadora, colorPredeterminado, mostrarEtapas = f
         imgLiga.src = jugadora.equipo.liga_logo;
     } else if (jugadora.equipo?.id === 83) { 
         imgLiga.src = jugadora.equipo.escudo;
-    }      
+    }       
     divBanderas.appendChild(imgLiga);
 
     if (jugadora.equipo?.escudo) {
@@ -274,6 +335,11 @@ function crearFichaBaseJugadora(jugadora, colorPredeterminado, mostrarEtapas = f
         imgClub.className = 'equipo-imagen';
         imgClub.alt = jugadora.equipo?.nombre;
         divBanderas.appendChild(imgClub);
+
+        console.log('Escudo del club:', imgClub.src);
+        if(imgClub.src.includes('retirada')) {
+            imgClub.src = '/img/retirada.svg';
+        }
     }
 
     // Posiciones
@@ -286,7 +352,7 @@ function crearFichaBaseJugadora(jugadora, colorPredeterminado, mostrarEtapas = f
         span.id = jugadora.posiciones_ids[jugadora.posiciones_abrev.indexOf(jugadora.posiciones_abrev[0])];
     }
     span.className = 'pos-' + jugadora.posiciones_abrev[0];
-    pPosicion.appendChild(span);
+    divBanderas.appendChild(span);
 
     divBanderaYPosicion.appendChild(divBanderas);
     divBanderaYPosicion.appendChild(pPosicion);
@@ -294,9 +360,8 @@ function crearFichaBaseJugadora(jugadora, colorPredeterminado, mostrarEtapas = f
     div1.appendChild(div1_2);
     div.appendChild(div1);
 
-    // Estilos de Fondo
+    // Estilos de Fondo por defecto
     const colorPrimario = jugadora.equipo?.color || colorPredeterminado || 'var(--color-primario)';
-    const colorSecundario = jugadora.equipo?.colorSecundario || 'transparent';
     const backgroundGradient = `
             linear-gradient(
                 to bottom,
@@ -308,14 +373,79 @@ function crearFichaBaseJugadora(jugadora, colorPredeterminado, mostrarEtapas = f
         
     div.style.background = backgroundGradient;
     div.style.border = '1px solid ' + colorPrimario;
+    div.style.position = 'relative';
+    div.style.overflow = 'hidden';
 
+    // 🟢 CAPA OVERLAY PARA HOVER (GSAP)
+    const divHover = document.createElement('div');
+    divHover.className = 'jugadora-hover-overlay';
+    divHover.style.cssText = `
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: ${colorPrimario};
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px;
+        box-sizing: border-box;
+        border-radius: inherit;
+        z-index: 10;
+        pointer-events: none;
+    `;
+
+    // 1. Escudo centrado para el hover
+    if (jugadora.equipo?.escudo) {
+        const imgClubHover = document.createElement('img');
+        imgClubHover.src = jugadora.equipo.escudo;
+        imgClubHover.alt = jugadora.equipo?.nombre || '';
+        imgClubHover.style.cssText = 'width: 48px; height: 48px; object-fit: contain;';
+        if(imgClubHover.src.includes('retirada')) {
+            imgClubHover.src = '/img/retirada.svg';
+        }
+        divHover.appendChild(imgClubHover);
+    }
+
+    // 2. Nombre y apellidos centrados para el hover
+    const divNombreHover = divNombre.cloneNode(true);
+    divNombreHover.style.background = 'transparent';
+    divNombreHover.style.textAlign = 'center';
+    divHover.appendChild(divNombreHover);
+
+    // Ocultar overlay por defecto con GSAP
+    gsap.set(divHover, { autoAlpha: 0, scale: 0.9 });
+    div.appendChild(divHover);
+
+    // 🟢 EVENTOS HOVER CON GSAP (Corregido para movimientos rápidos)
+    div.addEventListener('mouseenter', () => {
+        gsap.killTweensOf(divHover); // Mata cualquier animación previa en curso
+        gsap.to(divHover, {
+            autoAlpha: 1,
+            scale: 1,
+            duration: 0.25,
+            ease: 'power2.out'
+        });
+    });
+
+    div.addEventListener('mouseleave', () => {
+        gsap.killTweensOf(divHover); // Mata cualquier animación previa en curso
+        gsap.to(divHover, {
+            autoAlpha: 0,
+            scale: 0.9,
+            duration: 0.2,
+            ease: 'power2.in'
+        });
+    });
+
+    // Click Redirección
     div.addEventListener('click', () => {
-        window.location.href = `jugadora_ficha.html?id=${jugadora.id_jugadora}&slug=${slugNombre}`;;
+        window.location.href = `jugadora_ficha.html?id=${jugadora.id_jugadora}&slug=${slugNombre}`;
     });
 
     wrapper.appendChild(div);
 
-    // Si es del histórico ("De siempre"), inyectamos el bloque de etapas abajo
+    // Si es del histórico, inyectamos el bloque de etapas abajo
     if (mostrarEtapas && jugadora.etapas) {
         const etapasDiv = document.createElement('div');
         etapasDiv.className = 'jugadora-etapas-outside';
@@ -328,7 +458,6 @@ function crearFichaBaseJugadora(jugadora, colorPredeterminado, mostrarEtapas = f
 
     return wrapper;
 }
-
 // ==========================================
 // 4. CONTROLADORES PRINCIPALES (ORQUESTADORES)
 // ==========================================
@@ -355,26 +484,33 @@ export async function crearFichaJugadorasDeSiempre(equipo, color) {
 }
 
 async function displayJugadorasActuales(id, jugadoras, color) {
-
+    // Ordenar por jugadoras.posiciones_ids[0] para que aparezcan en orden de posición
+    jugadoras.sort((a, b) => {
+        const posA = a.posiciones_ids?.[0] || 999; // Si no tiene posición, lo ponemos al final
+        const posB = b.posiciones_ids?.[0] || 999;
+        return posA - posB;
+    });
     const container = document.getElementById(id);
-    if (!container || !jugadoras || jugadoras.length === 0) return;
+    if (!container) return;
+    container.innerHTML = ''; // Limpiamos antes de mostrar nuevas jugadoras
+    if (!jugadoras || jugadoras.length === 0) return;
 
+    // Opcional: Mantener el contenedor de destacadas si lo usas arriba
     const destacadosContainer = document.getElementById('jugadoras-destacadas-container');
-    if (destacadosContainer) destacadosContainer.innerHTML = '';
-
-    await esperarGridTactico();
-
     if (destacadosContainer) {
-        const { masCara, masJoven, masMayor } = obtenerJugadorasDestacadas(jugadoras);
+        destacadosContainer.innerHTML = '';
+        const { masCara, masJoven, masMayor, masAlta } = obtenerJugadorasDestacadas(jugadoras);
         destacadosContainer.appendChild(crearCardDestacada(masCara, 'MÁS CARA'));
         destacadosContainer.appendChild(crearCardDestacada(masJoven, 'MÁS JOVEN'));
         destacadosContainer.appendChild(crearCardDestacada(masMayor, 'MÁS MAYOR'));
+        destacadosContainer.appendChild(crearCardDestacada(masAlta, 'MÁS ALTA'));
     }
 
-    // 1. Limpiar el campo y los suplentes antes de pintar
+    /* --- COMENTADO/ELIMINADO: Lógica del campo de fútbol y suplentes ---
+    await esperarGridTactico();
     limpiarCampoYSuplentes();
 
-    // 2. Ordenar por IDs de posición
+    // Ordenar por IDs de posición
     jugadoras.sort((a, b) => {
         const idA = a.posiciones_ids?.[0] || 999;
         const idB = b.posiciones_ids?.[0] || 999;
@@ -384,7 +520,6 @@ async function displayJugadorasActuales(id, jugadoras, color) {
     const suplentesContainer = document.getElementById('suplentes');
     const fragmentSuplentes = document.createDocumentFragment();
 
-    // 3. Ubicar jugadoras en el campo o en suplentes
     jugadoras.forEach(jugadora => {
         const posicionPrincipal = jugadora.posiciones_ids?.[0];
         let colocadoEnCampo = false;
@@ -393,7 +528,6 @@ async function displayJugadorasActuales(id, jugadoras, color) {
             colocadoEnCampo = ponerJugadoraEnField(jugadora, posicionPrincipal);
         }
 
-        // Si no cabía en el campo (o no tiene posición válida), va a Suplentes
         if (!colocadoEnCampo) {
             const cardJugadora = crearFichaBaseJugadora(jugadora, color, false);
             fragmentSuplentes.appendChild(cardJugadora);
@@ -403,6 +537,23 @@ async function displayJugadorasActuales(id, jugadoras, color) {
     if (suplentesContainer) {
         suplentesContainer.appendChild(fragmentSuplentes);
     }
+    ------------------------------------------------------------------- */
+
+    // --- NUEVO: Renderizado lineal idéntico al de históricas ---
+    const fragment = document.createDocumentFragment();
+
+    jugadoras.forEach((jugadora, index) => {
+        // Usamos la misma función base, pasando false (porque no son históricas)
+        const cardJugadora = crearFichaBaseJugadora(jugadora, color, false);
+        fragment.appendChild(cardJugadora);
+
+        // Añadimos la clase .visible con retraso escalonado igual que en las históricas
+        setTimeout(() => {
+            cardJugadora.classList.add('visible');
+        }, index * 100);
+    });
+
+    container.appendChild(fragment);
 }
 
 function displayJugadorasHistoricas(id, jugadoras, color) {

@@ -1547,7 +1547,6 @@ section#jugadoras-actuales, section#jugadoras-destacadas, section#palmares{
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    overflow: hidden;
     /*background: var(--color-secundario);*/
 }
 
@@ -1600,24 +1599,25 @@ section#jugadoras-actuales, section#jugadoras-destacadas, section#palmares{
     position: absolute;
     display: flex;
     flex-direction: column;
+    align-items: end;
     right: 0;
     top: 0;
     padding-top: 10px;
     padding-inline: 5px;
-    gap: 0;
+    gap: 5px;
 }
 
-#jugadoras-actuales-container .jugadora-posicion span:first-child,
-#jugadoras-container .jugadora-posicion span:first-child{
+#jugadoras-actuales-container .jugadora-banderas-posicion span:last-child,
+#jugadoras-container .jugadora-banderas-posicion span:last-child{
     transform: scale(1.15);
     font-size: small;
     text-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
 }
 
-#jugadoras-actuales-container .jugadora-posicion span:nth-child(n+2),
-#jugadoras-container .jugadora-posicion span:nth-child(n+2) {
-    font-size: smaller;
-    opacity: 0.8;
+#jugadoras-actuales-container .jugadora-banderas-posicion span:nth-child(n+2),
+#jugadoras-container .jugadora-banderas-posicion span:nth-child(n+2) {
+    font-size: x-small;
+    /*opacity: 0.8;*/
 }
 
 #jugadoras-actuales .football-field tbody{

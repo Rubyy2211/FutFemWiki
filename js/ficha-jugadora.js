@@ -24,8 +24,6 @@ export async function cargarFichaJugadora(id_jugadora) {
         fetchJugadoraTrayectoriaById(id_jugadora)
     ]);   
 
-    console.log(jugadora)
-
     actualizarCardJugadora(jugadora);
 
     const ultimo = trayectorias.at(-1);
@@ -208,6 +206,8 @@ async function cargarTrayectorias(jugadora, trayectorias, palmaresPromise) {
     const mostrador = document.getElementById('mostrador-tarjetas');
     const filtros = document.getElementById('filtros-equipo');
     const fragment = document.createDocumentFragment();
+    const nombre = document.getElementById('equipo-nombre');
+    const nombreLink = document.getElementById('equipo-nombre-link');
     const escudoEquipo = document.getElementById('escudo-equipo');
     const escudoNombre = document.getElementById('equipo-nombre-texto');
     console.log('Trayectorias cargadas:', trayectorias);
@@ -218,6 +218,7 @@ async function cargarTrayectorias(jugadora, trayectorias, palmaresPromise) {
         escudoNombre.textContent = trayectorias[trayectorias.length - 1]?.nombre || '';
         document.documentElement.style.setProperty('--equipo-color', trayectorias[trayectorias.length - 1]?.color || 'var(--color-primario)');
         mostrador.innerHTML = ''; // Limpiar
+        nombreLink.href = `/equipo_ficha.html?id=${trayectorias[trayectorias.length - 1].equipo}&slug=${trayectorias[trayectorias.length - 1].slug}`;
     }else{
         escudoEquipo.src = '/img/equipo-predeterm.svg';
         escudoEquipo.alt = 'Sin equipo';
@@ -376,7 +377,7 @@ async function cargarCompanyeras(equipoId) {
         color-mix(in srgb, ${compañera.color} 50%, transparent))`;
         // Evento click para redirigir a la ficha de la compañera
         card.addEventListener('click', () => {
-            window.location.href = `/jugadora/${compañera.id_jug_comp}/${slugNombre}/`;
+            window.location.href = `/jugadora_ficha.html?id=${compañera.id_jug_comp}&slug=${slugNombre}`;
         });
         contenedor.appendChild(card);
     });

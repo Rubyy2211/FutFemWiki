@@ -238,13 +238,13 @@ function updatePaginationUI() {
     const prevBtn = document.createElement('button');
     const prevSpan = document.createElement('span');
     prevBtn.id = 'prevPage';
-    prevSpan.textContent = '←';
+    prevSpan.textContent = '<<';
     prevBtn.appendChild(prevSpan);
 
     const nextBtn = document.createElement('button');
     const nextSpan = document.createElement('span');
     nextBtn.id = 'nextPage';
-    nextSpan.textContent = '→';
+    nextSpan.textContent = '>>';
     nextBtn.appendChild(nextSpan);
 
     const indicator = document.createElement('span');
