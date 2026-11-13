@@ -733,6 +733,10 @@ header{
     background: none !important;
 }
 
+header.open{
+    background: color-mix(in srgb, color-mix(in srgb, var(--color-secundario) 70%, black 30%) 70%, transparent 30%) !important;
+}
+
 /* Asegura que el contenedor del header sea la referencia de posición */
 .header-container {
     position: relative;
