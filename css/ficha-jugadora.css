@@ -47,7 +47,6 @@ body::before{
     overflow: hidden;
     display: flex;
     flex-direction: row;
-    max-width: 95%;
 }
 
 #jugadora-display-container{
@@ -309,8 +308,8 @@ body::before{
 }
 
 .companyera-card:hover {
-    transform: translateY(-3px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    background: color-mix(in srgb, var(--color-detalles) 80%, transparent 20%) !important;
 }
 
 .companyera-card img {
@@ -1004,13 +1003,18 @@ span.swiper-pagination-bullet-active{
         padding-block: 20px;
         max-width: 500px;
     }
+
+    #jugadora-info .row>div{
+        background: linear-gradient(to right, color-mix(in srgb, var(--equipo-color) 50%, transparent 50%), color-mix(in srgb, var(--equipo-color) 50%, transparent 50%));
+    }
+
     #span-posicion{
         display: none;
     }
     .mySwiper {
         /* Usa un valor fijo o una unidad estable. 
            Si usas vh, asegúrate de que sea el mismo antes y después de cargar */
-        min-height: 42vh !important; 
+        min-height: 60% !important; 
         height: 50vh;
     }
     .swiper{
@@ -1066,13 +1070,32 @@ span.swiper-pagination-bullet-active{
     .swiper #mostrador-tarjetas .swiper-slide .tarjeta-wrapper .tarjeta-front .nombre{
         font-size: medium;
     }
+
+    #palmares{
+        max-height: 30%;
+        min-height: 30%;
+    }
+
     #companyeras-container div{
         width: 70px;
         height: 70px;
     }
+
     #container-companyeras{
         padding: unset;
+        padding-inline: 10px;
+        overflow-x: auto;             /* Habilita el scroll horizontal */
+        overflow-y: hidden;           /* Oculta el scroll vertical */
+        grid-auto-flow: column;       /* Hace que los elementos se llenen por columnas (de arriba a abajo, luego a la derecha) */
+        grid-template-columns: none;  /* Anula el auto-fill vertical anterior */
+        grid-template-rows: repeat(3, 100px); /* Fija exactamente 3 filas de 100px de alto (puedes cambiar a 4) */
+        grid-auto-columns: 100px; /* O puedes usar minmax(100px, 120px) si quieres un pequeño margen de flexibilidad */
     }
+
+    #container-companyeras::-webkit-scrollbar {
+        display: none; /* Oculta la barra de desplazamiento en navegadores basados en WebKit */
+    }
+
     #jugadora-info{
         justify-content: center;
         min-height: 30%;
@@ -1080,6 +1103,7 @@ span.swiper-pagination-bullet-active{
         min-width: 300px;
         flex-direction: column;
     }
+
     #resto{
         max-height: 80%;
         height: 80%;

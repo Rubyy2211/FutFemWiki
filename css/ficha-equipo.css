@@ -2112,6 +2112,11 @@ body.no-scroll {
 }
 
 @media (max-width: 768px){
+
+    #equipo-info #datos-equipo .bloque-nombre-pais h1{
+        text-wrap: nowrap;
+    }
+
     .trofeo img{
         width: 50px !important;
         height: auto !important;
