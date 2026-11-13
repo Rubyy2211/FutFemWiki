@@ -207,7 +207,7 @@ async function cargarTrayectorias(jugadora, trayectorias, palmaresPromise) {
     const filtros = document.getElementById('filtros-equipo');
     const fragment = document.createDocumentFragment();
     const nombre = document.getElementById('equipo-nombre');
-    const nombreLink = document.getElementById('equipo-nombre-link');
+    const nombreLink = document.querySelector('#equipo-nombre a');
     const escudoEquipo = document.getElementById('escudo-equipo');
     const escudoNombre = document.getElementById('equipo-nombre-texto');
     console.log('Trayectorias cargadas:', trayectorias);
